@@ -1,0 +1,325 @@
+
+import React from 'react';
+import { Platform, StatusBar, TouchableOpacity, View, Text, FlatList, Image, ActivityIndicator } from 'react-native';
+import { ReportStyle } from './ReportStyle';
+import ModalSelector from 'react-native-modal-selector';
+import { urlDev, urlResource } from '../../../services/api/config';
+import { useIsFocused } from '@react-navigation/native';
+import { GetAllEmployeeAttendanceWithMonth } from '../../../services/Report'
+import { CommonStyles } from '../../../common/CommonStyles';
+import { DailyAttendanceStyle } from "../attendance/DailyAttendanceStyle"
+import moment from 'moment';
+import LocalStorage from '../../../common/LocalStorage';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import {Picker} from '@react-native-picker/picker';
+
+
+const ReportScreen = ({ navigation, route }) => {
+
+    const isFocused = useIsFocused();
+    const [yearList, setYearList] = useState([
+        { label: '2019', key: '2019' },
+        { label: '2020', key: '2020' },
+        { label: '2021', key: '2021' },
+        { label: '2022', key: '2022' },
+        { label: '2023', key: '2023' },
+        { label: '2024', key: '2024' },
+        { label: '2025', key: '2025' },
+        { label: '2026', key: '2026' },
+        { label: '2027', key: '2027' },
+        { label: '2028', key: '2028' },
+        { label: '2029', key: '2029' },
+        { label: '2030', key: '2030' },
+    ]);
+    const [monthList, setMonthList] = useState([
+        { label: 'January', key: 'January' },
+        { label: 'February', key: 'February' },
+        { label: 'March', key: 'March' },
+        { label: 'April', key: 'April' },
+        { label: 'May', key: 'May' },
+        { label: 'June', key: 'June' },
+        { label: 'July', key: 'July' },
+        { label: 'August', key: 'August' },
+        { label: 'September', key: 'September' },
+        { label: 'October', key: 'October' },
+        { label: 'November', key: 'November' },
+        { label: 'December', key: 'December' },
+    ]);
+    const [VistNumber, setVistNumber] = useState(moment(new Date()).format("MMMM"));
+    const [year, setyear] = useState(moment(new Date()).format("YYYY"));
+    const [workingReportList, setworkingReportList] = useState([]);
+    const [companyId, setcompanyId] = useState(0);
+    const [progressVisible, setprogressVisible] = useState(false);
+
+
+    useEffect(() => {
+        getAllEmployeeAttendanceWithMonth();
+
+    }, [isFocused])
+
+    const goBack = () => {
+        navigation.goBack();
+    }
+    const selectedItem = async (itemValue) => {
+        setVistNumber(itemValue);
+        getAllEmployeeAttendanceWithMonth();
+    }
+    const getAllEmployeeAttendanceWithMonth = async () => {
+        try {
+            const cId = await LocalStorage.GetData("companyId");
+            setcompanyId(cId);
+            setprogressVisible(true);
+            await GetAllEmployeeAttendanceWithMonth(cId, VistNumber, year)
+                .then(res => {
+                    setworkingReportList(res?.result);
+                    setprogressVisible(false);
+                })
+                .catch(() => {
+                    setprogressVisible(false);
+                    console.log("error occured");
+                });
+
+        } catch (error) {
+            setprogressVisible(false);
+            console.log(error);
+        }
+    }
+
+
+    const selectedItemYear = async (itemValue) => {
+        setyear(itemValue);
+        getAllEmployeeAttendanceWithMonth();
+    }
+    const goToDetail = (item) => {
+        navigation.navigate("DetailScreen", { detailItem: item, month: VistNumber, year: year });
+        //  Actions.DetailScreen();
+    }
+    const renderDropDownMonth = () => {
+        if (Platform.OS === 'android') {
+            return (
+                <Picker
+                    selectedValue={VistNumber}
+                    itemStyle={{ borderWidth: 1, borderColor: 'red', fontSize: 12, fontWeight: '500', padding: 0, borderColor: '#798187', borderRadius: 10, borderWidth: 1 }}
+                    style={{ height: 50, width: 130, borderWidth: 1, marginTop: -15, padding: 0, borderColor: '#798187', borderRadius: 10, }}
+                    onValueChange={(itemValue, itemIndex) =>
+                        selectedItem(itemValue)
+                    }>
+                    <Picker.Item label={VistNumber} value={VistNumber} />
+                    {monthList.map((item, key) => {
+                        return <Picker.Item value={item.key} label={item.label} key={key} />
+                    })}
+                </Picker>
+            )
+        } else {
+            return (
+                <ModalSelector
+                    style={CommonStyles.ModalSelectorStyle}
+                    data={monthList}
+                    initValue={VistNumber}
+                    onChange={(option) => {
+                        const newUser = option.key
+                        selectedItem(newUser)
+                    }}
+                />
+            )
+        }
+    }
+    const renderDropDownYear = () => {
+        if (Platform.OS === 'android') {
+            return (
+                <Picker
+                    selectedValue={year}
+                    itemStyle={{ borderWidth: 1, borderColor: 'red', fontSize: 12, padding: 0, borderColor: 'black', borderRadius: 10, borderWidth: 1 }}
+                    style={{ height: 50, width: 100, borderWidth: 1, marginTop: -15, padding: 0, borderColor: 'black', borderRadius: 10, }}
+                    onValueChange={(itemValue, itemIndex) =>
+                        selectedItemYear(itemValue)
+                    }>
+                    {yearList.map((item, key) => { return <Picker.Item value={item.key} label={item.label} key={key} /> })}
+                </Picker>
+            )
+        } else {
+            return (
+                <ModalSelector
+                    style={CommonStyles.ModalSelectorStyle}
+                    data={yearList}
+                    initValue={year}
+                    onChange={(option) => {
+                        const newUser = option.key
+                        selectedItemYear(newUser)
+                    }}
+                />
+            )
+        }
+    }
+
+    return (
+        <View style={ReportStyle.container}>
+
+            <View
+                style={CommonStyles.HeaderContent}>
+                <View
+                    style={CommonStyles.HeaderFirstView}>
+                    <TouchableOpacity
+                        style={CommonStyles.HeaderMenuicon}
+                        onPress={() => { navigation.openDrawer() }}>
+                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
+                            source={require('../../../../assets/images/menu_b.png')}>
+                        </Image>
+                    </TouchableOpacity>
+
+                    <View
+                        style={CommonStyles.HeaderTextView}>
+                        <Text
+                            style={CommonStyles.HeaderTextstyle}>
+                            ATTENDANCE REPORT
+                        </Text>
+                    </View>
+
+                </View>
+            </View>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 10, marginBottom: 0, padding: 10, paddingBottom: 0, }}>
+                <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
+                    <Text style={{ color: '#d2d6d9', fontFamily: 'PRODUCT_SANS_BOLD', fontSize: 16 }}>Month:</Text>
+                    {renderDropDownMonth()}
+
+                </View>
+                <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
+                    <Text style={{ color: '#d2d6d9', fontFamily: 'PRODUCT_SANS_BOLD', fontSize: 16 }}>Year:</Text>
+                    {renderDropDownYear()}
+                </View>
+            </View>
+            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={ReportStyle.loaderIndicator} />) : null}
+            <FlatList
+
+                data={workingReportList}
+                keyExtractor={(x, i) => i.toString()}
+                renderItem={({ item }) =>
+                    <TouchableOpacity onPress={() => goToDetail(item)}>
+                        <View style={
+                            DailyAttendanceStyle.FlatListTouchableOpacitywork
+                        }>
+                            <View
+                                style={
+                                    DailyAttendanceStyle.FlatListLeft
+                                }>
+                                <View style={{ paddingRight: 10, }}>
+                                    {item.ImageFileName !== "" ?
+                                        <Image resizeMode="contain" style={
+                                            DailyAttendanceStyle.ImageLocal
+                                        } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={
+                                            DailyAttendanceStyle.ImagestyleFromServer
+                                        } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />}
+
+
+
+                                </View>
+                                <View style={DailyAttendanceStyle.RightTextView}>
+                                    <Text style={
+                                        DailyAttendanceStyle.NameText
+                                    }
+                                    >
+                                        {item.EmployeeName}
+                                    </Text>
+                                    <Text style={
+                                        DailyAttendanceStyle.DesignationText
+                                    }
+                                    >
+                                        {item.Designation}
+                                    </Text>
+                                    <Text style={
+                                        DailyAttendanceStyle.DepartmentText
+                                    }
+                                    >
+                                        {item.DepartmentName}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={DailyAttendanceStyle.TimeContainerwork}>
+                                <View
+                                    style={
+                                        DailyAttendanceStyle.TimeContentwork
+                                    }>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text
+                                            style={
+                                                [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]
+                                            }>
+                                            Present:
+                                        </Text>
+
+                                        <Text
+                                            style={
+                                                [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]
+                                            }>
+                                            {item.TotalPresent} d
+                                        </Text>
+                                    </View>
+                                    <Text style={
+                                        DailyAttendanceStyle.CheckinTimeText
+                                    }>
+                                        {item.CheckInTimeVw !== "" ? item.CheckInTimeVw : ("")}
+
+                                    </Text>
+
+                                </View>
+
+                                <View
+                                    style={
+                                        DailyAttendanceStyle.CheckOutTimeView
+                                    }>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text
+                                            style={
+                                                [DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]
+                                            }>
+                                            Completed:
+                                        </Text>
+                                        <Text
+                                            style={
+                                                [DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]
+                                            }>
+                                            {item.TotalStayTime} h
+                                        </Text>
+                                    </View>
+                                    <Text style={
+                                        DailyAttendanceStyle.CheckOutTimeText
+                                    }></Text>
+                                </View>
+
+                                <View
+                                    style={
+                                        DailyAttendanceStyle.CheckOutTimeView
+                                    }>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text
+                                            style={
+                                                [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]
+                                            }>
+                                            No Checked Out:
+                                        </Text>
+                                        <Text
+                                            style={
+                                                [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]
+                                            }>
+                                            {item.TotalCheckedOutMissing} d
+                                        </Text>
+                                    </View>
+                                    <Text style={
+                                        DailyAttendanceStyle.CheckOutMissingTimeText
+                                    }></Text>
+                                </View>
+
+                            </View>
+                        </View>
+                        <View style={{ borderBottomColor: '#edeeef', borderBottomWidth: 1, marginLeft: "24%", marginRight: 10, }}></View>
+                    </TouchableOpacity>
+                }>
+            </FlatList>
+
+
+        </View>
+    );
+}
+
+export default ReportScreen;
