@@ -1,25 +1,13 @@
-import React, { Component, useEffect, useState } from 'react';
-import {
-    FlatList, Text, View, Image, StatusBar, TouchableOpacity, ScrollView,
-    Platform, RefreshControl, BackHandler, Alert,
-} from 'react-native';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Text, View, Image, TouchableOpacity, ScrollView, RefreshControl, BackHandler } from 'react-native';
 import Iconic from 'react-native-vector-icons/Feather'
 import { CommonStyles } from '../../../common/CommonStyles';
-import {
-    loadFromStorage,
-    storage,
-    CurrentUserProfile
-} from "../../../common/storage";
 import { DailyAttendanceStyle } from './DailyAttendanceStyle';
 import Modal from 'react-native-modalbox';
-
 import { GetCompanyByUserId } from "../../../services/CompanyService"
 import { useSelector } from "react-redux";
-
 import { GetAttendanceFeed } from '../../../services/EmployeeTrackService';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlResource } from '../../../services/api/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { DrawerContentStyle } from "../../MenuDrawer/DrawerContentStyle"
 import LocalStorage from '../../../common/LocalStorage';
@@ -110,7 +98,7 @@ const AdminTodayAttendance = ({ navigation }) => {
 
     const closeCompanyModal = async (index, value) => {
         setCompanyModal(false);
-        await LocalStorage.SetData("companyId", index.toString());
+        // await LocalStorage.SetData("companyId", index.toString());
         await LocalStorage.SetData("companyName", value);
         setslectedCompanyIndex(index);
         setselctedCompanyValue(value);
@@ -142,13 +130,12 @@ const AdminTodayAttendance = ({ navigation }) => {
         try {
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
-                    // console.log('company...', res.result);
-                    if (res.result === null) {
+                    if (res === null) {
                         <AppLoading></AppLoading>
-                    } else if (res.result.length > 0) {
+                    } else if (res?.length > 0) {
 
                         const cList = [];
-                        res.result.forEach(function (item) {
+                        res?.forEach(function (item) {
                             const ob = {
                                 'Text': item.CompanyName,
                                 'Value': item.Id,
@@ -174,12 +161,13 @@ const AdminTodayAttendance = ({ navigation }) => {
 
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
-                    console.log('company...', res.result);
-                    if (res.result === null) {
+                    console.log('compayres....',res)
+
+                    if (res === null) {
                         <AppLoading></AppLoading>
-                    } else if (res.result.length > 0) {
+                    } else if (res?.length > 0) {
                         const cList = [];
-                        res.result.forEach(function (item) {
+                        res?.forEach(function (item) {
                             const ob = {
                                 'Text': item.CompanyName,
                                 'Value': item.Id,
@@ -191,8 +179,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                             cList.push(ob);
                         });
                         setcompanyList(cList);
-                        // console.log(companyList, 'compaylist....')
-                        LocalStorage.SetData("companyId", companyList[0].Value.toString());
+                        // LocalStorage.SetData("companyId", companyList[0].Value.toString());
                         LocalStorage.SetData("companyName", companyList[0].Text);
                     }
                 })
@@ -213,11 +200,10 @@ const AdminTodayAttendance = ({ navigation }) => {
 
         await GetAttendanceFeed(cId)
             .then(res => {
-                console.log("first", res)
-                setemployeeList(res.result.EmployeeList);
-                setdisplayAbleEmployeeList(res.result.EmployeeList);
-                setstatusCount(res.result.StatusCount);
-                // console.log(res.result.EmployeeList, 'emplist');
+                console.log('attendanvce',res)
+                setemployeeList(res?.EmployeeList);
+                setdisplayAbleEmployeeList(res?.EmployeeList);
+                setstatusCount(res?.StatusCount);
             }).catch(() => {
             });
     }
@@ -231,7 +217,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                             style={selectedId == 1 ?
                                 DailyAttendanceStyle.countBoxColumn1NumberActive :
                                 DailyAttendanceStyle.countBoxColumn1NumberInactive}>
-                            {statusCount.TotalEmployee}
+                            {statusCount?.TotalEmployee}
                         </Text>
                         <Text
                             style={selectedId == 1 ?
@@ -247,7 +233,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                             style={selectedId == 2 ?
                                 DailyAttendanceStyle.countBoxColumn2NumberActive :
                                 DailyAttendanceStyle.countBoxColumn2NumberInactive}>
-                            {statusCount.TotalCheckIn}
+                            {statusCount?.TotalCheckIn}
                         </Text>
                         <Text
                             style={selectedId == 2 ?
@@ -266,7 +252,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                                 DailyAttendanceStyle.countBoxColumn3NumberInactive
                             }
                         >
-                            {statusCount.TotalNotAttend}
+                            {statusCount?.TotalNotAttend}
                         </Text>
                         <Text
                             style={selectedId == 3 ?
@@ -309,7 +295,6 @@ const AdminTodayAttendance = ({ navigation }) => {
                                     <Text
                                         style={DrawerContentStyle.CompanyModalTextStyle}>
                                         {selctedCompanyValue}
-
                                     </Text>
                                     <Iconic
                                         name="chevrons-down" size={14} color="#d6d6d6"

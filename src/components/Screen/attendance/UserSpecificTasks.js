@@ -98,10 +98,10 @@ const UserSpecificTasks =({navigation})=>{
             await GetRelatedToMeTasks(clientId)
                 .then(res =>
                 {
-                    settaskList(res.result);
-                    setTempList(res?.result);
+                    console.log('RESPONSE',res)
+                    settaskList(res);
+                    setTempList(res);
                     setprogressVisible(false);
-                    arrayholder = res.result;
                     console.log(arrayholder, 'taskresutl...');
                 })
                 .catch(() =>

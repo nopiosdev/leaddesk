@@ -1,11 +1,11 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Platform, StatusBar, Dimensions,
     TouchableOpacity, View, Text,
     Image, ScrollView,
     BackHandler,
     RefreshControl,
-    FlatList, StyleSheet,
+    FlatList, StyleSheet, ActivityIndicator,
 } from 'react-native';
 import Timeline from 'react-native-timeline-flatlist'
 import { DailyAttendanceStyle } from './DailyAttendanceStyle';
@@ -18,13 +18,13 @@ import { CommonStyles } from '../../../common/CommonStyles';
 import { ConvertUtcToLocalTime } from '../../../common/commonFunction';
 import LocalStorage from '../../../common/LocalStorage';
 import call from 'react-native-phone-call'
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setClientId, updateUserEmployee, updateUserPhone } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
 
 
 
-const DailyAttendanceDetails =({navigation,route})=> {
+const DailyAttendanceDetails = ({ navigation, route }) => {
 
     const [DepartmentName, setDepartmentName] = useState('');
     const [Designation, setDesignation] = useState('');
@@ -38,13 +38,13 @@ const DailyAttendanceDetails =({navigation,route})=> {
     const [aItemUserId, setaItemUserId] = useState('');
     const [refreshing, setrefreshing] = useState(false);
     const userDetails = useSelector((state) => state.user.currentUser);
-    const paramsData=route?.params;
+    const paramsData = route?.params;
     const user = useSelector((state) => state.user.currentUser);
     const clientId = useSelector((state) => state.user.clientId);
     const isFocused = useIsFocused();
 
-    const dispatch=useDispatch();
-    const makeCall=()=>{
+    const dispatch = useDispatch();
+    const makeCall = () => {
         //handler to make a call
         const args = {
             number: user?.PhoneNumber,
@@ -55,32 +55,32 @@ const DailyAttendanceDetails =({navigation,route})=> {
 
 
     useEffect(() => {
-        (async()=>{
-        dispatch(setClientId(paramsData?.aItem?.UserId));
-        await getEmpTrackInfo();
-        await getEmpInfo();
-        dispatch(updateUserPhone(paramsData?.aItem?.PhoneNumber))
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-    })()
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-      }
-    }, [isFocused])    
-   
+        (async () => {
+            dispatch(setClientId(paramsData?.aItem?.UserId));
+            await getEmpTrackInfo();
+            await getEmpInfo();
+            dispatch(updateUserPhone(paramsData?.aItem?.PhoneNumber))
+            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+        })()
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        }
+    }, [isFocused])
+
 
     const handleBackButton = () => {
         navigation.navigate('DailyAttendance');
         return true;
     }
-console.log('paramsData',paramsData)
+
     const getEmpTrackInfo = async () => {
+        setrefreshing(true);
         try {
-            console.log("getEmpTrackInfo", user?.Id);
             await GetMovementDetails(paramsData?.aItem?.UserId)
-                .then(res => {      
-                    console.log(res.result)            
-                    setEmpTrackList(res.result);
-                    res?.result?.map((userData, index) => {
+                .then(res => {
+                    console.log("getEmpTrackInfo", res);
+                    setEmpTrackList(res);
+                    res?.map((userData, index) => {
                         var title = '';
                         var color = '';
                         if (userData.IsCheckInPoint) {
@@ -96,14 +96,14 @@ console.log('paramsData',paramsData)
                         var myObj = {
                             "time": ConvertUtcToLocalTime(userData.LogDateTime),
                             "title": title,
-                            "description":  userData.LogLocation,
+                            "description": userData.LogLocation,
                             "circleColor": color
                         };
-                        setdata([...data,...myObj]);
-                    });                    
-                    setLongitude(res?.result[res?.result?.length - 1]?.Longitude);
-                    setLatitude(res?.result[res?.result?.length - 1]?.Latitude);
-                    setLogLocation(res?.result[res?.result?.length - 1]?.LogLocation);
+                        setdata([myObj]);
+                    });
+                    setLongitude(res[res?.length - 1]?.Longitude);
+                    setLatitude(res[res?.length - 1]?.Latitude);
+                    setLogLocation(res[res?.length - 1]?.LogLocation);
                 })
                 .catch((ex) => {
                     console.log(ex, "GetMovementDetails error occured");
@@ -112,9 +112,10 @@ console.log('paramsData',paramsData)
         catch (error) {
             console.log(error);
         }
+        setrefreshing(false);
     }
 
-    const goBack = () => {       
+    const goBack = () => {
         navigation.navigate('DailyAttendance')
     };
 
@@ -123,12 +124,11 @@ console.log('paramsData',paramsData)
 
             await GetMyTodayAttendance(clientId)
                 .then(res => {
-                    console.log("getEmpInfo",user?.Id);
-                    setEmployeeName(res?.result?.EmployeeName);
-                    setDepartmentName(res?.result?.DepartmentName);
-                    setDesignation(res?.result?.Designation);
-                    // global.aItemEmployeeName = res.result.EmployeeName;
-                    dispatch(updateUserEmployee(res?.result?.EmployeeName))
+                    console.log("getEmpInfo", res);
+                    setEmployeeName(res?.EmployeeName);
+                    setDepartmentName(res?.DepartmentName);
+                    setDesignation(res?.Designation);
+                    dispatch(updateUserEmployee(res?.EmployeeName))
                 })
                 .catch(() => {
                     console.log("error occured");
@@ -138,7 +138,7 @@ console.log('paramsData',paramsData)
             console.log(error);
         }
     }
-    const _onRefresh = async () => {
+    const onRefresh = async () => {
         setrefreshing(true);
         setTimeout(function () {
             setrefreshing(false);
@@ -166,47 +166,47 @@ console.log('paramsData',paramsData)
         );
     }
 
-        return (
-            <View style={DailyAttendanceStyle.container}>
-             
+    return (
+        <View style={DailyAttendanceStyle.container}>
+
+            <View
+                style={CommonStyles.HeaderContent}>
                 <View
-                    style={CommonStyles.HeaderContent}>
+                    style={CommonStyles.HeaderFirstView}>
+                    <TouchableOpacity
+                        style={CommonStyles.HeaderMenuicon}
+                        onPress={() => { goBack() }}>
+                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
+                            source={require('../../../../assets/images/left_arrow.png')}>
+                        </Image>
+                    </TouchableOpacity>
                     <View
-                        style={CommonStyles.HeaderFirstView}>
-                        <TouchableOpacity
-                            style={CommonStyles.HeaderMenuicon}
-                            onPress={() => { goBack() }}>
-                            <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                                source={require('../../../../assets/images/left_arrow.png')}>
-                            </Image>
-                        </TouchableOpacity>
-                        <View
-                            style={CommonStyles.HeaderTextView}>
-                            <Text
-                                style={CommonStyles.HeaderTextstyle}>
-                                {EmployeeName}
+                        style={CommonStyles.HeaderTextView}>
+                        <Text
+                            style={CommonStyles.HeaderTextstyle}>
+                            {EmployeeName}
 
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={{ alignItems: 'flex-end' }}>
-                        <TouchableOpacity
-                            onPress={()=>makeCall()}
-                            style={{
-                                padding: 8, paddingVertical: 2,
-
-                            }}>
-                            <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
-                                resizeMode='contain'
-                                source={require('../../../../assets/images/call.png')}>
-                            </Image>
-                        </TouchableOpacity>
+                        </Text>
                     </View>
                 </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                    <TouchableOpacity
+                        onPress={() => makeCall()}
+                        style={{
+                            padding: 8, paddingVertical: 2,
+
+                        }}>
+                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
+                            resizeMode='contain'
+                            source={require('../../../../assets/images/call.png')}>
+                        </Image>
+                    </TouchableOpacity>
+                </View>
+            </View>
 
 
-                <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
-                <ScrollView showsVerticalScrollIndicator={false}>
+            <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} >
                 <View
                     style={{
                         flexDirection: 'column',
@@ -214,14 +214,13 @@ console.log('paramsData',paramsData)
                     }}>
                     <View style={{ backgroundColor: '#ffffff' }}>
                         <View style={{ flexDirection: 'column' }}>
-                            {renderTrackList()}
-                            {data.length>0?renderTrackList():<View><Text>No Activities Found to show</Text></View>}
+                            {!refreshing? data?.length > 0 ? renderTrackList() : <View style={{width:'100%',padding:10}}><Text style={{textAlign:'center'}}>No Activities Found!</Text></View>:<ActivityIndicator/>}
                         </View>
                     </View>
                 </View>
             </ScrollView>
          
-            </View>
+            </View >
         );
 }
 

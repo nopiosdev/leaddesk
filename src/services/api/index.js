@@ -8,44 +8,29 @@ import axios from 'axios';
 
 export const getApi = async (action, headers = {}) => {
   const userToken = await AsyncStorage.getItem("userToken");
-  let requestHeaders = _.pickBy(
-    {
-      ...(userToken ? { Authorization: `bearer ${userToken}` } : { "Client-ID": apiConfig.clientId }),
-      ...headers,
-      ...{ Accept: "application/json", "Content-Type": "application/json" }
-    },
-    item => !_.isEmpty(item)
-  );
 
-  return await axios.get(`${apiConfig.url}${action}`, { headers: requestHeaders })
+  return await axios.get(`${apiConfig.url}${action}`, { headers: { "Content-Type": "multipart/form-data" } })
     .then(async ({ data }) => {
-      console.log('Res', data);
-      return { result: data, isSuccess: true, message: "" };
+      return data;
     })
     .catch((error) => {
-      return { result: null, isSuccess: false, message: "" };
+      return { success: false, message: "" };
     });
 }
 
 
 
-export const postApi = async (action, headers = {}, body = {}) => {
+export const postApi = async (action, data) => {
   const userToken = await AsyncStorage.getItem("userToken");
-  let requestHeaders = _.pickBy(
-    {
-      ...(userToken ? { Authorization: `bearer ${userToken}` } : { "Client-ID": apiConfig.clientId }),
-      ...headers,
-      ...{ Accept: "application/json", "Content-Type": "application/json" }
-    },
-    item => !_.isEmpty(item)
-  );
-  console.log(`${apiConfig.url}${action}`);
-  return await axios.post(`${apiConfig.url}${action}`, body, { headers: requestHeaders })
-    .then(async ({ data }) => {
-      return { result: data, isSuccess: true, message: "" };
+  return await axios.post(`${apiConfig.url}${action}`, data, { headers: { "Content-Type": "multipart/form-data" } })
+    .then(({ data }) => {
+      return data;
     })
     .catch((error) => {
-      return { result: null, isSuccess: false, message: "" };
+      return {
+        success: false,
+        error
+      };
     });
 };
 

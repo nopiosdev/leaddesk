@@ -74,9 +74,9 @@ const DailyAttendanceLocation =({navigation})=> {
         try {
             await GetMovementDetails(clientId)
                 .then(res => {
-                    setEmpTrackList(res?.result)
-                    console.log('movement details', res?.result)
-                    res.result.map((userData, index) => {
+                    setEmpTrackList(res)
+                    console.log('movement details', res)
+                    res?.map((userData, index) => {
                         var title = '';
                         var color = '';
                         if (userData.IsCheckInPoint) {
@@ -99,18 +99,19 @@ const DailyAttendanceLocation =({navigation})=> {
                             "title": title + " " + (index + 1),
                             "description": userData.LogLocation,
                             coordinates: {
-                                "latitude": userData.Latitude,
-                                "longitude": userData.Longitude
+                                "latitude":Number(userData.Latitude),
+                                "longitude": Number(userData.Longitude)
                             },
                         }
-                        setmarkers([...markers,...newMarkerObj])
+                        // setmarkers([...markers,...newMarkerObj])
+                        setmarkers([newMarkerObj])
                     });
-                    console.log('Lat',res?.result[res?.result?.length - 1])
+                    console.log('Lat',res[res?.length - 1])
 
-                    setLongitude(res?.result[res?.result?.length - 1]?.Longitude);
-                    setLatitude(res?.result[res?.result?.length - 1]?.Latitude);
-                    setLogLocation(res?.result[res?.result?.length - 1]?.LogLocation);
-                    const tcount = 60 * res?.result?.length - 60;
+                    setLongitude(Number(res[res?.length - 1]?.Longitude));
+                    setLatitude(Number(res[res?.length - 1]?.Latitude));
+                    setLogLocation(res[res?.length - 1]?.LogLocation);
+                    const tcount = 60 * res?.length - 60;
                     setsvgLinHeight(tcount === 0 ? 60 : tcount);
                 })
                 .catch((ex) => {
@@ -131,12 +132,12 @@ const DailyAttendanceLocation =({navigation})=> {
 
             await GetMyTodayAttendance(clientId)
                 .then(res => {
-                    console.log(res.result, "getEmpInfo");
+                    console.log(res, "getEmpInfo");
                     
-                    setEmployeeName(res.result.EmployeeName);
-                    setDepartmentName(res.result.DepartmentName);
-                    setDesignation(res.result.Designation);
-                    dispatch(updateUserEmployee(res.result.EmployeeName));
+                    setEmployeeName(res?.EmployeeName);
+                    setDepartmentName(res?.DepartmentName);
+                    setDesignation(res?.Designation);
+                    dispatch(updateUserEmployee(res?.EmployeeName));
                 })
                 .catch(() => {
                     console.log("error occured");
@@ -195,11 +196,12 @@ const DailyAttendanceLocation =({navigation})=> {
                         }}
 
                     >
-                        {markers.map(marker => (
+                        {markers?.map((marker,i) => (
                             <MapView.Marker
-                                coordinate={marker.coordinates}
-                                title={marker.title}
-                                description={marker.description}
+                                coordinate={marker?.coordinates}
+                                title={marker?.title}
+                                description={marker?.description}
+                                key={i.toString()+"_"}
                             />
                         ))}
                         <MapView.Marker coordinate={{

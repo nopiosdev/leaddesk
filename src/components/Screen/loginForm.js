@@ -4,27 +4,30 @@ import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Login, GetUserClaim } from '../../services/AccountService';
 import {
-saveToStorage,
-storage,
-CurrentUserProfile
+    saveToStorage,
+    storage,
+    CurrentUserProfile
 } from '../../common/storage';
 import LocalStorage from '../../common/LocalStorage'
 import { Feather, Entypo } from '@expo/vector-icons';
-import {  ConfirmDialog } from 'react-native-simple-dialogs';
+import { ConfirmDialog } from 'react-native-simple-dialogs';
 import { useDispatch } from 'react-redux';
 import { addUser, toggleUser } from '../../Redux/Slices/UserSlice';
+import { useIsFocused } from '@react-navigation/native';
 
 var { width } = Dimensions.get('window');
 
-const LoginForm =({navigation,phoneno})=> {
+const LoginForm = ({ navigation, phoneno }) => {
 
-    const [userName, setUserName] = useState(phoneno);
+    const [userName, setUserName] = useState('');
     const [password, setpassword] = useState('');
     const [alertMessage, setalertMessage] = useState('');
     const [loading, setloading] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const PasswordRef = createRef();
     const dispatch = useDispatch();
+    const Isfocused = useIsFocused();
+
 
     const handleBackButton = () => {
         BackHandler.exitApp()
@@ -39,10 +42,10 @@ const LoginForm =({navigation,phoneno})=> {
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-        return ()=> {BackHandler.removeEventListener('hardwareBackPress', handleBackButton);}
+        return () => { BackHandler.removeEventListener('hardwareBackPress', handleBackButton); }
     }, [])
-    
-    const  onPressSubmitButton = async()=> {
+
+    const onPressSubmitButton = async () => {
         NetInfo.fetch().then(async state => {
             if (state.isConnected) {
                 if (userName != "" && password != "") {
@@ -64,151 +67,153 @@ const LoginForm =({navigation,phoneno})=> {
             }
         });
     }
-    const onFetchLoginRecords=async()=> {
+    const onFetchLoginRecords = async () => {
         console.log("trying login..");
-        let UserModel = {
-            UserName: userName,
-            Password: password,
-        };
-        const response = await Login(UserModel).then(async (response) => {
-            if (response && response.isSuccess) {
-                console.log('USER',response)
-                if (response.result.Success) {
-                     LocalStorage.SetData("Login", "Login");
-                     LocalStorage.SetData("userToken",  response.result.Token);                    
-                     LocalStorage.SetData("companyId",  response.result.CompanyId.toString());
-                     await getUserClaim(response.result.UserKey);
-                     setUserName('');
-                     setpassword('');
+        var data = new FormData();
+        data.append('phoneNumber', userName);
+        data.append('password', password);
+
+        await Login(data).then(async (response) => {
+            console.log('respo', response)
+            if (response && response.success) {
+                    LocalStorage.SetData("Login", "Login");
+                    LocalStorage.SetData("userToken", '123123');
+                    LocalStorage.SetData("companyId", response?.CompanyId.toString());
+                    // await getUserClaim(response?.Id);
+                    dispatch(addUser(response))
+                    LocalStorage.SetData("CurrentUser", JSON.stringify(response));
+                    dispatch(toggleUser('Login'))
+                    
+
+                    setUserName('');
+                    setpassword('');
                     setloading(false);
-                } else {
-                    setloading(false);
-                    setalertMessage('User name or password is wrong')
-                    setShowConfirm(true);
-                }
             } else {
                 setloading(false);
-                setalertMessage('User name or password is wrong')
+                setalertMessage('Phonenumber or password is wrong')
                 setShowConfirm(true);
             }
         });
     }
-    
+
     const getUserClaim = async (userKey) => {
         try {
             await GetUserClaim(userKey)
                 .then(res => {
-                    const ob = res.result;
+                    const ob = res;
                     console.log('empInfo', ob);
                     if (ob != null) {
                         dispatch(addUser(ob))
-                        LocalStorage.SetData("CurrentUser",JSON.stringify(ob));
-                        dispatch(toggleUser('Login'))                        
+                        LocalStorage.SetData("CurrentUser", JSON.stringify(ob));
+                        dispatch(toggleUser('Login'))
                     }
                 })
         } catch (error) {
             console.log(error);
         }
     }
-
+    useEffect(() => {
+        setUserName(phoneno);
+    }, [Isfocused])
+    console.log(phoneno)
     return (
-            <View style={styles.container}>
-                {loading ? (<ActivityIndicator size="large" color="#1B7F67" style={{ left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}
+        <View style={styles.container}>
+            {loading ? (<ActivityIndicator size="large" color="#1B7F67" style={{ left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}
 
-                <View style={[styles.TextInputView, { marginBottom: 10 }]}>
-                    <Entypo name="old-mobile" size={20} color="#4b4b4b"
-                        style={styles.InputIcon} />
-                    <TextInput style={styles.TextInput}
-                        keyboardType="numeric"
-                        placeholder="Your Mobile Number"
-                        placeholderTextColor="#bcbcbc"
-                        underlineColorAndroid="transparent"
-                        returnKeyType="next" 
-                        autoCorrect={false}
-                        onChangeText={changeUsrNameHandler}
-                        value={userName}
-                        onSubmitEditing={() => PasswordRef?.current?.focus()}
-                    />
-                </View>
-                <View style={styles.TextInputView}>
-                    <Feather name="lock" size={20} color="#4b4b4b"
-                        style={styles.InputIcon} />
-                    <TextInput style={styles.TextInput}
-                        placeholder="Your Password"
-                        keyboardType="numeric"
-                        placeholderTextColor="#bcbcbc"
-                        underlineColorAndroid="transparent"
-                        onChangeText={changePassNameHandler}
-                        returnKeyType="go" 
-                        secureTextEntry 
-                        autoCorrect={false}
-                        ref={PasswordRef}
-                        value={password}
-                        onSubmitEditing={() => onPressSubmitButton(userName,password)}
-                    />
-                </View>
-
-                <TouchableOpacity style={styles.LoginButton}
-                    onPress={() => onPressSubmitButton(userName,password)}>
-                    <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
-
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                        <Text style={styles.TextStyle}>
-                            LOGIN
-                        </Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', marginRight: 10, }}>
-                        <Entypo name="chevron-right" size={20} color="#ffffff" />
-                    </View>
-                </TouchableOpacity>
-
-                <View style={[styles.LoginButton, style = { backgroundColor: '#ffffff', }]}>
-
-                    <TouchableOpacity
-                        onPress={()=>navigation.navigate('register')}
-                        style={{
-                            alignItems: 'center',
-                            width: (width * 66) / 100,
-                            height: "100%",
-                            justifyContent: 'center',
-                            backgroundColor: '#f1f4f6',
-                            borderRadius: 5,
-                        }}>
-
-                        <Text style={[styles.TextStyle, style = { color: "#6d6d6d" }]}>
-                            REGISTER
-                        </Text>
-                    </TouchableOpacity>
-                    <Image
-                        style={{ width: 40, height: 40 }}
-                        source={require('../../../assets/images/RegCall.png')}>
-                    </Image>
-
-                </View>
-
-
-
-
-
-                <ConfirmDialog
-                    title="Message"
-                    message={alertMessage}
-                    onTouchOutside={() => setShowConfirm(false)}
-                    visible={showConfirm}
-                    positiveButton={
-                        {
-                            title: "OK",
-                            onPress: ()=>setShowConfirm(false),
-                            titleStyle: {
-                                color: "black",
-                                colorDisabled: "aqua",
-                            }
-                        }
-                    }
+            <View style={[styles.TextInputView, { marginBottom: 10 }]}>
+                <Entypo name="old-mobile" size={20} color="#4b4b4b"
+                    style={styles.InputIcon} />
+                <TextInput style={styles.TextInput}
+                    keyboardType="numeric"
+                    placeholder="Your Mobile Number"
+                    placeholderTextColor="#bcbcbc"
+                    underlineColorAndroid="transparent"
+                    returnKeyType="next"
+                    autoCorrect={false}
+                    onChangeText={changeUsrNameHandler}
+                    value={userName}
+                    onSubmitEditing={() => PasswordRef?.current?.focus()}
                 />
             </View>
-        )
+            <View style={styles.TextInputView}>
+                <Feather name="lock" size={20} color="#4b4b4b"
+                    style={styles.InputIcon} />
+                <TextInput style={styles.TextInput}
+                    placeholder="Your Password"
+                    keyboardType="numeric"
+                    placeholderTextColor="#bcbcbc"
+                    underlineColorAndroid="transparent"
+                    onChangeText={changePassNameHandler}
+                    returnKeyType="go"
+                    secureTextEntry
+                    autoCorrect={false}
+                    ref={PasswordRef}
+                    value={password}
+                    onSubmitEditing={() => onPressSubmitButton(userName, password)}
+                />
+            </View>
+
+            <TouchableOpacity style={styles.LoginButton}
+                onPress={() => onPressSubmitButton(userName, password)}>
+                <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
+
+                </View>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.TextStyle}>
+                        LOGIN
+                    </Text>
+                </View>
+                <View style={{ alignItems: 'flex-end', marginRight: 10, }}>
+                    <Entypo name="chevron-right" size={20} color="#ffffff" />
+                </View>
+            </TouchableOpacity>
+
+            <View style={[styles.LoginButton, style = { backgroundColor: '#ffffff', }]}>
+
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('register')}
+                    style={{
+                        alignItems: 'center',
+                        width: (width * 66) / 100,
+                        height: "100%",
+                        justifyContent: 'center',
+                        backgroundColor: '#f1f4f6',
+                        borderRadius: 5,
+                    }}>
+
+                    <Text style={[styles.TextStyle, style = { color: "#6d6d6d" }]}>
+                        REGISTER
+                    </Text>
+                </TouchableOpacity>
+                <Image
+                    style={{ width: 40, height: 40 }}
+                    source={require('../../../assets/images/RegCall.png')}>
+                </Image>
+
+            </View>
+
+
+
+
+
+            <ConfirmDialog
+                title="Message"
+                message={alertMessage}
+                onTouchOutside={() => setShowConfirm(false)}
+                visible={showConfirm}
+                positiveButton={
+                    {
+                        title: "OK",
+                        onPress: () => setShowConfirm(false),
+                        titleStyle: {
+                            color: "black",
+                            colorDisabled: "aqua",
+                        }
+                    }
+                }
+            />
+        </View>
+    )
 }
 
 

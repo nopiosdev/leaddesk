@@ -12,7 +12,7 @@ import { Feather, MaterialIcons, Entypo } from '@expo/vector-icons';
 
 var { width } = Dimensions.get('window');
 
-const RegisterForm = ({navigation}) => {
+const RegisterForm = ({ navigation }) => {
     const [gender, setGender] = useState('Male');
     const [UserFullName, setUserFullName] = useState('');
     const [CompanyName, setCompanyName] = useState('');
@@ -81,27 +81,26 @@ const RegisterForm = ({navigation}) => {
                 setalertHeading("Password length minimum 6 characters!");
                 throw "Please provide 6 characters password";
             }
-            let data = {
-                UserFullName: UserFullName
-                , UserName: PhoneNumber
-                , CompanyName: CompanyName
-                , PhoneNumber: PhoneNumber, Password: Password
-                , Password_confirmation: Password_confirmation
-                , Email: Email
-                , UserType: 'admin'
-                , Gender: gender
 
-            };
+
 
             setloading(true);
-            let response = await CreateAccount(data);
-            console.log('rege', response);
-            if (response && response.isSuccess) {
-                setsuccessMessage(response.result.message);
+            let response = await CreateAccount(UserFullName, PhoneNumber, CompanyName, Password, Password_confirmation, Email, gender);
+            console.log('regge', response);
+            if (response && response.success) {
+                setsuccessMessage(response?.message);
                 setShowConfirm(true);
             } else {
                 if (response) {
-                    alert("Registration failed.");
+            console.log('error', response);
+
+                    Alert.alert(
+                        "Registration failed!",
+                        response?.message?.toString(),
+                        [
+                            { text: 'OK', },
+                        ],
+                        { cancelable: false });
                 }
             }
             setloading(false);
@@ -135,7 +134,7 @@ const RegisterForm = ({navigation}) => {
             )
         }
         else {
-
+            return true;
         }
     };
     const changePasswordHandler = () => {
@@ -152,7 +151,7 @@ const RegisterForm = ({navigation}) => {
             )
         }
         else {
-
+            return true;
         }
     };
 
@@ -177,7 +176,7 @@ const RegisterForm = ({navigation}) => {
     const optionYes = () => {
         setShowConfirm(false);
         console.log('phr', PhoneNumber);
-        navigation.navigate('login',{ phoneno: PhoneNumber });
+        navigation.navigate('login', { phoneno: PhoneNumber });
     }
     return (
 
@@ -195,6 +194,7 @@ const RegisterForm = ({navigation}) => {
                     underlineColorAndroid="transparent"
                     onChangeText={uname => setUserFullName(uname)}
                     onSubmitEditing={() => Number?.current?.focus()}
+                    name='fullName'
                 />
             </View>
             <View style={[styles.TextInputView, { marginBottom: 10 }]}>
@@ -207,6 +207,7 @@ const RegisterForm = ({navigation}) => {
                     autoCorrect={false}
                     onChangeText={mnumber => setPhoneNumber(mnumber)}
                     onSubmitEditing={() => email?.current?.focus()}
+                    name='phoneNumber'
                     ref={Number}
                 />
             </View>
@@ -220,9 +221,8 @@ const RegisterForm = ({navigation}) => {
                     autoCorrect={false}
                     onChangeText={Email => setEmail(Email)}
                     ref={email}
-
+                    name='email'
                     onSubmitEditing={() => CName?.current?.focus()}
-                    onBlur={() => changeEmailHandler()}
                 />
             </View>
             <View style={[styles.TextInputView, { marginBottom: 10 }]}>
@@ -236,6 +236,7 @@ const RegisterForm = ({navigation}) => {
                     onChangeText={cn => setCompanyName(cn)}
                     autoCorrect={false}
                     onSubmitEditing={() => PasswordRef?.current?.focus()}
+                    name='companyName'
                     ref={CName}
                 />
             </View>
@@ -256,8 +257,8 @@ const RegisterForm = ({navigation}) => {
                     keyboardType="number-pad"
                     onChangeText={Password => setPassword(Password)}
                     onSubmitEditing={() => CPasswordRef?.current?.focus()}
+                    name='password'
                     ref={PasswordRef}
-                    onBlur={() => changePasswordSixCharacterHandler()}
                 />
             </View>
             <Text style={{ width: 300, color: '#ddd' }}>Password must be with numaric, small and capital mix</Text>
@@ -272,25 +273,25 @@ const RegisterForm = ({navigation}) => {
                     autoCorrect={false}
                     keyboardType="number-pad"
                     onChangeText={cPassword => setPassword_confirmation(cPassword)}
+                    name='cpassword'
                     ref={CPasswordRef}
-                    onBlur={() => changePasswordHandler()}
                 />
             </View>
             <View style={styles.RadioBtnView}>
                 <Text style={{ fontSize: 13, color: 'gray' }}>Gender:  </Text>
                 <RadioButton
                     innerCircleColor='green' currentValue={gender}
-                    value={"Male"} onPress={() => setGender('Male')}>
+                    value={"Male"} name='gender' onPress={() => setGender('Male')}>
                     <Text style={styles.RadioBtnText}>Male</Text>
                 </RadioButton>
 
                 <RadioButton
-                    innerCircleColor='green' currentValue={gender}
+                    innerCircleColor='green' name='gender' currentValue={gender}
                     value={"Female"} onPress={() => setGender('Female')}>
                     <Text style={styles.RadioBtnText}>Female</Text>
                 </RadioButton>
 
-                <RadioButton innerCircleColor='green' currentValue={gender} value={"Other"} onPress={() => setGender('Other')}>
+                <RadioButton innerCircleColor='green' name='gender' currentValue={gender} value={"Other"} onPress={() => setGender('Other')}>
                     <Text style={styles.RadioBtnText}>Other</Text>
                 </RadioButton>
             </View>

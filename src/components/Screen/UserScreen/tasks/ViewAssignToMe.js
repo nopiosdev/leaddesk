@@ -46,7 +46,7 @@ const ViewAssignToMe = ({ navigation, route }) => {
     const [taskModel, settaskModel] = useState({});
     const [companyId, setcompanyId] = useState(0);
     const [taskId, setTaskId] = useState('');
-    const [TastStatusList, setTastStatusList] = useState([]);
+    const [TaskStatusList, setTaskStatusList] = useState([]);
     const [StatusId, setStatusId] = useState("");
     const [employeeList, setEmployeeList] = useState([]);
     const [isDateTimePickerVisible, setisDateTimePickerVisible] = useState(false);
@@ -320,7 +320,7 @@ const ViewAssignToMe = ({ navigation, route }) => {
 
 
     const renderstatusList = () => {
-        let content = TastStatusList?.map((item, i) => {
+        let content = TaskStatusList?.map((item, i) => {
             return (
                 <TouchableOpacity style={{
                     paddingVertical: 7, borderBottomColor: '#D5D5D5',
@@ -354,9 +354,9 @@ const ViewAssignToMe = ({ navigation, route }) => {
         try {
             await TaskStatus()
                 .then(res => {
-                    setTastStatusList(res?.result);
+                    setTaskStatusList(res?.result);
                     setprogressVisible(false);
-                    console.log(TastStatusList, 'TastStatusList...View');
+                    console.log(TaskStatusList, 'TaskStatusList...View');
                 })
                 .catch(() => {
                     setprogressVisible(false);

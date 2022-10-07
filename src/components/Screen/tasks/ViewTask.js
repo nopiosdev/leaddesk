@@ -37,7 +37,7 @@ const ViewTask = ({ navigation, route }) => {
     const [TaskId, setTaskId] = useState('');
     const [TaskNo, setTaskNo] = useState(0);
     const [DueDate, setDueDate] = useState('');
-    const [TastStatusList, setTastStatusList] = useState([]);
+    const [TaskStatusList, setTaskStatusList] = useState([]);
     const [StatusId, setStatusId] = useState("");
     const [employeeList, setEmployeeList] = useState([]);
     const [priorityList, setpriorityList] = useState([]);
@@ -226,7 +226,7 @@ const ViewTask = ({ navigation, route }) => {
         )
     }
     const renderstatusList = () => {
-        let content = TastStatusList?.map((item, i) => {
+        let content = TaskStatusList?.map((item, i) => {
             return (
                 <TouchableOpacity style={{ paddingVertical: 7, borderBottomColor: '#D5D5D5', borderBottomWidth: 2 }} key={i}
                     onPress={() => { closeModalforStatus(item.Id, item.Name) }}>
@@ -333,9 +333,9 @@ const ViewTask = ({ navigation, route }) => {
 
             await TaskStatus()
                 .then(res => {
-                    setTastStatusList(res.result);
+                    console.log(res, 'TaskStatusList...View');
+                    // setTaskStatusList(res);
                     setprogressVisible(false);
-                    console.log(TastStatusList, 'TastStatusList...View');
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -421,12 +421,13 @@ const ViewTask = ({ navigation, route }) => {
         return content;
     }
     const getEmployeeList = async (companyId) => {
+        console.log('first', companyId)
         try {
             await EmployeeList(companyId)
                 .then(res => {
-                    setEmployeeList(res?.result);
+                    console.log(res, 'Employeelist...View');
+                    setEmployeeList(res);
                     setprogressVisible(false);
-                    console.log(employeeList, 'Employeelist...View');
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -442,9 +443,9 @@ const ViewTask = ({ navigation, route }) => {
         try {
             await GetTaskAttachments(TaskId)
                 .then(res => {
-                    setfileList(res?.result);
+                    console.log("Filelist...", res, 'fileList...View');
+                    setfileList(res);
                     setprogressVisible(false);
-                    console.log("Filelist...", fileList, 'fileList...View');
                 })
                 .catch((error) => {
                     setprogressVisible(false);
@@ -764,7 +765,7 @@ const ViewTask = ({ navigation, route }) => {
                         <View style={TaskStyle.dblModelContent}>
                             <ScrollView showsVerticalScrollIndicator={false} style={{ height: "80%" }}>
                                 <View style={{}} >
-                                    {renderEmpList()}
+                                    {employeeList?.length > 0 && renderEmpList()}
                                 </View>
                             </ScrollView>
                         </View>
@@ -789,7 +790,7 @@ const ViewTask = ({ navigation, route }) => {
                         <View style={TaskStyle.dblModelContent}>
                             <ScrollView showsVerticalScrollIndicator={false} style={{ height: "80%" }}>
                                 <View style={{}} >
-                                    {renderstatusList()}
+                                    {TaskStatusList?.length > 0 && renderstatusList()}
                                 </View>
                             </ScrollView>
                         </View>

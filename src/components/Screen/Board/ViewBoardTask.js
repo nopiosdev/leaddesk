@@ -63,7 +63,7 @@ export default class ViewBoardTask extends Component {
             DueDate: '',
             EmployeeList: [],
             companyId: 0,
-            TastStatusList: [],
+            TaskStatusList: [],
             StatusId: '',
             StatusName: '',
             Title: '',
@@ -230,7 +230,7 @@ export default class ViewBoardTask extends Component {
         )
     }
     renderstatusList() {
-        let content = this.state.TastStatusList.map((item, i) => {
+        let content = this.state.TaskStatusList.map((item, i) => {
             return (
                 <TouchableOpacity style={{ paddingVertical: 7, borderBottomColor: '#D5D5D5', borderBottomWidth: 2 }} key={i}
                     onPress={() => { this.closeModalforStatus(item.Id, item.Name) }}>
@@ -332,8 +332,8 @@ export default class ViewBoardTask extends Component {
             //this.setState({ progressVisible: isProgress });
             await TaskStatus()
                 .then(res => {
-                    this.setState({ TastStatusList: res.result, progressVisible: false });
-                    console.log(this.state.TastStatusList, 'TastStatusList...View');
+                    this.setState({ TaskStatusList: res.result, progressVisible: false });
+                    console.log(this.state.TaskStatusList, 'TaskStatusList...View');
                 })
                 .catch(() => {
                     this.setState({ progressVisible: false });

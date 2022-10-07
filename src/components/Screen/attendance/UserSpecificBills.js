@@ -15,7 +15,7 @@ import { DailyAttendanceStyle } from './DailyAttendanceStyle';
 
 import InvoiceList from '../finance/InvoiceListComponent';
 
-import { GetMyInvoiceList } from '../../../services/FinancialService'
+import { GetMyInvoiceList } from '../../../services/UserService/FinancialService'
 
 import { SearchBar } from 'react-native-elements';
 import call from 'react-native-phone-call'
