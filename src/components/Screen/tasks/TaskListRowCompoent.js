@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import moment from 'moment';
 
 const styles = StyleSheet.create({
     container: {
@@ -66,38 +67,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 16
     },
-    ToDo: {
-        color: '#C4C4C4',
-        fontWeight: "bold",
-        fontSize: 16,
-        fontFamily: 'Montserrat_Bold'
-    },
-    InProgress: {
-        color: '#3D8EC5',
-        fontWeight: "bold",
-        fontSize: 16,
-        fontFamily: 'Montserrat_Bold'
-    },
-    Pause: {
-        color: '#CB9A3A',
-        fontWeight: "bold",
-        fontSize: 16,
-        fontFamily: 'Montserrat_Bold'
-    },
-    Completed: {
-        color: 'white',
-        fontWeight: "bold",
-        fontSize: 16,
-        fontFamily: 'Montserrat_Bold'
-    },
-    Done: {
-        color: '#0A7A46',
-        fontWeight: "bold",
-        fontSize: 16,
-        fontFamily: 'Montserrat_Bold'
-    },
-    Cancelled: {
-        color: 'white',
+    status: {
         fontWeight: "bold",
         fontSize: 16,
         fontFamily: 'Montserrat_Bold'
@@ -142,77 +112,58 @@ const styles = StyleSheet.create({
 
 });
 
-let sytlecolor = ""
-const setSelectedOption = (id) => {
-    switch (id) {
-        case "To Do":
-            sytlecolor = "ToDo"
-            break;
-        case "In Progress":
-            sytlecolor = "InProgress"
-            break;
-        case "Pause":
-            sytlecolor = "Pause"
-            break;
-        case "Completed":
-            sytlecolor = "Completed"
-            break;
-        case "Done & Bill Collected":
-            sytlecolor = "Done"
-            break;
-        case "Cancelled":
-            sytlecolor = "Cancelled"
-            break;
-        default:
-            sytlecolor = "ToDo"
-    }
-};
+
 
 let stylecolor = ""
 const setSelectedOptionCircle = (id) => {
     switch (id) {
-        case "Normal":
+        case 1:
             stylecolor = "white"
             break;
-        case "High":
+        case 2:
             stylecolor = "#cc5c5c"
             break;
-        case "Low":
+        case 3:
             stylecolor = "white"
             break;
     }
 };
 
 let leftSideColor = ""
+let sytlecolor = ""
+
 const leftSideColorfunction = (id) => {
     switch (id) {
-        case "To Do":
+        case 1:
             leftSideColor = "#C4C4C4"
             break;
-        case "In Progress":
+        case 2:
             leftSideColor = "#3D8EC5"
             break;
-        case "Pause":
+        case 3:
             leftSideColor = "#CB9A3A"
             break;
-        case "Completed":
+        case 4:
             leftSideColor = "#3DC585"
             break;
-        case "Done & Bill Collected":
+        case 5:
             leftSideColor = "#0A7A46"
             break;
-        case "Cancelled":
+        case 6:
             leftSideColor = "#A53131"
             break;
+        default:
+            leftSideColor = "#C4C4C4"
     }
 };
+
 
 const TaskListRowCompoent = (props) => {
     const navigation = useNavigation();
     return (
         <TouchableOpacity
             onPress={() => navigation.navigate("ViewTask", { TaskModel: props.itemData })}>
-            {leftSideColorfunction(props.itemData.StatusName)}
+            {leftSideColorfunction(props.itemData.StatusId)}
             <View style={[styles.container, { borderLeftColor: leftSideColor }]}>
                 <View style={styles.container_text}>
                     <View style={styles.contentContainer}>
@@ -222,54 +173,50 @@ const TaskListRowCompoent = (props) => {
                             </Text>
                         </View>
                         <View style={{ alignItems: 'flex-end', marginRight: 8, }}>
-                            {setSelectedOptionCircle(props.itemData.PriorityName)}
-                            <MaterialIcons
-                                name="priority-high" size={18}
-                                color={stylecolor}
-                            >
-                            </MaterialIcons>
-                        </View>
+                            {setSelectedOptionCircle(props.itemData.PriorityId)}
+                            {< MaterialIcons name="priority-high" size={18}color={stylecolor}>
+                        </MaterialIcons>}
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Ionicons name="md-people" size={20} style={{ marginHorizontal: 0, }} color="#4a535b" />
-                        <Text style={styles.submittedDate}>
-                            {props.itemData.AssignToName}
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Ionicons name="md-people" size={20} style={{ marginHorizontal: 0, }} color="#4a535b" />
+                    <Text style={styles.submittedDate}>
+                        {props.itemData.AssignToName}
+                    </Text>
+                </View>
+                <View style={styles.descriptionContainer}>
+                    <View style={styles.deescriptionView}>
+                        <Text style={styles.description}>
+                            {props.itemData.Description}
                         </Text>
                     </View>
-                    <View style={styles.descriptionContainer}>
-                        <View style={styles.deescriptionView}>
-                            <Text style={styles.description}>
-                                {props.itemData.Description}
-                            </Text>
-                        </View>
-                        <View style={styles.fileIconContainer}>
-                            {(props.itemData.HasAttachments) ?
-                                <View
-                                    style={TaskStyle.taskBodyRight}>
-                                    <MaterialCommunityIcons name="file-document-outline" size={20} color="#BEC3C8"
-                                    />
-                                </View>
-                                : null}
-                        </View>
+                    <View style={styles.fileIconContainer}>
+                        {(props.itemData.HasAttachments) ?
+                            <View
+                                style={TaskStyle.taskBodyRight}>
+                                <MaterialCommunityIcons name="file-document-outline" size={20} color="#BEC3C8" />
+                            </View>
+                            : null}
                     </View>
-                    <View style={styles.statusContainer}>
-                        <View style={styles.statusText}>
-                            {setSelectedOption(props.itemData.StatusName)}
-                            <Text style={styles[sytlecolor]}>{props.itemData.StatusName}</Text>
-                        </View>
-                        <View style={styles.totalAmount}>
-                            {props.itemData.DueDateVw !== "" ?
-                                <FontAwesome
-                                    name="calendar"
-                                    size={15} color="#878787"
-                                    style={{ marginRight: 2 }} />
-                                : <Text></Text>}
-                            <Text style={styles.dateTimeText}> {props.itemData.DueDateVw}</Text>
-                        </View>
-                    </View>
-
                 </View>
+                <View style={styles.statusContainer}>
+                    <View style={styles.statusText}>
+                        {leftSideColorfunction(props.itemData.StatusId)}
+                        <Text style={[styles.status, { color: leftSideColor }]}>{props.itemData.StatusId === 1 ? 'Todo' : props.itemData.StatusId === 2 ? 'In Progress' : props.itemData.StatusId === 3 ? 'Pause' : props.itemData.StatusId === 4 ? 'Completed' : props.itemData.StatusId === 5 ? 'Done' : props.itemData.StatusId === 6 ? 'Cancelled' : 'Todo'}</Text>
+                    </View>
+                    <View style={styles.totalAmount}>
+                        {props.itemData.DueDate !== "" ?
+                            <FontAwesome
+                                name="calendar"
+                                size={15} color="#878787"
+                                style={{ marginRight: 2 }} />
+                            : <Text></Text>}
+                        <Text style={styles.dateTimeText}> {moment(props.itemData.DueDate).format('DD/MM/YY')}</Text>
+                    </View>
+                </View>
+
             </View>
+        </View>
         </TouchableOpacity >
     );
 }

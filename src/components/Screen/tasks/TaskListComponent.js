@@ -20,6 +20,7 @@ const TaskListComponent = (props) => (
             data={props.itemList}
             keyExtractor={(x, i) => i.toString()}
             renderItem={({ item }) => <TaskLists navigation={props?.navigation} itemData={item} />}
+            refreshControl={props?.refreshControl}
         />
 
     </View>

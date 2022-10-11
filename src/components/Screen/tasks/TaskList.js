@@ -94,8 +94,9 @@ const TaskList = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await GetRelatedToMeTasks(userId)
                 .then(res => {
-                    settaskList(res.result.filter(x => x.StatusName !== "Completed" && x.StatusName !== "Cancelled"))
-                    settempList(res.result.filter(x => x.StatusName !== "Completed" && x.StatusName !== "Cancelled"))
+                    console.log('TASK',res)
+                    settaskList(res?.filter(x => x.StatusName !== "Completed" && x.StatusName !== "Cancelled"))
+                    settempList(res?.filter(x => x.StatusName !== "Completed" && x.StatusName !== "Cancelled"))
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                     setisLoaded(true);
@@ -182,36 +183,5 @@ const TaskList = ({ navigation, route }) => {
     )
 
 }
-// const Tab = createBottomTabNavigator();
-
-// <Tab.Navigator initialRouteName='DailyAttendance' screenOptions={({ route }) => ({
-//     // tabBarIcon: ({ focused, color, size }) => {
-//     //     if (route.name === 'DailyAttendanceDetails') {
-//     //         return <Image source={require('../../assets/images/goal.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }} />
-//     //     }
-//     //     if (route.name === 'DailyAttendanceLocation' && focused) {
-//     //         return <Image source={require('../../assets/images/pin_s.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }} />
-//     //     } else if (route.name === 'DailyAttendanceLocation' && !focused) {
-//     //         return <Image source={require('../../assets/images/pin.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }}></Image>
-//     //     }
-//     //     if (route.name === 'UserSpecificTasks' && focused) {
-//     //         return <Image source={require('../../assets/images/list_s.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }} />
-//     //     } else if (route.name === 'UserSpecificTasks' && !focused) {
-//     //         return <Image source={require('../../assets/images/list_a.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }}></Image>
-//     //     }
-//     //     if (route.name === 'UserSpecificLeave' && focused) {
-//     //         return <Image source={require('../../assets/images/briefcase_s.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }} />
-//     //     } else if (route.name === 'UserSpecificLeave' && !focused) {
-//     //         return <Image source={require('../../assets/images/briefcase.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }}></Image>
-//     //     }
-//     // },
-//     tabBarActiveTintColor: 'purple',
-//     tabBarInactiveTintColor: 'gray',
-// })} >
-//     <Tab.Screen name="TaskList" component={TaskList} options={{ headerShown: false, title: 'Time Line' }} />
-//     {/* <Tab.Screen name="DailyAttendanceLocation" component={DailyAttendanceLocation} options={{ headerShown: false, title: "Map View" }} />
-//             <Tab.Screen name="UserSpecificTasks" component={UserSpecificTasks} options={{ headerShown: false, title: "Tasks" }} />
-//             <Tab.Screen name="UserSpecificLeave" component={UserSpecificLeave} options={{ headerShown: false, title: "Leave" }} /> */}
-// </Tab.Navigator>
 
 export default TaskList;

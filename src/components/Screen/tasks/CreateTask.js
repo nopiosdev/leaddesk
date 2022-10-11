@@ -39,6 +39,7 @@ import { TaskStyle } from './TaskStyle';
 import { SaveTask, PriorityList } from '../../../services/TaskService';
 import { useSelector } from "react-redux";
 import LocalStorage from '../../../common/LocalStorage';
+import CustomImagePicker from '../../CustomImagePicker';
 
 
 
@@ -221,46 +222,35 @@ const CreateTask = ({ navigation, route }) => {
         if (taskTitle === "") return ToastAndroid.show('Title Can not be Empty ', ToastAndroid.TOP);
         settouchabledisableForsaveTask(true);
         try {
-            let taskModel = {
-                CreatedById: user?.Id,
-                CompanyId: companyId,
-                Title: taskTitle,
-                Description: taskDescription,
-                AssignToName: EmpName,
-                AssignedToId: EmpValue,
-                TaskGroupId: TaskGroupId,
-                PriorityId: PriorityId,
-                DueDate: date == '' ? null : moment(date).format("YYYYY-MM-DD")
-            };
-            console.log('taskModel', taskModel)
-            setprogressVisible(true);
-            const userToken = await LocalStorage.GetData("userToken");
             var data = new FormData();
-            data.append('taskmodel', JSON.stringify(taskModel))
+            data.append('CreatedById', user?.Id);
+            data.append('CompanyId', companyId);
+            data.append('Title', taskTitle);
+            data.append('Description', taskDescription);
+            data.append('AssignToName', EmpName);
+            data.append('AssignedToId', EmpValue);
+            data.append('TaskGroupId', TaskGroupId);
+            data.append('PriorityId', PriorityId === null ? '' : PriorityId);
+            data.append('DueDate', !date ? null : moment(date).format("YYYYY-MM-DD"));
             data.append('taskAttachmentsModel', JSON.stringify(fileList))
-            fetch(urlDev + "RtTaskApi/SaveTask/", {
-                headers: {
-                    'Authorization': `bearer ${userToken}`,
-                    'Accept': 'application/json',
-                    'Content-Type': 'multipart/form-data'
-                },
-                method: "POST",
-                body: data
-            })
-                .then(response => response.json())
+
+            setprogressVisible(true);
+            SaveTask(data)
                 .then(response => {
-                    console.log("TASK", response)
-                    setprogressVisible(false);
-                    ToastAndroid.show('Task saved successfully', ToastAndroid.TOP);
-                    setcompanyId('');
-                    settaskTitle('');
-                    settaskDescription('');
-                    setEmpName('');
-                    setEmpValue('');
-                    setTaskGroupId('');
-                    setPriorityId('');
-                    setdate('');
-                    refreshOnBack();
+                    console.log("TASK response", response)
+                    if (response?.success) {
+                        setprogressVisible(false);
+                        ToastAndroid.show('Task saved successfully', ToastAndroid.TOP);
+                        setcompanyId('');
+                        settaskTitle('');
+                        settaskDescription('');
+                        setEmpName('');
+                        setEmpValue('');
+                        setTaskGroupId('');
+                        setPriorityId('');
+                        setdate('');
+                        refreshOnBack();
+                    }
                 })
                 .catch(error => {
                     setprogressVisible(false);
@@ -279,7 +269,7 @@ const CreateTask = ({ navigation, route }) => {
             await EmployeeList(companyId)
                 .then(res => {
                     // console.log(res)
-                    setEmployeeList(res.result);
+                    setEmployeeList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -296,7 +286,7 @@ const CreateTask = ({ navigation, route }) => {
         try {
             await PriorityList()
                 .then(res => {
-                    setpriorityList(res?.result);
+                    setpriorityList(res);
                     setprogressVisible(false);
 
                 })
@@ -317,10 +307,11 @@ const CreateTask = ({ navigation, route }) => {
 
     const renderEmpList = () => {
         let content = employeeList?.map((empName, i) => {
+            console.log('empName', empName)
             return (
                 <TouchableOpacity style={{ paddingVertical: 7, borderBottomColor: '#D5D5D5', borderBottomWidth: 2 }} key={i}
-                    onPress={() => { setAssignTo(empName.Value, empName.Text) }}>
-                    <Text style={[{ textAlign: 'center' }, TaskStyle.dbblModalText]} key={empName.Value}>{empName.Text}</Text>
+                    onPress={() => { setAssignTo(empName.Id, empName.EmployeeName) }}>
+                    <Text style={[{ textAlign: 'center' }, TaskStyle.dbblModalText]} key={empName.Id}>{empName.EmployeeName}</Text>
                 </TouchableOpacity>
             )
         });
@@ -697,7 +688,14 @@ const CreateTask = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View>
+                <CustomImagePicker
+                    TaskId={TaskId}
+                    setfileList={setfileList}
+                    fileList={fileList}
+                    setprogressVisible={setprogressVisible}
+                    setmodalForImage={setmodalForImage}
+                />
+                {/* <View>
                     <View>
                         <Text style={{
                             color: '#000000',
@@ -720,7 +718,7 @@ const CreateTask = ({ navigation, route }) => {
                             <Text style={{ textAlign: 'center', marginTop: 4, color: '#7a7a7a', fontSize: 10 }}>From Gallary</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View> */}
             </Modal>
             <Modal1
                 visible={isModelVisible}

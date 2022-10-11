@@ -7,8 +7,6 @@ import { CheckConnection } from '../../common/checkNetConnection'
 import axios from 'axios';
 
 export const getApi = async (action, headers = {}) => {
-  const userToken = await AsyncStorage.getItem("userToken");
-
   return await axios.get(`${apiConfig.url}${action}`, { headers: { "Content-Type": "multipart/form-data" } })
     .then(async ({ data }) => {
       return data;
@@ -21,7 +19,6 @@ export const getApi = async (action, headers = {}) => {
 
 
 export const postApi = async (action, data) => {
-  const userToken = await AsyncStorage.getItem("userToken");
   return await axios.post(`${apiConfig.url}${action}`, data, { headers: { "Content-Type": "multipart/form-data" } })
     .then(({ data }) => {
       return data;

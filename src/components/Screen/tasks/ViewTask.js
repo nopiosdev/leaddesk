@@ -26,6 +26,7 @@ import { urlDev, urlResource } from '../../../services/api/config';
 import LocalStorage from '../../../common/LocalStorage';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
+import CustomImagePicker from '../../CustomImagePicker';
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,7 +52,6 @@ const ViewTask = ({ navigation, route }) => {
     const [isModelVisible, setisModelVisible] = useState(false);
     const [fileList, setfileList] = useState([]);
     const [progressVisible, setprogressVisible] = useState(false);
-    const [ImageFileName, setImageFileName] = useState('');
     const [AssignedToId, setAssignedToId] = useState('');
     const [images, setimages] = useState(null);
     const paramsData = route?.params;
@@ -72,7 +72,7 @@ const ViewTask = ({ navigation, route }) => {
     const refreshOnBack = () => {
         if (user?.UserType == 'admin') {
             // Actions.TabnavigationInTasks();
-            navigation.navigate('TaskListScreen');
+            navigation.navigate('TaskListBottomTab', { screen: 'TaskListScreen' });
         } else {
             // navigation.navigate('userTask');
             navigation.navigate('CreateByMe');
@@ -91,22 +91,22 @@ const ViewTask = ({ navigation, route }) => {
     }
     const setSelectedOption = (id) => {
         switch (id) {
-            case "To Do":
+            case 1:
                 setstatuscolor("#C4C4C4");
                 break;
-            case "In Progress":
+            case 2:
                 setstatuscolor("#3D8EC5");
                 break;
-            case "Pause":
+            case 3:
                 setstatuscolor("#CB9A3A");
                 break;
-            case "Completed":
+            case 4:
                 setstatuscolor("#3DC585");
                 break;
-            case "Done & Bill Collected":
+            case 5:
                 setstatuscolor("#0A7A46");
                 break;
-            case "Cancelled":
+            case 6:
                 setstatuscolor("#A53131");
                 break;
         }
@@ -126,14 +126,15 @@ const ViewTask = ({ navigation, route }) => {
                     setTaskId(paramsData?.TaskModel?.Id);
                     setDueDate(paramsData?.TaskModel?.DueDate);
                     setTaskNo(paramsData?.TaskModel?.TaskNo);
-                    setPriorityName(paramsData?.TaskModel?.PriorityName);
+                    setPriorityName(paramsData?.TaskModel?.PriorityId === 1 ? 'Normal' : paramsData?.TaskModel?.PriorityId === 2 ? 'High' : paramsData?.TaskModel?.PriorityId === 3 ? 'Low' :'Normal');
+                    setStatusName(paramsData?.TaskModel?.StatusId === 1 ? 'Todo' : paramsData?.TaskModel?.StatusId === 2 ? 'In Progress' : paramsData?.TaskModel?.StatusId === 3 ? 'Pause' : paramsData?.TaskModel?.StatusId === 4 ? 'Completed' : paramsData?.TaskModel?.StatusId === 5 ? 'Done' : paramsData?.TaskModel?.StatusId === 6 ? 'Cancelled' : 'Todo')
                     const cId = await LocalStorage.GetData("companyId");
                     getEmployeeList(cId);
                     setcompanyId(cId);
                     getTaskStatuslist();
                     getPriorityList();
                     getTaskAttachments(paramsData?.TaskModel?.Id)
-                    setSelectedOption(paramsData?.TaskModel?.StatusName)
+                    setSelectedOption(paramsData?.TaskModel?.StatusId)
                     BackHandler.addEventListener('hardwareBackPress', handleBackButton);
                     setisLoaded(true);
                 })();
@@ -145,10 +146,9 @@ const ViewTask = ({ navigation, route }) => {
         )
     )
 
-
     const gotoBordDetail = (item) => {
         setimages([{ url: urlResource + item.FileName }]);
-        ImageViewer();
+        imageViewer();
     }
     const openmodalForImage = () => {
         setmodalForImage(true);
@@ -159,7 +159,7 @@ const ViewTask = ({ navigation, route }) => {
         return true;
     }
 
-    const ImageViewer = () => {
+    const imageViewer = () => {
         setisModelVisible(true);
     }
     const ShowModalFunction = (visible) => {
@@ -169,8 +169,8 @@ const ViewTask = ({ navigation, route }) => {
         let content = employeeList?.map((emp, i) => {
             return (
                 <TouchableOpacity style={{ paddingVertical: 7, borderBottomColor: '#D5D5D5', borderBottomWidth: 2 }} key={i}
-                    onPress={() => { closeModal1(emp.Value, emp.Text) }}>
-                    <Text style={[{ textAlign: 'center' }, TaskStyle.dbblModalText]} key={emp.Value}>{emp.Text}</Text>
+                    onPress={() => { closeModal1(emp.Id, emp.EmployeeName) }}>
+                    <Text style={[{ textAlign: 'center' }, TaskStyle.dbblModalText]} key={emp.Id}>{emp.EmployeeName}</Text>
                 </TouchableOpacity>
             )
         });
@@ -180,6 +180,7 @@ const ViewTask = ({ navigation, route }) => {
         try {
             await deleteTask(TaskId)
                 .then(res => {
+                    console.log('DELEDTED',res)
                     ToastAndroid.show('Task Deleted successfully', ToastAndroid.TOP);
                     refreshOnBack();
                 })
@@ -202,9 +203,9 @@ const ViewTask = ({ navigation, route }) => {
         try {
             await PriorityList()
                 .then(res => {
-                    setpriorityList(res?.result);
+                    console.log(res, "PriotyLIst.....")
+                    setpriorityList(res);
                     setprogressVisible(false);
-                    console.log(res.result, "PriotyLIst.....")
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -237,6 +238,7 @@ const ViewTask = ({ navigation, route }) => {
         return content;
     }
     const closeModal1 = async (index, value) => {
+        console.log(index)
         setAssignToName(value);
         setAssignedToId(index);
         setmodal1(false);
@@ -245,87 +247,9 @@ const ViewTask = ({ navigation, route }) => {
     const closeModalforStatus = async (index, value) => {
         setStatusId(index);
         setStatusName(value);
-        setSelectedOption(value);
+        setSelectedOption(index);
         setmodalforstatus(false);
     }
-
-    const _takePhoto = async () => {
-        setmodalForImage(false);
-        await ImagePicker.getCameraPermissionsAsync()
-        await ImagePicker.getMediaLibraryPermissionsAsync();
-        let pickerResult = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            // aspect: [4, 4],
-            //quality: .2,
-            height: 250,
-            width: 250,
-        });
-        console.log(pickerResult, '.......................')
-        if (pickerResult.cancelled == false) {
-            handleUploadPhoto(pickerResult)
-        }
-    };
-    const _pickImage = async () => {
-        setmodalForImage(false);
-        await ImagePicker.getCameraPermissionsAsync()
-        await ImagePicker.getMediaLibraryPermissionsAsync();
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            //aspect: [4, 4],
-            quality: 1,
-            height: 250,
-            width: 250,
-        });
-        if (pickerResult.cancelled == false) {
-            handleUploadPhoto(pickerResult)
-        }
-    };
-
-
-    const handleUploadPhoto = async (pickerResult) => {
-
-        const userToken = await LocalStorage.GetData("userToken");
-        console.log(pickerResult.uri, '...............send')
-        var data = new FormData();
-        data.append('BlobName', {
-            uri: pickerResult.uri,
-            name: 'my_photo.jpg',
-            type: 'image/jpg'
-        })
-        setprogressVisible(true);
-        fetch(urlDev + "RtTaskApi/UploadDocuments?containerName=" + Imageparam, {
-            headers: {
-                'Authorization': `bearer ${userToken}`,
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
-            },
-            method: "POST",
-            body: data
-        })
-            .then(response => response.json())
-            .then(response => {
-                let attachmentModel = {
-                    TaskId: taskId,
-                    FileName: response.ImagePath,
-                    BlobName: response.ImagePath,
-                }
-                console.log("upload succes", response);
-                setfileList(fileList.concat(attachmentModel));
-                setImageFileName(response.ImagePath)
-                setprogressVisible(false);
-                ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
-                // Toast.showSuccess( 'Uploaded successfully', { duration: 1000 } );
-
-                console.log(response.ImagePath, 'return..............');
-                //this.updateEmployeeRecords();
-            })
-            .catch(error => {
-                setprogressVisible(false);
-                console.log("upload error", error);
-                ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
-                // this.errorToast();
-            });
-    };
 
     const getTaskStatuslist = async () => {
         try {
@@ -333,8 +257,8 @@ const ViewTask = ({ navigation, route }) => {
 
             await TaskStatus()
                 .then(res => {
-                    console.log(res, 'TaskStatusList...View');
-                    // setTaskStatusList(res);
+                    // console.log(res, 'TaskStatusList...View');
+                    setTaskStatusList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -358,45 +282,37 @@ const ViewTask = ({ navigation, route }) => {
         });
         if (Title === "") return ToastAndroid.show('Please enter title ', ToastAndroid.TOP);
         try {
-            console.log("due date" + DueDate)
-            let taskModel = {
-                CreatedById: paramsData?.TaskModel.CreatedById,
-                CompanyId: paramsData?.TaskModel.CompanyId,
-                Title: Title,
-                Description: Description,
-                AssignToName: AssignToName,
-                AssignedToId: AssignedToId,
-                Id: paramsData?.TaskModel.Id,
-                StatusId: StatusId,
-                TaskGroupId: paramsData?.TaskModel.TaskGroupId,
-                PriorityId: PriorityId,
-                DueDate: DueDate == null ? null : moment(DueDate).format("YYYYY-MM-DD")
-            };
+            console.log("StatusId" , fileList)
+
             setprogressVisible(true);
             const userToken = await LocalStorage.GetData("userToken");
             var data = new FormData();
-            data.append('taskmodel', JSON.stringify(taskModel))
+            data.append('CreatedById', paramsData?.TaskModel.CreatedById);
+            data.append('CompanyId', paramsData?.TaskModel.CompanyId);
+            data.append('Title', Title);
+            data.append('Description', Description);
+            data.append('AssignToName', AssignToName);
+            data.append('AssignedToId', AssignedToId);
+            data.append('Id', paramsData?.TaskModel.Id);
+            data.append('StatusId', StatusId === null ? '' : StatusId);
+            data.append('TaskGroupId', paramsData?.TaskModel.TaskGroupId);
+            data.append('PriorityId', PriorityId === null ? '' : PriorityId);
+            data.append('DueDate', DueDate == null ? null : moment(DueDate).format("YYYYY-MM-DD"));
             data.append('taskAttachmentsModel', JSON.stringify(fileList))
-            fetch(urlDev + "RtTaskApi/SaveTask/", {
-                headers: {
-                    'Authorization': `bearer ${userToken}`,
-                    'Accept': 'application/json',
-                    'Content-Type': 'multipart/form-data'
-                },
-                method: "POST",
-                body: data
-            }).then(response => {
-                setprogressVisible(false);
-                ToastAndroid.show('Task Updated successfully', ToastAndroid.TOP);
-                refreshOnBack();
+
+            SaveTask(data).then(response => {
+                console.log('SAVE', response)
+                if(response?.success){
+                    setprogressVisible(false);
+                    ToastAndroid.show('Task Updated successfully', ToastAndroid.TOP);
+                    refreshOnBack();
+                }
             })
                 .catch(error => {
                     setprogressVisible(false);
-                    console.log("error occured");
+                    console.log("error occured",error);
                     settouchabledisableForsaveExpense(true);
-
                 });
-
         } catch (error) {
             setprogressVisible(false);
             console.log(error);
@@ -405,7 +321,7 @@ const ViewTask = ({ navigation, route }) => {
 
 
     const setPriority = async (id, name) => {
-        setPriority(id);
+        setPriorityId(id);
         setPriorityName(name);
         setmodalPriority(false);
     }
@@ -421,7 +337,6 @@ const ViewTask = ({ navigation, route }) => {
         return content;
     }
     const getEmployeeList = async (companyId) => {
-        console.log('first', companyId)
         try {
             await EmployeeList(companyId)
                 .then(res => {
@@ -443,13 +358,13 @@ const ViewTask = ({ navigation, route }) => {
         try {
             await GetTaskAttachments(TaskId)
                 .then(res => {
-                    console.log("Filelist...", res, 'fileList...View');
+                    // console.log("Filelist...", res, 'fileList...View');
                     setfileList(res);
                     setprogressVisible(false);
                 })
                 .catch((error) => {
                     setprogressVisible(false);
-                    console.log("Filelist error occured", TaskId);
+                    // console.log("Filelist error occured", TaskId);
                 });
 
         } catch (error) {
@@ -490,16 +405,13 @@ const ViewTask = ({ navigation, route }) => {
         );
     };
 
-    // let textRef = React.createRef();
-    // let menuRef = null;
-    // const setMenuRef = ref => menuRef = ref;
-    // const hideMenu = () => menuRef.hide();
-    // const showMenu = () => menuRef.show(textRef.current, Position.TOP_RIGHT);
+
     const onPress = () => showMenu();
     const DeleteEmp = () => {
         setShowMenu(false);
         alertmethod();
     }
+
     return (
         <>
             {isLoaded ?
@@ -765,7 +677,7 @@ const ViewTask = ({ navigation, route }) => {
                         <View style={TaskStyle.dblModelContent}>
                             <ScrollView showsVerticalScrollIndicator={false} style={{ height: "80%" }}>
                                 <View style={{}} >
-                                    {employeeList?.length > 0 && renderEmpList()}
+                                    {employeeList?.length > 0 ? renderEmpList() : 'sd'}
                                 </View>
                             </ScrollView>
                         </View>
@@ -849,19 +761,13 @@ const ViewTask = ({ navigation, route }) => {
                             </View>
                         </View>
                         <View>
-                            <View>
-                                <Text style={NoticeStyle.addPhotoText}>Add Photos</Text>
-                            </View>
-                            <View style={NoticeStyle.cemaraImageContainer}>
-                                <TouchableOpacity onPress={() => _takePhoto()} style={{ alignItems: "center", paddingLeft: 35 }}>
-                                    <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../assets/images/photo_camera_black.png')}></Image>
-                                    <Text style={NoticeStyle.takePhotoText}>Take Photo</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => _pickImage()} style={{ alignItems: 'center', paddingRight: 35 }}>
-                                    <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../assets/images/Gallary.png')}></Image>
-                                    <Text style={NoticeStyle.takePhotoText}>From Gallary</Text>
-                                </TouchableOpacity>
-                            </View>
+                            <CustomImagePicker
+                                TaskId={TaskId}
+                                setfileList={setfileList}
+                                fileList={fileList}
+                                setprogressVisible={setprogressVisible}
+                                setmodalForImage={setmodalForImage}
+                            />
                         </View>
                     </Modal>
                     <Modal1
