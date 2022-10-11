@@ -10,24 +10,24 @@ import { GetRelatedToMeTasks } from '../../../services/TaskService';
 import TaskLists from "../tasks/TaskListComponent"
 import { CommonStyles } from '../../../common/CommonStyles';
 import { useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 
 
-const UserSpecificTasks =({navigation})=>{
+const UserSpecificTasks = ({ navigation }) => {
 
     const [progressVisible, setprogressVisible] = useState(false);
     const [refreshing, setrefreshing] = useState(false);
     const [taskList, settaskList] = useState([]);
     const [tempList, setTempList] = useState([]);
-    let arrayholder=[];
+    let arrayholder = [];
     const [search, setSearch] = useState(null);
     const user = useSelector((state) => state.user.currentUser);
     const clientId = useSelector((state) => state.user.clientId);
+    const isFocused = useIsFocused();
 
-    const _onRefresh = async () =>
-    {
+    const _onRefresh = async () => {
         setrefreshing(true);
-        setTimeout(function ()
-        {
+        setTimeout(function () {
             setrefreshing(false);
 
         }, 2000);
@@ -44,22 +44,22 @@ const UserSpecificTasks =({navigation})=>{
     }
 
     useEffect(() => {
-      ( async ()=>{
-        getTaskList(clientId, true);
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+        (async () => {
+            getTaskList(clientId, true);
+            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-      }
-    }, [])
-    
-    const handleBackButton=()=>    {
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        }
+    }, [isFocused])
+
+    const handleBackButton = () => {
         navigation.navigate('DailyAttendance')
         return true;
-    }  
+    }
 
     const searchFilterFunction = text => {
-        if(text!=''){
+        if (text != '') {
             const newData = arrayholder.filter(item => {
                 const itemData = `${item.Title.toUpperCase()} ${item.Title.toUpperCase()} ${item.Title.toUpperCase()}`;
                 const textData = text.toUpperCase();
@@ -67,13 +67,12 @@ const UserSpecificTasks =({navigation})=>{
                 return itemData.indexOf(textData) > -1;
             });
             settaskList(newData);
-        }else{
+        } else {
             settaskList(tempList);
         }
     };
 
-    const renderHeader = () =>
-    {
+    const renderHeader = () => {
         return (
             <ScrollView scrollEnabled={false}>
                 <SearchBar
@@ -90,34 +89,29 @@ const UserSpecificTasks =({navigation})=>{
         );
     };
 
-    const getTaskList = async (userId, isProgress) =>
-    {
-        try
-        {
+    const getTaskList = async (userId, isProgress) => {
+        try {
             setprogressVisible(isProgress);
             await GetRelatedToMeTasks(clientId)
-                .then(res =>
-                {
-                    console.log('RESPONSE',res)
+                .then(res => {
+                    console.log('RESPONSE', res)
                     settaskList(res);
                     setTempList(res);
                     setprogressVisible(false);
                     console.log(arrayholder, 'taskresutl...');
                 })
-                .catch(() =>
-                {
+                .catch(() => {
                     setprogressVisible(false);
                     console.log("error occured");
                 });
 
-        } catch (error)
-        {
+        } catch (error) {
             setprogressVisible(false);
             console.log(error);
         }
     }
 
-    const goToCreateTask=()=> {
+    const goToCreateTask = () => {
         navigation.navigate('CreateTask')
     }
 
@@ -126,48 +120,48 @@ const UserSpecificTasks =({navigation})=>{
         navigation.navigate('ViewAssignToMe', { TaskModel: task, arrayholder: arrayholder, })
     }
 
-        return (
+    return (
+        <View
+            style={TaskStyle.container}>
+
             <View
-                style={TaskStyle.container}>
-               
+                style={CommonStyles.HeaderContent}>
                 <View
-                    style={CommonStyles.HeaderContent}>
+                    style={CommonStyles.HeaderFirstView}>
+                    <TouchableOpacity
+                        style={CommonStyles.HeaderMenuicon}
+                        onPress={() => { handleBackButton() }}>
+                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
+                            source={require('../../../../assets/images/left_arrow.png')}>
+                        </Image>
+                    </TouchableOpacity>
                     <View
-                        style={CommonStyles.HeaderFirstView}>
-                        <TouchableOpacity
-                            style={CommonStyles.HeaderMenuicon}
-                            onPress={() => { handleBackButton() }}>
-                            <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                                source={require('../../../../assets/images/left_arrow.png')}>
-                            </Image>
-                        </TouchableOpacity>
-                        <View
-                            style={CommonStyles.HeaderTextView}>
-                            <Text
-                                style={CommonStyles.HeaderTextstyle}>
-                                {user.aItemEmployeeName}
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={{ alignItems: 'flex-end' }}>
-                        <TouchableOpacity
-                            onPress={Call}
-                            style={{
-                                padding: 8, paddingVertical: 2,
-                               
-                            }}>
-                            <Image style={{ width: 20, height: 20,alignItems:'center',marginTop:5, }}
-                                resizeMode='contain'
-                                source={require('../../../../assets/images/call.png')}>
-                            </Image>
-                        </TouchableOpacity>
+                        style={CommonStyles.HeaderTextView}>
+                        <Text
+                            style={CommonStyles.HeaderTextstyle}>
+                            {user.aItemEmployeeName}
+                        </Text>
                     </View>
                 </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                    <TouchableOpacity
+                        onPress={Call}
+                        style={{
+                            padding: 8, paddingVertical: 2,
 
-                {progressVisible == true ?
-                    <ActivityIndicator size="large" color="#1B7F67"
-                        style={TaskStyle.loaderIndicator} />
-                        :
+                        }}>
+                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
+                            resizeMode='contain'
+                            source={require('../../../../assets/images/call.png')}>
+                        </Image>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {progressVisible == true ?
+                <ActivityIndicator size="large" color="#1B7F67"
+                    style={TaskStyle.loaderIndicator} />
+                :
                 <TaskLists
                     refreshControl={
                         <RefreshControl
@@ -176,9 +170,9 @@ const UserSpecificTasks =({navigation})=>{
                         />
                     }
                     itemList={taskList} headerRenderer={renderHeader()} pointerEvents="none" />
-                }
-            </View >
-        )
+            }
+        </View >
+    )
 }
 
-export default  UserSpecificTasks;
+export default UserSpecificTasks;

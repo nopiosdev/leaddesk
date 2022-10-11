@@ -95,8 +95,8 @@ const TaskList = ({ navigation, route }) => {
             await GetRelatedToMeTasks(userId)
                 .then(res => {
                     console.log('TASK',res)
-                    settaskList(res?.filter(x => x.StatusName !== "Completed" && x.StatusName !== "Cancelled"))
-                    settempList(res?.filter(x => x.StatusName !== "Completed" && x.StatusName !== "Cancelled"))
+                    settaskList(res?.filter(x => x.StatusId !== 4 && x.StatusName !== 6))
+                    settempList(res?.filter(x => x.StatusId !== 4 && x.StatusName !== 6))
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                     setisLoaded(true);

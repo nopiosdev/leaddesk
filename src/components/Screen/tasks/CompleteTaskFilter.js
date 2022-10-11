@@ -12,16 +12,16 @@ import { GetRelatedToMeTasks } from '../../../services/TaskService';
 import TaskLists from "./TaskListComponent"
 import { CommonStyles } from '../../../common/CommonStyles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 var screen = Dimensions.get('window');
 
 const CompleteTaskFilter = ({ navigation, route }) => {
 
     const [progressVisible, setprogressVisible] = useState(false);
+    const user = useSelector((state) => state.user.currentUser);
     const [refreshing, setrefreshing] = useState(false);
-    const [userId, setuserId] = useState('');
     const [search, setSearch] = useState('');
     const [taskList, settaskList] = useState([]);
     const [tempList, settempList] = useState([]);
@@ -34,14 +34,12 @@ const CompleteTaskFilter = ({ navigation, route }) => {
         setTimeout(function () {
             setrefreshing(false);
         }, 2000);
-        getTaskList(userId, false);
+        getTaskList(false);
     };
 
     useEffect(() => {
         (async () => {
-            const uId = await LocalStorage.GetData("userId");
-            setuserId(uId);
-            getTaskList(uId, true);
+            getTaskList(true);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })
 
@@ -83,13 +81,14 @@ const CompleteTaskFilter = ({ navigation, route }) => {
 
         );
     };
-    const getTaskList = async (userId, isProgress) => {
+    const getTaskList = async (isProgress) => {
         try {
             setprogressVisible(isProgress);
-            await GetRelatedToMeTasks(userId)
+            await GetRelatedToMeTasks(user.Id)
                 .then(res => {
-                    settaskList(res.result.filter(x => x.StatusName === "Completed" || x.StatusName === "Cancelled"));
-                    settempList(res.result.filter(x => x.StatusName === "Completed" || x.StatusName === "Cancelled"));
+                    console.log(res)
+                    settaskList(res?.filter(x => x.StatusId === 4 || x.StatusId === 5 || x.StatusId === 6));
+                    settempList(res?.filter(x => x.StatusId === 4 || x.StatusId === 5 || x.StatusId === 6));
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                 })

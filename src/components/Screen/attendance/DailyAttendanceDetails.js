@@ -36,7 +36,7 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
     const [EmpTrackList, setEmpTrackList] = useState([]);
     const [data, setdata] = useState([]);
     const [aItemUserId, setaItemUserId] = useState('');
-    const [refreshing, setrefreshing] = useState(false);
+    const [refreshing, setrefreshing] = useState(true);
     const userDetails = useSelector((state) => state.user.currentUser);
     const paramsData = route?.params;
     const user = useSelector((state) => state.user.currentUser);
