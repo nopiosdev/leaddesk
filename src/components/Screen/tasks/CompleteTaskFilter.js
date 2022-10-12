@@ -14,6 +14,7 @@ import { CommonStyles } from '../../../common/CommonStyles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import Searchbar from '../../Searchbar';
 
 var screen = Dimensions.get('window');
 
@@ -54,7 +55,7 @@ const CompleteTaskFilter = ({ navigation, route }) => {
     }
     const searchFilterFunction = text => {
         if (text !== '') {
-            const newData = tempList.filter(item => {
+            const newData = tempList?.filter(item => {
                 const itemData = `${item.Title.toUpperCase()} ${item.Title.toUpperCase()} ${item.Title.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
@@ -66,21 +67,6 @@ const CompleteTaskFilter = ({ navigation, route }) => {
         }
     };
 
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setSearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-
-        );
-    };
     const getTaskList = async (isProgress) => {
         try {
             setprogressVisible(isProgress);
@@ -161,7 +147,7 @@ const CompleteTaskFilter = ({ navigation, route }) => {
                     />
                 }
             >
-                <TaskLists itemList={taskList} headerRenderer={renderHeader()} />
+                <TaskLists itemList={taskList} headerRenderer={<Searchbar searchFilterFunction={searchFilterFunction}/>} />
             </ScrollView>
         </View >
     )

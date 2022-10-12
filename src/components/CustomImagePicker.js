@@ -9,7 +9,7 @@ import { upLoadImage } from '../services/TaskService';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const CustomImagePicker = ({ TaskId, setprogressVisible, setfileList, fileList,setmodalForImage }) => {
+const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileList, fileList,setmodalForImage }) => {
 
     const [ImageFileName, setImageFileName] = useState('');
 
@@ -36,7 +36,11 @@ const CustomImagePicker = ({ TaskId, setprogressVisible, setfileList, fileList,s
                     FileName: response?.image,
                     BlobName: response?.image,
                 }
-                setfileList(fileList.concat(attachmentModel));
+                if(single){
+                    setfileList(response?.image);
+                }else{
+                    setfileList(fileList.concat(attachmentModel));
+                }
                 setImageFileName(response?.image)
                 ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
             }else{

@@ -18,7 +18,6 @@ import {
 } from '../../../services/EmployeeTrackService';
 import Iconic from 'react-native-vector-icons/Feather'
 import { CommonStyles } from '../../../common/CommonStyles';
-import { SearchBar } from 'react-native-elements';
 import { GetEmployeeWithCompanyId } from "../../../services/AccountService";
 import { urlDev, urlResource } from '../../../services/api/config';
 import { googlemapApiForAutoCheckPoint } from '../../../services/api/config';
@@ -27,6 +26,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
 import { useSelector } from "react-redux";
 import { useEffect } from 'react';
+import Searchbar from '../../Searchbar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,7 +51,6 @@ const LiveTracking = ({ navigation, route }) => {
     const [errorMessage, seterrorMessage] = useState('');
     const [companyId, setcompanyId] = useState(null);
     const [employeeModal, setemployeeModal] = useState(false);
-    const [search, setsearch] = useState('');
     const [tempList, setTempList] = useState([]);
 
     let mapView = null;
@@ -101,8 +100,9 @@ const LiveTracking = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetEmployeeWithCompanyId(companyId)
                 .then(res => {
-                    setemployeeList(res?.result);
-                    setTempList(res?.result);
+                    console.log('EMp',res)
+                    setemployeeList(res);
+                    setTempList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -120,11 +120,11 @@ const LiveTracking = ({ navigation, route }) => {
             if (selctedEmployeeValue === "All Employee") {
                 await GetMovementDetailsAll(companyId)
                     .then(res => {
-                        setEmpTrackList(res?.result)
+                        setEmpTrackList(res)
                         var markerlist = [];
-                        console.log('movement details', res.result)
-                        if (res.result.length > 0) {
-                            res.result.map((userData, index) => {
+                        console.log('GetMovementDetailsAll', res)
+                        if (res?.length > 0) {
+                            res?.map((userData, index) => {
                                 var title = '';
                                 var color = '';
                                 if (userData.IsCheckInPoint) {
@@ -142,16 +142,16 @@ const LiveTracking = ({ navigation, route }) => {
                                     "description": userData.LogLocation,
                                     "color": color,
                                     coordinates: {
-                                        "latitude": userData.Latitude,
-                                        "longitude": userData.Longitude
+                                        "latitude":Number(userData.Latitude),
+                                        "longitude": Number(userData.Longitude)
                                     },
                                 }
                                 markerlist.push(newMarkerObj);
                             });
                             setmarkers(markers.concat(markerlist))
-                            setLongitude(res.result[res.result.length - 1].Longitude);
-                            setLatitude(res.result[res.result.length - 1].Latitude);
-                            setLogLocation(res.result[res.result.length - 1].LogLocation);
+                            setLongitude(Number(res[res?.length - 1]?.Longitude));
+                            setLatitude(Number(res[res?.length - 1]?.Latitude));
+                            setLogLocation(res[res?.length - 1]?.LogLocation);
 
                         } else {
                             _getLocationAsync();
@@ -163,10 +163,10 @@ const LiveTracking = ({ navigation, route }) => {
             } else {
                 await GetMovementDetails(slectedEmployeeId)
                     .then(res => {
-                        setEmpTrackList(res.result);
+                        console.log('GetMovementDetails', res)
+                        setEmpTrackList(res);
                         var markerlist = [];
-                        console.log('movement details', res.result)
-                        res.result.map((userData, index) => {
+                        res?.map((userData, index) => {
                             var title = '';
                             var color = '';
                             if (userData.IsCheckInPoint) {
@@ -177,24 +177,24 @@ const LiveTracking = ({ navigation, route }) => {
                                 color = 'red';
                             } else {
                                 title = "Checked point";
-                                color = index === res.result.length - 1 ? 'red' : 'yellow';
+                                color = index === res?.length - 1 ? 'red' : 'yellow';
                             }
                             var newMarkerObj = {
                                 "title": title + " " + (index + 1),
                                 "description": userData.LogLocation,
                                 "color": color,
                                 coordinates: {
-                                    "latitude": userData.Latitude,
-                                    "longitude": userData.Longitude
+                                    "latitude": Number(userData.Latitude),
+                                    "longitude": Number(userData.Longitude)
                                 },
                             }
                             markerlist.push(newMarkerObj);
 
                         });
                         setmarkers(markers.concat(markerlist))
-                        setLongitude(res.result[res.result.length - 1].Longitude);
-                        setLatitude(res.result[res.result.length - 1].Latitude);
-                        setLogLocation(res.result[res.result.length - 1].LogLocation);
+                        setLongitude(Number(res[res?.length - 1]?.Longitude));
+                        setLatitude(Number(res[res?.length - 1]?.Latitude));
+                        setLogLocation(res[res?.length - 1]?.LogLocation);
                     })
                     .catch((ex) => {
                         console.log(ex, "GetMovementDetails error occured");
@@ -223,35 +223,19 @@ const LiveTracking = ({ navigation, route }) => {
         getEmpTrackInfo();
     }
     const searchFilterFunction = text => {
-
-        if (text != '') {
+        if (text !== '') {
             const newData = tempList?.filter(item => {
-                const itemData = `${item.UserName.toUpperCase()} ${item.DepartmentName.toUpperCase()} ${item.Designation.toUpperCase()}`;
+                const itemData = `${item.Title.toUpperCase()}`;
                 const textData = text.toUpperCase();
+
                 return itemData.indexOf(textData) > -1;
             });
             setemployeeList(newData);
         } else {
-            setemployeeList(tempList);
+            setemployeeList(tempList)
         }
-
     };
-    const renderSearchHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                style={{ position: 'absolute', zIndex: 1, marginBottom: 0 }}
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setsearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-
-        );
-    };
+ 
 
     const onReady = (result) => {
         mapView.fitToCoordinates(result.coordinates, {
@@ -324,6 +308,7 @@ const LiveTracking = ({ navigation, route }) => {
             </View>
         )
     }
+
     return (
         <View style={LiveTrackingStyle.container}>
 
@@ -388,17 +373,17 @@ const LiveTracking = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={{ paddingVertical: 20, }}>
-                    <ScrollView showsVerticalScrollIndicator={false} style={{ height: "100%" }}>
-                        <View style={{ flex: 1, padding: 10, }}>
+                        <Searchbar searchFilterFunction={searchFilterFunction}/> 
                             <FlatList
                                 data={employeeList}
                                 keyExtractor={(x, i) => i.toString()}
+                                style={{height:'100%'}}
                                 renderItem={({ item }) =>
                                     <TouchableOpacity onPress={() => closeEmployeeModal(item)}>
                                         <View
                                             style={LiveTrackingStyle.FlatlistMainView}>
                                             <View style={{ paddingRight: 10, }}>
-                                                {item.ImageFileName !== "" ?
+                                                {item.ImageFileName?
                                                     (<Image style={LiveTrackingStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />) :
                                                     (<Image style={
                                                         LiveTrackingStyle.imageradious
@@ -420,10 +405,7 @@ const LiveTracking = ({ navigation, route }) => {
                                         </View>
                                     </TouchableOpacity>
                                 }
-                                ListHeaderComponent={renderSearchHeader()}
                             />
-                        </View>
-                    </ScrollView>
                 </View>
             </Modal>
         </View>

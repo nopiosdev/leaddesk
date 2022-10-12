@@ -19,6 +19,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DailyAttendanceDetails from '../attendance/DailyAttendanceDetails';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../Loader';
+import Searchbar from '../../Searchbar';
 
 const TaskList = ({ navigation, route }) => {
 
@@ -61,8 +62,8 @@ const TaskList = ({ navigation, route }) => {
     }
     const searchFilterFunction = text => {
         if (text !== '') {
-            const newData = tempList.filter(item => {
-                const itemData = `${item.Title.toUpperCase()} ${item.Title.toUpperCase()} ${item.Title.toUpperCase()}`;
+            const newData = tempList?.filter(item => {
+                const itemData = `${item.Title.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
                 return itemData.indexOf(textData) > -1;
@@ -73,21 +74,6 @@ const TaskList = ({ navigation, route }) => {
         }
     };
 
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setsearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-
-        );
-    };
     const getTaskList = async (userId, isProgress) => {
         setisLoaded(false);
         try {
@@ -172,7 +158,7 @@ const TaskList = ({ navigation, route }) => {
                             />
                         }
                     >
-                        {renderHeader()}
+                        {<Searchbar searchFilterFunction={searchFilterFunction}/>}
                         <TaskLists itemList={taskList} />
                     </ScrollView>
                 </View >

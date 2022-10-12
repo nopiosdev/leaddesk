@@ -20,6 +20,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Checkbox } from 'react-native-paper';
+import CustomImagePicker from '../../CustomImagePicker';
 
 var tempCheckValues = [];
 var cListforcheckbox = [];
@@ -65,23 +66,27 @@ const CreateNotice = ({ navigation, route }) => {
                 return ToastAndroid.show('Plese Connect the Internet', ToastAndroid.TOP);
             }
         });
-        if (details === "" || ImageFileName === "") return ToastAndroid.show('Please fill all the field', ToastAndroid.TOP);
+        if (!details) return ToastAndroid.show('Please fill all the field', ToastAndroid.TOP);
+        if (!ImageFileName) return ToastAndroid.show('Please select image', ToastAndroid.TOP);
         try {
-            let noticeModel = {
-                CreatedBy: user?.Id,
-                CompanyId: companyId,
-                Details: details,
-                DepartmentIdList: test.CheckBoxList,
-                ImageFileName: ImageFileName,
-            };
+            var data = new FormData();
+            data.append('CreatedById', user?.Id);
+            data.append('CompanyId', companyId);
+            data.append('Details', details);
+            // data.append('DepartmentIdList', test.CheckBoxList);
+            data.append('ImageFileName', ImageFileName);
+
             setprogressVisible(true);
-            await SaveNotice(noticeModel)
+            await SaveNotice(data)
                 .then(res => {
-                    setprogressVisible(false);
-                    ToastAndroid.show('Notice saved successfully', ToastAndroid.TOP);
-                    setdetails('');
-                    setImageFileName('');
-                    navigation.navigate('Notice');
+                    console.log('SaveNotice', res)
+                    // if (res?.success) {
+                        setprogressVisible(false);
+                        ToastAndroid.show('Notice saved successfully', ToastAndroid.TOP);
+                        setdetails('');
+                        setImageFileName('');
+                        navigation.navigate('Notice');
+                    // }
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -136,71 +141,8 @@ const CreateNotice = ({ navigation, route }) => {
     const openmodalForImage = () => {
         setmodalForImage(true);
     }
-    const _takePhoto = async () => {
-        setmodalForImage(false)
-        await ImagePicker.getCameraPermissionsAsync()
-        await ImagePicker.getMediaLibraryPermissionsAsync();
-        let pickerResult = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            // aspect: [4, 4],
-            //quality: .2,
-            height: 250,
-            width: 250,
-        });
-        console.log(pickerResult, '.......................')
-        if (pickerResult.cancelled == false) {
-            handleUploadPhoto(pickerResult)
-        }
-    };
-    const _pickImage = async () => {
-        setmodalForImage(false)
-        await ImagePicker.getCameraPermissionsAsync()
-        await ImagePicker.getMediaLibraryPermissionsAsync();
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            //aspect: [4, 4],
-            quality: 1,
-            height: 250,
-            width: 250,
-        });
-        if (pickerResult.cancelled == false) {
-            handleUploadPhoto(pickerResult)
-        }
-    };
-    const handleUploadPhoto = async (pickerResult) => {
 
-        const userToken = await LocalStorage.GetData("userToken");
-        console.log(pickerResult.uri, '...............send')
-        var data = new FormData();
-        data.append('BlobName', {
-            uri: pickerResult.uri,
-            name: 'my_photo.jpg',
-            type: 'image/jpg'
-        })
-        setprogressVisible(true);
-        fetch(urlDev + "RtTaskApi/UploadDocuments?containerName=" + Imageparam, {
-            headers: {
-                'Authorization': `bearer ${userToken}`,
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
-            },
-            method: "POST",
-            body: data
-        })
-            .then(response => response.json())
-            .then(response => {
-                setimage(urlResource + response.ImagePath);
-                setImageFileName(response?.ImagePath);
-                setprogressVisible(false);
-                ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
-            })
-            .catch(error => {
-                setprogressVisible(false);
-                console.log("upload error", error);
-                ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
-                // this.errorToast();
-            });
-    };
+
     const imageViewer = () => {
         setisModelVisible(true);
     }
@@ -211,18 +153,17 @@ const CreateNotice = ({ navigation, route }) => {
     const ShowModalFunction = (visible) => {
         setisModelVisible(false);
     }
-
     const getDepartment = async (cid) => {
         try {
 
             await GetDepartmentByCompanyId(cid)
                 .then(res => {
-                    console.log('comlen', res.result);
-                    if (res.result !== null) {
-                        console.log('comlen2', res.result);
-                        if (res.result.length > 0) {
+                    console.log('comlen', res);
+                    if (res !== null) {
+                        console.log('comlen2', res);
+                        if (res?.length > 0) {
                             const depList = [];
-                            res.result.forEach(function (item) {
+                            res?.forEach(function (item) {
                                 const ob = {
                                     'Text': item.DepartmentName,
                                     'Value': item.Id
@@ -261,7 +202,7 @@ const CreateNotice = ({ navigation, route }) => {
                         }}>
                         <Checkbox
                             // value={checkBoxChecked[val.Value]}
-                            status={ 'checked' }
+                            status={'checked'}
                             onPress={(value) =>
                                 checkBoxChanged(val.Value,
                                     checkBoxChecked[val.Value], value)}
@@ -346,8 +287,9 @@ const CreateNotice = ({ navigation, route }) => {
                                     ADD PHOTO
                                 </Text>
                             </View>
-                            {/* </View> */}
                         </TouchableOpacity>
+
+                        {/* </View> */}
                         <TouchableOpacity
                             style={NoticeStyle.openDeptTouhableOpacity}>
                         </TouchableOpacity>
@@ -404,21 +346,13 @@ const CreateNotice = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View>
-                    <View>
-                        <Text style={NoticeStyle.addPhotoText}>Add Photos</Text>
-                    </View>
-                    <View style={NoticeStyle.cemaraImageContainer}>
-                        <TouchableOpacity onPress={() => _takePhoto()} style={{ alignItems: "center", paddingLeft: 35 }}>
-                            <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../assets/images/photo_camera_black.png')}></Image>
-                            <Text style={NoticeStyle.takePhotoText}>Take Photo</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => _pickImage()} style={{ alignItems: 'center', paddingRight: 35 }}>
-                            <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../assets/images/Gallary.png')}></Image>
-                            <Text style={NoticeStyle.takePhotoText}>From Gallary</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <CustomImagePicker
+                    setfileList={setImageFileName}
+                    fileList={images}
+                    setprogressVisible={setprogressVisible}
+                    setmodalForImage={setmodalForImage}
+                    single={true}
+                />
             </Modal>
 
             <Modal
@@ -427,8 +361,6 @@ const CreateNotice = ({ navigation, route }) => {
                 isOpen={modalfordept}
                 backdropPressToClose={false}
                 swipeToClose={false}
-            // onOpened={() => setState({ floatButtonHide: true })}
-            // onClosed={() => this.setState({ floatButtonHide: false })}
             >
                 <View
                     style={{
@@ -497,7 +429,7 @@ const CreateNotice = ({ navigation, route }) => {
                 <ImageViewer
                     saveToLocalByLongPress={true}
                     // onSave={this.saveImageToFolder( images )}
-                    imageUrls={images} >
+                    imageUrls={urlResource + images} >
                 </ImageViewer>
             </Modal1>
 

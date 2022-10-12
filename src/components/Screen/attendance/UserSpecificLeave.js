@@ -14,6 +14,8 @@ import { CommonStyles } from '../../../common/CommonStyles';
 import { useState } from 'react';
 import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from "react-redux";
+import moment from 'moment';
+import Searchbar from '../../Searchbar';
 
 
 const UserSpecificLeave = ({ navigation }) => {
@@ -32,14 +34,14 @@ const UserSpecificLeave = ({ navigation }) => {
             setrefreshing(false);
         }, 2000);
 
-        getLeaveList(user?.Id, false);
+        getLeaveList(false);
     };
 
     useEffect(() => {
         (async () => {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId)
-            getLeaveList(user?.Id, true);
+            getLeaveList(true);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
         return () => {
@@ -60,21 +62,6 @@ const UserSpecificLeave = ({ navigation }) => {
         return true;
     }
 
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setsearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-        );
-    };
-
     const searchFilterFunction = text => {
 
         if (search) {
@@ -90,15 +77,15 @@ const UserSpecificLeave = ({ navigation }) => {
         }
     };
 
-    const getLeaveList = async (userId, isProgress) => {
+    const getLeaveList = async (isProgress) => {
         try {
             setprogressVisible(isProgress);
-            await GetUserLeaves(userId)
+            await GetUserLeaves(user?.Id)
                 .then(res => {
                     setleaveList(res);
+                    console.log('leaveresultlist.............', res)
                     setprogressVisible(false);
                     settempList(res);
-                    console.log(res, 'leaveresultlist.............')
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -115,7 +102,9 @@ const UserSpecificLeave = ({ navigation }) => {
 
         await LeaveApproved(item.Id, user?.Id)
             .then(res => {
-                getLeaveList(companyId, true);
+                if (res?.success) {
+                    getLeaveList(true);
+                }
             })
             .catch(() => {
                 setprogressVisible(false);
@@ -126,14 +115,16 @@ const UserSpecificLeave = ({ navigation }) => {
     const leaveReject = async (item) => {
         await LeaveRejected(item.Id)
             .then(res => {
-                getLeaveList(companyId, true);
+                console.log('REJECTED', res)
+                if (res?.success) {
+                    getLeaveList(true);
+                }
             })
             .catch(() => {
                 setprogressVisible(false);
                 console.log("error occured");
             });
 
-        getLeaveList(companyId, true);
     }
 
 
@@ -181,7 +172,7 @@ const UserSpecificLeave = ({ navigation }) => {
 
                 {/* <ScrollView showsVerticalScrollIndicator={false}> */}
                 <View style={{ flex: 1, padding: 10, }}>
-                    {renderHeader()}
+                    {<Searchbar searchFilterFunction={searchFilterFunction}/>}
                     {leaveList?.length > 0 && <FlatList
                         refreshControl={
                             <RefreshControl
@@ -192,7 +183,8 @@ const UserSpecificLeave = ({ navigation }) => {
                         data={leaveList}
                         keyExtractor={(x, i) => i.toString()}
                         renderItem={({ item }) =>
-                            <View
+                        {
+                           return <View
                                 style={LeaveListStyle.listContainer}
                             >
                                 <View style={LeaveListStyle.listInnerContainer}>
@@ -211,7 +203,7 @@ const UserSpecificLeave = ({ navigation }) => {
                                     </Text>
                                     <Text
                                         style={LeaveListStyle.reasonFromDate}>
-                                        {item.FromDateVw}
+                                        {moment(item.FromDate).format('DD/MM/YYYY')}
                                     </Text>
                                 </View>
 
@@ -235,7 +227,7 @@ const UserSpecificLeave = ({ navigation }) => {
                                     </Text>
                                     <Text
                                         style={LeaveListStyle.detailsTextInner}>
-                                        {item.ToDateVw}
+                                        {moment(item.ToDate).format('DD/MM/YYYY')}
                                     </Text>
                                 </View>
 
@@ -250,7 +242,7 @@ const UserSpecificLeave = ({ navigation }) => {
                                 </View>
 
 
-                                {(item.ApprovedBy != null && item.ApprovedBy != '') ?
+                                {(item.ApprovedBy != null && item.ApprovedBy != '') &&
                                     <View
                                         style={LeaveListStyle.approvedByContainer}>
                                         <View style={{ flexDirection: 'column' }}>
@@ -271,11 +263,11 @@ const UserSpecificLeave = ({ navigation }) => {
                                             </Text>
                                             <Text
                                                 style={LeaveListStyle.approvedAtText1}>
-                                                {item.ApprovedAtVw}
+                                                {moment(item.ApprovedAt).format('DD/MM/YYYY')}
                                             </Text>
                                         </View>
                                     </View>
-                                    : null}
+                                    }
 
                                 {(!item.IsApproved && !item.IsRejected) ?
                                     <View
@@ -313,7 +305,7 @@ const UserSpecificLeave = ({ navigation }) => {
                                                 </Text>)
                                                 : (item.IsRejected == true ?
                                                     (<Text style={{ color: 'red', }}>
-                                                        Rejecected
+                                                        Rejected
                                                     </Text>)
                                                     : (<Text style={{ color: '#f1b847', }}>
                                                         Pending
@@ -328,6 +320,7 @@ const UserSpecificLeave = ({ navigation }) => {
                                     </View>
                                 }
                             </View>
+                        }
                         }
                     />}
                 </View>

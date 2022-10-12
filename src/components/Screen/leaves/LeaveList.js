@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
+import Searchbar from '../../Searchbar';
 
 
 const LeaveList = ({ navigation, route }) => {
@@ -36,27 +37,9 @@ const LeaveList = ({ navigation, route }) => {
         navigation.goBack();
     }
 
-
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                style={{ position: 'absolute', zIndex: 1 }}
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setSearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-
-        );
-    };
-
     const searchFilterFunction = text => {
         if (text !== '') {
-            const newData = tempList.filter(item => {
+            const newData = tempList?.filter(item => {
                 const itemData = `${item.EmployeeName.toUpperCase()} ${item.EmployeeName.toUpperCase()} ${item.EmployeeName.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
@@ -83,8 +66,8 @@ const LeaveList = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await GetLeaveList(companyId)
                 .then(res => {
-                    setleaveList(res?.result);
-                    setTempList(res?.result);
+                    setleaveList(res);
+                    setTempList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -288,7 +271,7 @@ const LeaveList = ({ navigation, route }) => {
                                         </View>
 
                                     }
-                                    ListHeaderComponent={renderHeader()}
+                                    ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction}/>}
                                 />
                             </View>
                         </ScrollView>

@@ -285,7 +285,7 @@ const ViewTask = ({ navigation, route }) => {
             console.log("StatusId" , fileList)
 
             setprogressVisible(true);
-            const userToken = await LocalStorage.GetData("userToken");
+
             var data = new FormData();
             data.append('CreatedById', paramsData?.TaskModel.CreatedById);
             data.append('CompanyId', paramsData?.TaskModel.CompanyId);

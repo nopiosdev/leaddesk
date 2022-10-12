@@ -16,6 +16,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
+import Searchbar from '../../Searchbar';
 
 const Notice = ({ navigation, route }) => {
 
@@ -26,7 +27,6 @@ const Notice = ({ navigation, route }) => {
     const [refreshing, setrefreshing] = useState(false);
     const [progressVisible, setprogressVisible] = useState(false);
     const [search, setSearch] = useState('');
-    let arrayholder = [];
     const isFocused = useIsFocused();
     const goBack = () => {
         navigation.goBack();
@@ -82,31 +82,15 @@ const Notice = ({ navigation, route }) => {
         }
     };
 
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setSearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-
-        );
-    };
     const getNoticeList = async (companyId, isProgress) => {
         try {
             setprogressVisible(isProgress);
             await getNotice(companyId)
                 .then(res => {
+                    console.log('.....noticeresult',res);
                     setprogressVisible(false);
-                    setnoticeList(res?.result);
-                    settempList(res?.result);
-                    arrayholder = res.result;
-                    console.log(res.result, '.....noticeresult');
+                    setnoticeList(res);
+                    settempList(res);
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -174,7 +158,7 @@ const Notice = ({ navigation, route }) => {
                         />
                     }>
                     <View style={{ flex: 1, padding: 10, }}>
-                        {renderHeader()}
+                        {<Searchbar searchFilterFunction={searchFilterFunction}/>}
                         <FlatList
                             data={noticeList}
                             keyExtractor={(x, i) => i.toString()}
@@ -183,13 +167,13 @@ const Notice = ({ navigation, route }) => {
                                 <TouchableOpacity onPress={() => goToDetail(item)}>
                                     <View
                                         style={NoticeStyle.listContainer}>
-                                        {item.ImageFileName === "" ?
+                                        {item.ImageFileName ?
                                             <View style={NoticeStyle.listDivider}>
                                                 <View style={NoticeStyle.noticepart}>
                                                     <Text style={{}}>{item.Details}</Text>
                                                 </View>
-
-                                            </View> : <View style={{
+                                            </View>
+                                             : <View style={{
                                                 justifyContent: 'space-between', flexDirection: 'row',
                                                 borderBottomColor: 'white', borderBottomWidth: 2, paddingBottom: 10,
                                             }}>
@@ -205,7 +189,7 @@ const Notice = ({ navigation, route }) => {
 
                                                     }}>
 
-                                                        {item.ImageFileName !== "" ?
+                                                        {item.ImageFileName ?
                                                             <Image resizeMode="cover"
                                                                 style={NoticeStyle.noticelistImage} source={{ uri: urlResource + item.ImageFileName }} /> : <Text></Text>}
                                                     </View>
@@ -221,7 +205,7 @@ const Notice = ({ navigation, route }) => {
                                             <View style={{ alignItems: 'flex-end', }}>
                                                 <Text style={NoticeStyle.createDateStyle}>
 
-                                                    {item.CreateDate}
+                                                    {item.CreatedDate}
                                                 </Text>
                                             </View>
                                         </View>

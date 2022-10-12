@@ -33,18 +33,18 @@ const ReportScreen = ({ navigation, route }) => {
         { label: '2030', key: '2030' },
     ]);
     const [monthList, setMonthList] = useState([
-        { label: 'January', key: 'January' },
-        { label: 'February', key: 'February' },
-        { label: 'March', key: 'March' },
-        { label: 'April', key: 'April' },
-        { label: 'May', key: 'May' },
-        { label: 'June', key: 'June' },
-        { label: 'July', key: 'July' },
-        { label: 'August', key: 'August' },
-        { label: 'September', key: 'September' },
-        { label: 'October', key: 'October' },
-        { label: 'November', key: 'November' },
-        { label: 'December', key: 'December' },
+        { label: 'January', key: '1' },
+        { label: 'February', key: '2' },
+        { label: 'March', key: '3' },
+        { label: 'April', key: '4' },
+        { label: 'May', key: '5' },
+        { label: 'June', key: '6' },
+        { label: 'July', key: '7' },
+        { label: 'August', key: '8' },
+        { label: 'September', key: '9' },
+        { label: 'October', key: '10' },
+        { label: 'November', key: '11' },
+        { label: 'December', key: '12' },
     ]);
     const [VistNumber, setVistNumber] = useState(moment(new Date()).format("MMMM"));
     const [year, setyear] = useState(moment(new Date()).format("YYYY"));
@@ -102,8 +102,10 @@ const ReportScreen = ({ navigation, route }) => {
                     selectedValue={VistNumber}
                     itemStyle={{ borderWidth: 1, borderColor: 'red', fontSize: 12, fontWeight: '500', padding: 0, borderColor: '#798187', borderRadius: 10, borderWidth: 1 }}
                     style={{ height: 50, width: 130, borderWidth: 1, marginTop: -15, padding: 0, borderColor: '#798187', borderRadius: 10, }}
-                    onValueChange={(itemValue, itemIndex) =>
+                    onValueChange={(itemValue, itemIndex) =>{
+                        console.log(itemValue)
                         selectedItem(itemValue)
+                    }
                     }>
                     <Picker.Item label={VistNumber} value={VistNumber} />
                     {monthList.map((item, key) => {

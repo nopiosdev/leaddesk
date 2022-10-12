@@ -13,6 +13,7 @@ import { GetCreatedByme } from '../../../../services/UserService/TaskService';
 import TaskLists from "./CreatedbymeComponent"
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
+import Searchbar from '../../../Searchbar';
 
 var screen = Dimensions.get('window');
 
@@ -54,7 +55,7 @@ const CreateByMe = ({ navigation, route }) => {
     const searchFilterFunction = text => {
         if (text != '') {
             const newData = tempList?.filter(item => {
-                const itemData = `${item.Title.toUpperCase()} ${item.Title.toUpperCase()} ${item.Title.toUpperCase()}`;
+                const itemData = `${item.Title.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
                 return itemData.indexOf(textData) > -1;
@@ -63,21 +64,6 @@ const CreateByMe = ({ navigation, route }) => {
         } else {
             settaskList(tempList);
         }
-    };
-
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setSearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-        );
     };
 
     const getCreateByme = async (isProgress) => {
@@ -161,7 +147,7 @@ const CreateByMe = ({ navigation, route }) => {
                         />
                     }
                 >
-                    {renderHeader()}
+                    {<Searchbar searchFilterFunction={searchFilterFunction}/>}
                     <TaskLists itemList={taskList} />
                 </ScrollView>
             }

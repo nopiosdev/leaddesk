@@ -14,6 +14,7 @@ import TaskLists from "./TaskListComponent"
 import { useDispatch, useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { toggleActive } from '../../../../Redux/Slices/UserSlice';
+import Searchbar from '../../../Searchbar';
 
 
 
@@ -62,21 +63,6 @@ const MyTask = ({ navigation, route }) => {
         } else {
             settaskList(tempList);
         }
-    };
-
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setSearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-        );
     };
 
     const getTaskList = async (isProgress) => {
@@ -155,7 +141,7 @@ const MyTask = ({ navigation, route }) => {
                         />
                     }
                 >
-                    {renderHeader()}
+                    {<Searchbar searchFilterFunction={searchFilterFunction}/>}
                     <TaskLists itemList={taskList}/>
                 </ScrollView>
             }

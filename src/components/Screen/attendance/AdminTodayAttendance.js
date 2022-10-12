@@ -335,7 +335,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 DailyAttendanceStyle.FlatListAttendanceLeft
                                             }>
                                             <View style={{ paddingRight: 10, }}>
-                                                {item.ImageFileName !== "" ?
+                                                {item.ImageFileName?
                                                     <Image resizeMode='cover' style={
                                                         DailyAttendanceStyle.ImageLocal
                                                     } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={

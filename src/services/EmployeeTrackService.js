@@ -8,5 +8,5 @@ export const EmployeeList = async (companyId) => getApi("employee/GetEmployeeAsT
 export const GetAttendanceFeed = async (companyId) => getApi("attendance/GetAttendanceFeed?companyId=" + companyId);
 export const GetMyTodayAttendance = async (userId) => getApi("attendance/GetMyTodayAttendance?userId=" + userId);
 export const GetMovementDetails = async (userId) => getApi("attendance/GetMovementDetails?userId=" + userId);
-export const GetMovementDetailsAll = async (companyId) => getApi("RtAttendanceApi/GetMovementDetailsAll?companyId=" + companyId);
+export const GetMovementDetailsAll = async (companyId) => getApi("attendance/GetMovementDetailsAll?companyId=" + companyId);
 export const GetLeaderboardData = async (companyId, month, year) => getApi("RtAttendanceApi/GetLeaderboardData?companyId=" + companyId + "&month=" + month + "&year=" + year);

@@ -11,6 +11,7 @@ import { SearchBar } from 'react-native-elements';
 import LocalStorage from '../../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import { urlResource } from '../../../../services/api/config';
+import Searchbar from '../../../Searchbar';
 
 const Notice = ({ navigation, route }) => {
 
@@ -81,7 +82,7 @@ const Notice = ({ navigation, route }) => {
     }
     const searchFilterFunction = text => {
         if (text !== '') {
-            const newData = tempList.filter(item => {
+            const newData = tempList?.filter(item => {
                 const itemData = `${item.PostingDate.toUpperCase()} ${item.Details.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
@@ -92,20 +93,7 @@ const Notice = ({ navigation, route }) => {
             setnoticeList(tempList);
         }
     };
-    const renderHeader = () => {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => { setsearch(text); searchFilterFunction(text) }}
-                autoCorrect={false}
-                value={search}
-            />
-        );
-    };
+    
     return (
         <View style={NoticeStyle.container}>
 
@@ -143,7 +131,7 @@ const Notice = ({ navigation, route }) => {
                             }
                             data={noticeList}
                             keyExtractor={(x, i) => i.toString()}
-                            ListHeaderComponent={renderHeader()}
+                            ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction}/>}
                             renderItem={({ item }) =>
                                 <TouchableOpacity
                                     onPress={() => goToDetail(item)}

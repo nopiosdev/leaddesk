@@ -22,6 +22,7 @@ import call from 'react-native-phone-call'
 
 import { CommonStyles } from '../../../common/CommonStyles';
 import LocalStorage from '../../../common/LocalStorage';
+import Searchbar from '../../Searchbar';
 
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
@@ -42,11 +43,12 @@ const UserSpecificBills=()=>{
 
     const [companyId, setcompanyId] = useState(0);
     const [invoiceDataList, setinvoiceDataList] = useState([]);
+    const [tempList, setTempList] = useState([]);
     const [progressVisible, setprogressVisible] = useState(true);
     const [refreshing, setrefreshing] = useState(false);
     const [userId, setuserId] = useState(global.aItemUserId);
     const [search, setsearch] = useState('');
-    let arrayholder=[];
+ 
     const user = useSelector((state) => state.user.currentUser);
     const clientId = useSelector((state) => state.user.clientId);
 
@@ -96,7 +98,8 @@ const UserSpecificBills=()=>{
             await GetMyInvoiceList(clientId)
                 .then(res =>
                 {
-                    setinvoiceDataList(res?.result);
+                    setinvoiceDataList(res);
+                    setTempList(res);
                     setprogressVisible(false);
                     arrayholder = res.result;
                     console.log(res.result, 'invoiceDataList.............')
@@ -115,35 +118,19 @@ const UserSpecificBills=()=>{
     }
 
     const searchFilterFunction = text => {
-      
-        setsearch(text)
-        const newData = arrayholder.filter(item =>
-        {
-            const itemData = `${item.InvoiceNo.toUpperCase()} ${item.CreatedByName.toUpperCase()} ${item.Title.toUpperCase()}`;
-            const textData = text.toUpperCase();
+        if (text !== '') {
+            const newData = tempList?.filter(item => {
+                const itemData = `${item.InvoiceNo.toUpperCase()} ${item.CreatedByName.toUpperCase()} ${item.Title.toUpperCase()}`;
+                const textData = text.toUpperCase();
 
-            return itemData.indexOf(textData) > -1;
-        });
-        setinvoiceDataList(newData);
+                return itemData.indexOf(textData) > -1;
+            });
+            setinvoiceDataList(newData);
+        } else {
+            setinvoiceDataList(tempList)
+        }
     };
 
-    const renderHeader = () =>
-    {
-        return (
-            <SearchBar
-                placeholder="Type Here..."
-                style={{ position: 'absolute', zIndex: 1 }}
-                lightTheme
-                containerStyle={{ backgroundColor: '#f6f7f9', }}
-                inputContainerStyle={{ backgroundColor: 'white', }}
-                round
-                onChangeText={text => searchFilterFunction(text)}
-                autoCorrect={false}
-                value={search}
-            />
-
-        );
-    };
 
         return (
             <View style={FinanceStyle.container}>
@@ -185,7 +172,7 @@ const UserSpecificBills=()=>{
 
 
 
-                <InvoiceList itemList={invoiceDataList} headerRenderer={renderHeader()} />
+                <InvoiceList itemList={invoiceDataList} headerRenderer={<Searchbar searchFilterFunction={searchFilterFunction}/>} />
             </View>
         );
 }

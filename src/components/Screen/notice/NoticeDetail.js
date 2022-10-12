@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 
 const NoticeDetail = ({ navigation, route }) => {
 
-    const [Details, setDetails] = useState('');
+    const [details, setDetails] = useState('');
     const [ImageFileName, setImageFileName] = useState('');
     const [isModelVisible, setisModelVisible] = useState(false);
     const paramsData = route?.params;
@@ -41,17 +41,17 @@ const NoticeDetail = ({ navigation, route }) => {
 
     const GetNoticeDetatil = async () => {
         let NoticeId = paramsData?.aItem.Id;
-        // alert(NoticeId);
         await getNoticedetail(NoticeId)
             .then(res => {
-                setDetails(res?.result?.Details);
-                setImageFileName(res?.result?.ImageFileName);
+                console.log('Details',res)
+                setDetails(res?.Details);
+                setImageFileName(res?.ImageFileName);
             })
             .catch(() => {
                 console.log("error occured");
             });
     }
-
+console.log(details,'Details')
     const images = [{ url: urlResource + ImageFileName, },];
     return (
         <View style={NoticeStyle.noticeDetailContainer}>
@@ -82,7 +82,7 @@ const NoticeDetail = ({ navigation, route }) => {
                     <View>
 
                         <Text style={NoticeStyle.noticeDetailTextStyle}>
-                            {Details}
+                            {details}
                         </Text>
 
                     </View>
