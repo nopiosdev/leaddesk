@@ -56,18 +56,16 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
             if (CompanyId == "") {
                 ToastAndroid.show("At first create a company.", ToastAndroid.SHORT);
                 return;
-            }
-
-            let Departmentodel = {
-                DepartmentName: Dept.DepartmentName,
-                CompanyId: CompanyId,
-            };
-            console.log(Departmentodel);
-            let response = await CreateDepartment(Departmentodel);
-            if (response && response.isSuccess) {
-                console.log('com', response);
+            }        
+            var data = new FormData();
+            data.append('CompanyId', CompanyId);
+            data.append('DepartmentName', Dept.DepartmentName);
+            let response = await CreateDepartment(data);
+            console.log('com', response);
+            if (response?.success) {
+                getDepartment();
                 ToastAndroid.show('Department created successully', ToastAndroid.TOP);
-                departmentList.push({ Value: response.result.Id, Text: response.result.DepartmentName })
+                departmentList.push({ Value: response?.Id, Text: response?.DepartmentName })
                 const depList = [];
                 Object.assign(depList, departmentList);
                 console.log('tttt', depList);
@@ -76,9 +74,7 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
                 setEmployee({ DepartmentId: departmentList[0].Value })
                 setDeptId(departmentList[0].Value);
                 setDeptName('');
-                // this.setState({ DepartmentId: departmentList[0].Value });
                 // this.setState({ PickerSelectedVal: departmentList[0].Value });
-                getDepartment();
                 console.log('deptlist', departmentList);
             } else {
                 ToastAndroid.show('error', ToastAndroid.TOP);
@@ -131,19 +127,17 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
     const updateDept = async () => {
         if (DeptName !== "") {
             try {
-                let deparment = {
-                    Id: DeptId,
-                    CompanyId: CompanyId,
-                    DepartmentName: DeptName,
-                };
-                let response = await updatedepartment(deparment);
+                var data = new FormData();
+                data.append('Id', DeptId);
+                data.append('CompanyId', CompanyId);
+                data.append('DepartmentName', DeptName);
+
+                let response = await updatedepartment(data);
                 console.log('deparment..', response);
-                if (response && response.isSuccess) {
+                if (response?.success) {
                     getDepartment();
                 } else {
-
-                    ToastAndroid.show('Invalid Input', ToastAndroid.TOP);
-
+                    ToastAndroid.show(response?.message, ToastAndroid.TOP);
                 }
             } catch (errors) {
                 console.log(errors);
@@ -160,12 +154,10 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
             setCompanyId(cId);
             await GetDepartmentByCompanyId(cId)
                 .then(res => {
-
-                    if (res.result !== null) {
-
-                        if (res?.result?.length > 0) {
+                    if (res !== null) {
+                        if (res?.length > 0) {
                             const depList = [];
-                            res?.result?.forEach(function (item) {
+                            res?.forEach(function (item) {
                                 const ob = {
                                     'Text': item.DepartmentName,
                                     'Value': item.Id

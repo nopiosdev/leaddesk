@@ -2,7 +2,7 @@ import React, { createRef,useState,useEffect } from 'react';
 import {
     Platform, StatusBar, BackHandler, Alert, View,
     Text, Image, ScrollView, ToastAndroid,
-    TouchableOpacity, TextInput
+    TouchableOpacity, TextInput, KeyboardAvoidingView
 } from 'react-native';
 import Modal from 'react-native-modalbox';
 import { FontAwesome } from '@expo/vector-icons';
@@ -11,7 +11,7 @@ import { CommonStyles } from '../../../common/CommonStyles';
 import { useSelector, useDispatch } from "react-redux";
 import LocalStorage from '../../../common/LocalStorage';
 import { toggleUser } from '../../../Redux/Slices/UserSlice';
-import { ChangePasswords } from '../../../services/UserService/AccountService';
+import { ChangePassword } from '../../../services/AccountService';
 
 const SettingScreen = ({ navigation, route }) => {
 
@@ -45,22 +45,22 @@ const SettingScreen = ({ navigation, route }) => {
         }
     }
     const changepassword = async () => {
-        console.log("trying changepassword..");
+        console.log("trying changepassword..",);
         try {
-            let UserModel = {
-                CurrentPassword: oldpassword,
-                NewPassword: newpassword,
-                UserId: user?.Id,
-            };
-            let response = await ChangePasswords(UserModel);
-            if (response && response.isSuccess) {
+            var data=new FormData();
+            data.append('oldpassword',oldpassword);
+            data.append('confpassword',newpassword);
+            data.append('UserId',user?.Id);
+
+            let response = await ChangePassword(data);
+            if (response.success) {
                 LocalStorage.RemoveData("userToken");
                 LocalStorage.RemoveData('Login');
                 dispatch(toggleUser('Logout'));
                 setprogressVisible(false);
             } else {
                 setprogressVisible(false);
-                alert("Password Not Updated. Please try again");
+                alert(response?.message);
             }
         } catch (errors) {
             console.log(errors);
@@ -151,6 +151,7 @@ const SettingScreen = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
+            <KeyboardAvoidingView>
             <ScrollView showsVerticalScrollIndicator={false}>
 
                 <View style={SettingStyle.profileContainer}>
@@ -364,6 +365,7 @@ const SettingScreen = ({ navigation, route }) => {
                             value={confirmpassword}
                             onChangeText={(text) => setconfirmpassword(text)}
                             ref={confirmPasswordRef}
+                            onSubmitEditing={() => changepassword()}
                         />
                         <TouchableOpacity style={SettingStyle.addPeopleBtnchangpass}
                             onPress={() => closemodalchangepassword()} >
@@ -374,6 +376,7 @@ const SettingScreen = ({ navigation, route }) => {
                     </View>
                 </Modal>
             </ScrollView>
+            </KeyboardAvoidingView>
         </View >
     );
 }

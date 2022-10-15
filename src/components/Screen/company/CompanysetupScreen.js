@@ -102,7 +102,6 @@ const CompanysetupScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         (async () => {
-            _bootstrapAsync();
             getCompany();
             const companyid = await LocalStorage.GetData("companyId");
             setcompanyid(companyid);
@@ -124,11 +123,6 @@ const CompanysetupScreen = ({ navigation, route }) => {
 
         getCompany();
         setmodalforEmpList(true);
-    }
-    const _bootstrapAsync = async () => {
-        // var response = await loadFromStorage(storage, CurrentUserProfile);
-        // await this.setState({ PortalUserId: response.item.Id });
-
     }
 
     const _EditCom = async (item) => {
@@ -157,22 +151,28 @@ const CompanysetupScreen = ({ navigation, route }) => {
     }
     const updateCom = async () => {
         try {
-            let company = {
-                Id: ComId,
-                CompanyName: ComName,
-                Address: Address,
-                PhoneNumber: phone,
-                MaximumOfficeHours: MaximumOfficeHours,
-                OfficeOutTime: OfficeOutTime
-            };
-            let response = await updatedeCompany(company);
+            var data = new FormData();
+            data.append('Id', ComId);
+            data.append('CompanyName', ComName);
+            data.append('Address', Address);
+            data.append('PhoneNumber', phone);
+            data.append('MaximumOfficeHours', MaximumOfficeHours);
+            data.append('OfficeOutTime', OfficeOutTime);
+
+            let response = await updatedeCompany(data);
             console.log('Company..', response);
-            if (response && response.isSuccess) {
+            if (response.success) {
                 getCompany();
+                setComName('');
+                setAddress('');
+                setphone('');
+                setComId('');
+                setMaximumOfficeHours('');
+                setOfficeOutTime('');
             } else {
                 Alert.alert(
                     "",
-                    "Invalid Input",
+                    `${response?.message}`,
                     [
                         { text: 'OK', },
                     ],
@@ -189,12 +189,12 @@ const CompanysetupScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
-                    console.log('company', res.result);
-                    if (res.result === null) {
+                    console.log('company', res);
+                    if (res === null) {
                         setprogressVisible(false);
-                    } else if (res.result.length > 0) {
+                    } else if (res.length > 0) {
                         const cList = [];
-                        res?.result?.forEach(function (item) {
+                        res?.forEach(function (item) {
                             const ob = {
                                 'Text': item.CompanyName,
                                 'Value': item.Id,
@@ -239,37 +239,30 @@ const CompanysetupScreen = ({ navigation, route }) => {
     const onFetchCompanyRecords = async () => {
         console.log("trying company create..");
         try {
-            let CompanyModel = {
-                MaximumOfficeHours: MaximumOfficeHours,
-                OfficeOutTime: OfficeOutTime,
-                CompanyName: CompanyName,
-                Address: CompanyAddress,
-                PhoneNumber: CompanyMobileNo,
-                PortalUserId: user?.Id,
-            };
-            console.log(CompanyModel, 'savetest')
+            var data = new FormData();
+            data.append('PortalUserId', user?.Id);
+            data.append('CompanyName', CompanyName);
+            data.append('Address', CompanyAddress);
+            data.append('PhoneNumber', CompanyMobileNo);
+            data.append('MaximumOfficeHours', MaximumOfficeHours);
+            data.append('OfficeOutTime', OfficeOutTime);
+            console.log(data, 'savetest')
 
-            let response = await CreateCompany(CompanyModel);
+            let response = await CreateCompany(data);
             console.log('com', response);
 
-            if (response && response.isSuccess) {
-                console.log('com', response);
-                const ob = {
-                    'Text': response.result.CompanyName,
-                    'Value': response.result.Id
-                }
-                companyList.push(ob);
+            if (response?.success) {
                 getCompany();
-                ToastAndroid.show("Company created successfully", ToastAndroid.TOP);
+                ToastAndroid.show(response?.message, ToastAndroid.TOP);
                 setmodal4(false);
                 setCompanyName('');
                 setCompanyMobileNo('');
                 setCompanyAddress('');
             } else {
-                ToastAndroid.show("error", ToastAndroid.TOP);
+                ToastAndroid.show(response?.message, ToastAndroid.TOP);
             }
         } catch (errors) {
-            ToastAndroid.show("error", ToastAndroid.TOP);
+            ToastAndroid.show("error" + errors, ToastAndroid.TOP);
         }
     }
     const openModal4 = () => {
@@ -281,6 +274,7 @@ const CompanysetupScreen = ({ navigation, route }) => {
     return (
 
         <View style={CompanySetupStyle.container}>
+
             <StatusBarPlaceHolder />
             <View style={NoticeStyle.headerBarforCompany}>
 
@@ -288,7 +282,7 @@ const CompanysetupScreen = ({ navigation, route }) => {
                     style={NoticeStyle.backIcon}>
                     <TouchableOpacity
                         style={NoticeStyle.backIconTouch}
-                        onPress={() => { navigation.goBack()}}>
+                        onPress={() => { navigation.goBack() }}>
                         <Image resizeMode="contain" style={{ width: 20, height: 20, }}
                             source={require('../../../../assets/images/left_arrow.png')}>
                         </Image>
@@ -323,257 +317,257 @@ const CompanysetupScreen = ({ navigation, route }) => {
 
                 </View>
             </View>
-            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}
-            <View style={CompanySetupStyle.FlatListContainer}>
-                <FlatList
-                    data={companyList}
-                    keyExtractor={(x, i) => i.toString()}
-                    renderItem={({ item }) =>
-                        <View style={CompanySetupStyle.FlatListItemContainer}>
-                            <View style={CompanySetupStyle.ListPart}>
-                                <Text style={CompanySetupStyle.companyText}>{item.Text}</Text>
-                                <View style={{ flexDirection: 'row', width: (width * 50) / 100, }}>
-                                    <Image resizeMode="contain" style={CompanySetupStyle.locationIcon} source={require('../../../../assets/images/Path_87.png')}></Image>
-                                    <Text style={CompanySetupStyle.locationText}>{item.Address}</Text>
+                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}
+                <View style={CompanySetupStyle.FlatListContainer}>
+                    <FlatList
+                        data={companyList}
+                        keyExtractor={(x, i) => i.toString()}
+                        renderItem={({ item }) =>
+                            <View style={CompanySetupStyle.FlatListItemContainer}>
+                                <View style={CompanySetupStyle.ListPart}>
+                                    <Text style={CompanySetupStyle.companyText}>{item.Text}</Text>
+                                    <View style={{ flexDirection: 'row', width: (width * 50) / 100, }}>
+                                        <Image resizeMode="contain" style={CompanySetupStyle.locationIcon} source={require('../../../../assets/images/Path_87.png')}></Image>
+                                        <Text style={CompanySetupStyle.locationText}>{item.Address}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', width: (width * 50) / 100, }}>
+                                        <Image style={CompanySetupStyle.phoneIcon} source={require('../../../../assets/images/Path_86.png')}></Image>
+                                        <Text style={CompanySetupStyle.phoneText}>{item.phone}</Text>
+                                    </View>
                                 </View>
-                                <View style={{ flexDirection: 'row', width: (width * 50) / 100, }}>
-                                    <Image style={CompanySetupStyle.phoneIcon} source={require('../../../../assets/images/Path_86.png')}></Image>
-                                    <Text style={CompanySetupStyle.phoneText}>{item.phone}</Text>
-                                </View>
+                                <TouchableOpacity onPress={() => _EditCom(item)} style={{ marginTop: 5, }}>
+                                    <View style={CompanySetupStyle.editCotainer}>
+                                        <Image style={CompanySetupStyle.editImage} source={require('../../../../assets/images/edit.png')}></Image>
+                                        <Text style={CompanySetupStyle.editText}>EDIT</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={() => _EditCom(item)} style={{ marginTop: 5, }}>
-                                <View style={CompanySetupStyle.editCotainer}>
-                                    <Image style={CompanySetupStyle.editImage} source={require('../../../../assets/images/edit.png')}></Image>
-                                    <Text style={CompanySetupStyle.editText}>EDIT</Text>
-                                </View>
+                        }
+                    />
+                    {/* <CompanyLists  itemList={companyList}/> */}
+                </View>
+                <Modal
+                    style={[CompanySetupStyle.modal3]}
+                    position={"center"} isOpen={modal4}
+                    isDisabled={isDisabled}
+                    backdropPressToClose={false}
+                    swipeToClose={true}
+                >
+                    <View style={CompanySetupStyle.modalHeader}>
+                        <View style={CompanySetupStyle.modalheaderLeft}></View>
+                        <View style={CompanySetupStyle.modalheaderRight}>
+                            <TouchableOpacity onPress={() => setmodal4(false)} style={CompanySetupStyle.closeTouchable}>
+                                <Image resizeMode="contain" style={{ width: 15, height: 15, marginRight: 17, marginTop: 15 }} source={require('../../../../assets/images/close.png')}>
+                                </Image>
                             </TouchableOpacity>
                         </View>
-                    }
-                />
-                {/* <CompanyLists  itemList={companyList}/> */}
-            </View>
-            <Modal
-                style={[CompanySetupStyle.modal3]}
-                position={"center"} isOpen={modal4} isDisabled={isDisabled}
-                // onOpened={() => this.setState({ floatButtonHide: true })}
-                backdropPressToClose={false}
-                swipeToClose={true}
-            >
-                <View style={CompanySetupStyle.modalHeader}>
-                    <View style={CompanySetupStyle.modalheaderLeft}></View>
-                    <View style={CompanySetupStyle.modalheaderRight}>
-                        <TouchableOpacity onPress={() => setmodal4(false)} style={CompanySetupStyle.closeTouchable}>
-                            <Image resizeMode="contain" style={{ width: 15, height: 15, marginRight: 17, marginTop: 15 }} source={require('../../../../assets/images/close.png')}>
-                            </Image>
-                        </TouchableOpacity>
                     </View>
-                </View>
 
 
-                <View style={CompanySetupStyle.modelContent}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 25 }}>
-                        ADD COMPANY
-                    </Text>
-                    <Image resizeMode="contain" style={CompanySetupStyle.addPeopleImg} source={require('../../../../assets/images/company.png')}>
-                    </Image>
-                </View>
+                    <View style={CompanySetupStyle.modelContent}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 25 }}>
+                            ADD COMPANY
+                        </Text>
+                        <Image resizeMode="contain" style={CompanySetupStyle.addPeopleImg} source={require('../../../../assets/images/company.png')}>
+                        </Image>
+                    </View>
 
-                <TextInput style={CompanySetupStyle.addCompanyinputBox} placeholder="Company Name"
-                    placeholderTextColor="#cbcbcb"
-                    returnKeyType="next" autoCorrect={false}
-                    onSubmitEditing={() => AddressRef.current.focus()}
-                    onChangeText={(text) => setCompanyName(text)}
-                    value={CompanyName}
-                />
-                <TextInput style={CompanySetupStyle.addCompanyinputBox} placeholder="Address"
-                    placeholderTextColor="#cbcbcb"
-                    returnKeyType="next" autoCorrect={false}
-                    ref={AddressRef}
-                    onSubmitEditing={() => PhoneRef.current.focus()}
-                    onChangeText={(text) => setCompanyAddress(text)}
-                    value={CompanyAddress}
-                />
-                <TextInput style={CompanySetupStyle.addCompanyinputBox} placeholder="Mobile Number"
-                    placeholderTextColor="#cbcbcb"
-                    keyboardType="number-pad"
-                    ref={PhoneRef}
-                    returnKeyType="go" autoCorrect={false}
-                    onChangeText={(text) => setCompanyMobileNo(text)}
-                    value={CompanyMobileNo}
-                />
+                    <TextInput style={CompanySetupStyle.addCompanyinputBox} placeholder="Company Name"
+                        placeholderTextColor="#cbcbcb"
+                        returnKeyType="next" autoCorrect={false}
+                        onSubmitEditing={() => AddressRef.current.focus()}
+                        onChangeText={(text) => setCompanyName(text)}
+                        value={CompanyName}
+                    />
+                    <TextInput style={CompanySetupStyle.addCompanyinputBox} placeholder="Address"
+                        placeholderTextColor="#cbcbcb"
+                        returnKeyType="next" autoCorrect={false}
+                        ref={AddressRef}
+                        onSubmitEditing={() => PhoneRef.current.focus()}
+                        onChangeText={(text) => setCompanyAddress(text)}
+                        value={CompanyAddress}
+                    />
+                    <TextInput style={CompanySetupStyle.addCompanyinputBox} placeholder="Mobile Number"
+                        placeholderTextColor="#cbcbcb"
+                        keyboardType="number-pad"
+                        ref={PhoneRef}
+                        returnKeyType="go" autoCorrect={false}
+                        onChangeText={(text) => setCompanyMobileNo(text)}
+                        value={CompanyMobileNo}
+                    />
 
-                <View style={{
-                    flexDirection: 'row', alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}>
-                    <Text style={{
-                        // marginTop: 10,
-                        marginLeft: 20, justifyContent: 'flex-start'
+                    <View style={{
+                        flexDirection: 'row', alignItems: 'center',
+                        justifyContent: 'space-between',
                     }}>
-                        Maximum Office Hours:
-                    </Text>
-                    <TouchableOpacity onPress={_showDateTimePicker}
-                        style={{ marginRight: 18, justifyContent: "flex-end" }}
-                    >
-                        <View>
-                            <TextInput
-                                editable={false}
-                                style={CompanySetupStyle.inputstylecom}
-                                value={MaximumOfficeHours}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                    <DateTimePicker
-                        isVisible={isDateTimePickerVisible}
-                        onConfirm={_handleDatePicked}
-                        onCancel={_hideDateTimePicker}
-                        mode={'time'}
-                    />
-                </View>
-                <View style={{
-                    flexDirection: 'row', alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
-                    <Text style={{
-                        // marginTop: 10,
-                        marginLeft: 20, justifyContent: 'flex-start',
-                    }}>
-                        Can Leave Before:
-                    </Text>
-                    <TouchableOpacity onPress={_showDateTimePicker1}
-                        style={{ marginRight: 18, justifyContent: "flex-end" }}
-                    >
-                        <View>
-                            <TextInput
-                                editable={false}
-                                style={CompanySetupStyle.inputstylecom}
-                                value={OfficeOutTime}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                    <DateTimePicker
-                        isVisible={isDateTimePickerVisible1}
-                        onConfirm={_handleDatePicked1}
-                        onCancel={_hideDateTimePicker1}
-                        mode={'time'}
-                    />
-                </View>
-                <TouchableOpacity style={CompanySetupStyle.addPeopleBtn} onPress={() => closeModal4()} >
-                    <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center', }}>Add</Text>
-                </TouchableOpacity>
-            </Modal>
-            <Modal style={[CompanySetupStyle.modalforCreateCompany]}
-                position={"center"} isOpen={modalcomupdate} isDisabled={isDisabled}
-                backdropPressToClose={false}
-                swipeToClose={false}
-            >
-                <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-                    <View style={{ alignItems: "flex-start" }}>
-                    </View>
-                    <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity onPress={() => setmodalcomupdate(false)}
-                            style={CompanySetupStyle.closeTouchable}>
-                            <Image resizeMode="contain" style={{ width: 15, height: 15, marginRight: 17, marginTop: 15 }}
-                                source={require('../../../../assets/images/close.png')}>
-                            </Image>
+                        <Text style={{
+                            // marginTop: 10,
+                            marginLeft: 20, justifyContent: 'flex-start'
+                        }}>
+                            Maximum Office Hours:
+                        </Text>
+                        <TouchableOpacity onPress={_showDateTimePicker}
+                            style={{ marginRight: 18, justifyContent: "flex-end" }}
+                        >
+                            <View>
+                                <TextInput
+                                    editable={false}
+                                    style={CompanySetupStyle.inputstylecom}
+                                    value={MaximumOfficeHours}
+                                />
+                            </View>
                         </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={{ marginTop: 10 }}>
-                    <View style={{}}>
-                        <Text style={CompanySetupStyle.lablecompanyName}>
-                            Company Name:
-                        </Text>
-                    </View>
-                    <View>
-                        <TextInput
-                            style={CompanySetupStyle.inputstyle}
-                            value={ComName}
-                            onChangeText={(txt) => setComName(txt)}
+                        <DateTimePicker
+                            isVisible={isDateTimePickerVisible}
+                            onConfirm={_handleDatePicked}
+                            onCancel={_hideDateTimePicker}
+                            mode={'time'}
                         />
                     </View>
-                </View>
-                <View style={{ marginTop: 5 }}>
-                    <View style={{}}>
-                        <Text style={CompanySetupStyle.lableAddress}>
-                            Company Address:
+                    <View style={{
+                        flexDirection: 'row', alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}>
+                        <Text style={{
+                            // marginTop: 10,
+                            marginLeft: 20, justifyContent: 'flex-start',
+                        }}>
+                            Can Leave Before:
                         </Text>
-                    </View>
-                    <View>
-                        <TextInput
-                            style={CompanySetupStyle.inputstyle}
-                            value={Address}
-                            onChangeText={(txt) => setAddress(txt)}
+                        <TouchableOpacity onPress={_showDateTimePicker1}
+                            style={{ marginRight: 18, justifyContent: "flex-end" }}
+                        >
+                            <View>
+                                <TextInput
+                                    editable={false}
+                                    style={CompanySetupStyle.inputstylecom}
+                                    value={OfficeOutTime}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        <DateTimePicker
+                            isVisible={isDateTimePickerVisible1}
+                            onConfirm={_handleDatePicked1}
+                            onCancel={_hideDateTimePicker1}
+                            mode={'time'}
                         />
                     </View>
-                </View>
-                <View style={{ marginTop: 5 }}>
-                    <View style={{}}>
-                        <Text
-                            style={CompanySetupStyle.labelphone}>
-                            Company Phone:
-                        </Text>
+                    <TouchableOpacity style={CompanySetupStyle.addPeopleBtn} onPress={() => closeModal4()} >
+                        <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center', }}>Add</Text>
+                    </TouchableOpacity>
+                </Modal>
+                <Modal style={[CompanySetupStyle.modalforCreateCompany]}
+                    position={"center"} isOpen={modalcomupdate} isDisabled={isDisabled}
+                    backdropPressToClose={false}
+                    swipeToClose={false}
+                >
+                    <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
+                        <View style={{ alignItems: "flex-start" }}>
+                        </View>
+                        <View style={{ alignItems: "flex-end" }}>
+                            <TouchableOpacity onPress={() => setmodalcomupdate(false)}
+                                style={CompanySetupStyle.closeTouchable}>
+                                <Image resizeMode="contain" style={{ width: 15, height: 15, marginRight: 17, marginTop: 15 }}
+                                    source={require('../../../../assets/images/close.png')}>
+                                </Image>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View>
-                        <TextInput
-                            style={CompanySetupStyle.inputstyle}
-                            value={phone}
-                            onChangeText={(txt) => setphone(txt)}
-                        />
-                    </View>
-                </View>
-                <View style={CompanySetupStyle.labelContainerMax}>
-                    <Text style={CompanySetupStyle.lablemax}>
-                        Maximum Office Hours:
-                    </Text>
-                    <TouchableOpacity onPress={_showDateTimePicker}
-                        style={CompanySetupStyle.TextinputTouch}
-                    >
+                    <View style={{ marginTop: 10 }}>
+                        <View style={{}}>
+                            <Text style={CompanySetupStyle.lablecompanyName}>
+                                Company Name:
+                            </Text>
+                        </View>
                         <View>
                             <TextInput
-                                editable={false}
-                                style={CompanySetupStyle.inputstylecom}
-                                value={MaximumOfficeHours}
+                                style={CompanySetupStyle.inputstyle}
+                                value={ComName}
+                                onChangeText={(txt) => setComName(txt)}
                             />
                         </View>
-                    </TouchableOpacity>
-                    <DateTimePicker
-                        isVisible={isDateTimePickerVisible}
-                        onConfirm={_handleDatePicked}
-                        onCancel={_hideDateTimePicker}
-                        mode={'time'}
-                    />
-                </View>
-                <View style={{
-                    flexDirection: 'row', alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}>
-                    <Text style={CompanySetupStyle.canleaveText}>
-                        Can Leave Before:
-                    </Text>
-                    <TouchableOpacity onPress={_showDateTimePicker1}
-                        style={{ marginRight: 18, justifyContent: "flex-end" }}
-                    >
+                    </View>
+                    <View style={{ marginTop: 5 }}>
+                        <View style={{}}>
+                            <Text style={CompanySetupStyle.lableAddress}>
+                                Company Address:
+                            </Text>
+                        </View>
                         <View>
                             <TextInput
-                                editable={false}
-                                style={CompanySetupStyle.inputstylecom}
-                                value={OfficeOutTime}
+                                style={CompanySetupStyle.inputstyle}
+                                value={Address}
+                                onChangeText={(txt) => setAddress(txt)}
+                            />
+                        </View>
+                    </View>
+                    <View style={{ marginTop: 5 }}>
+                        <View style={{}}>
+                            <Text
+                                style={CompanySetupStyle.labelphone}>
+                                Company Phone:
+                            </Text>
+                        </View>
+                        <View>
+                            <TextInput
+                                style={CompanySetupStyle.inputstyle}
+                                value={phone}
+                                onChangeText={(txt) => setphone(txt)}
+                            />
+                        </View>
+                    </View>
+                    <View style={CompanySetupStyle.labelContainerMax}>
+                        <Text style={CompanySetupStyle.lablemax}>
+                            Maximum Office Hours:
+                        </Text>
+                        <TouchableOpacity onPress={_showDateTimePicker}
+                            style={CompanySetupStyle.TextinputTouch}
+                        >
+                            <View>
+                                <TextInput
+                                    editable={false}
+                                    style={CompanySetupStyle.inputstylecom}
+                                    value={MaximumOfficeHours}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        <DateTimePicker
+                            isVisible={isDateTimePickerVisible}
+                            onConfirm={_handleDatePicked}
+                            onCancel={_hideDateTimePicker}
+                            mode={'time'}
+                        />
+                    </View>
+                    <View style={{
+                        flexDirection: 'row', alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}>
+                        <Text style={CompanySetupStyle.canleaveText}>
+                            Can Leave Before:
+                        </Text>
+                        <TouchableOpacity onPress={_showDateTimePicker1}
+                            style={{ marginRight: 18, justifyContent: "flex-end" }}
+                        >
+                            <View>
+                                <TextInput
+                                    editable={false}
+                                    style={CompanySetupStyle.inputstylecom}
+                                    value={OfficeOutTime}
 
-                            />
-                        </View>
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        <DateTimePicker
+                            isVisible={isDateTimePickerVisible1}
+                            onConfirm={_handleDatePicked1}
+                            onCancel={_hideDateTimePicker1}
+                            mode={'time'}
+                        />
+                    </View>
+                    <TouchableOpacity style={CompanySetupStyle.addPeopleBtncom} onPress={() => closemodalForupdateCom()} >
+                        <Text style={CompanySetupStyle.SaveStyle}>Save</Text>
                     </TouchableOpacity>
-                    <DateTimePicker
-                        isVisible={isDateTimePickerVisible1}
-                        onConfirm={_handleDatePicked1}
-                        onCancel={_hideDateTimePicker1}
-                        mode={'time'}
-                    />
-                </View>
-                <TouchableOpacity style={CompanySetupStyle.addPeopleBtncom} onPress={() => closemodalForupdateCom()} >
-                    <Text style={CompanySetupStyle.SaveStyle}>Save</Text>
-                </TouchableOpacity>
-            </Modal>
+                </Modal>
         </View>
     );
 }

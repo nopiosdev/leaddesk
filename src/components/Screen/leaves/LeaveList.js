@@ -9,6 +9,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
 import Searchbar from '../../Searchbar';
+import LeaveBox from '../../LeaveBox';
 
 
 const LeaveList = ({ navigation, route }) => {
@@ -23,7 +24,7 @@ const LeaveList = ({ navigation, route }) => {
     const [search, setSearch] = useState('');
     const isFocused = useIsFocused();
 
-    
+
     const _onRefresh = async () => {
         setrefreshing(true);
         setTimeout(function () {
@@ -66,6 +67,7 @@ const LeaveList = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await GetLeaveList(companyId)
                 .then(res => {
+                    console.log('GetLeaveList', res)
                     setleaveList(res);
                     setTempList(res);
                     setprogressVisible(false);
@@ -101,8 +103,6 @@ const LeaveList = ({ navigation, route }) => {
                 setprogressVisible(false);
                 console.log("error occured");
             });
-
-        getLeaveList(companyId, true);
     }
 
     return (
@@ -146,132 +146,13 @@ const LeaveList = ({ navigation, route }) => {
                                     data={leaveList}
                                     keyExtractor={(x, i) => i.toString()}
                                     renderItem={({ item }) =>
-                                        <View
-                                            style={LeaveListStyle.listContainer}
-                                        >
-                                            <View style={{ flexDirection: 'row', borderBottomColor: 'gray', borderBottomWidth: .4, padding: 8, paddingLeft: 0 }}>
-
-                                                <Text style={{ fontFamily: 'Montserrat_SemiBold', fontSize: 14 }}>{item.EmployeeName}</Text>
-                                            </View>
-                                            <View style={LeaveListStyle.listInnerContainer}>
-                                                <Text style={LeaveListStyle.leaveType}>
-
-                                                    Cause:
-                                                </Text>
-                                                <Text style={LeaveListStyle.leaveFrom}>
-                                                    From:
-
-                                                </Text>
-                                            </View>
-
-                                            <View style={LeaveListStyle.leaveReasonContainer}>
-                                                <Text
-                                                    style={[LeaveListStyle.leaveReasonText,
-                                                    { fontFamily: 'Montserrat_SemiBold' }]}>
-
-                                                    {item.LeaveReason}
-                                                </Text>
-                                                <Text
-                                                    style={LeaveListStyle.reasonFromDate}>
-                                                    {item.FromDateVw}
-
-
-                                                </Text>
-                                            </View>
-                                            <View
-                                                style={LeaveListStyle.causeContainer}>
-                                                <Text
-                                                    style={LeaveListStyle.causeText}>
-
-                                                    Leave Type:
-                                                </Text>
-                                                <Text
-                                                    style={LeaveListStyle.leaveToText}>
-                                                    To:
-                                                </Text>
-                                            </View>
-
-                                            <View
-                                                style={LeaveListStyle.detailsContainer}>
-                                                <Text
-                                                    style={LeaveListStyle.reasonFromDate}>
-                                                    {item.LeaveType}
-
-                                                </Text>
-                                                <Text
-                                                    style={LeaveListStyle.detailsTextInner}>
-                                                    {item.ToDateVw}
-                                                </Text>
-                                            </View>
-                                            {(item.ApprovedBy != null && item.ApprovedBy != '') ?
-                                                <View
-                                                    style={LeaveListStyle.approvedByContainer}>
-                                                    <Text
-                                                        style={LeaveListStyle.approvedByText}>
-                                                        Approved By: {item.ApprovedBy}
-                                                    </Text>
-                                                    <Text
-                                                        style={LeaveListStyle.approvedAtText}>
-                                                        Approved At: {item.ApprovedAtVw}
-                                                    </Text>
-                                                </View>
-                                                : null}
-
-                                            {(!item.IsApproved && !item.IsRejected) ?
-                                                <View
-                                                    style={LeaveListStyle.buttonContainer}
-                                                >
-                                                    <View style={LeaveListStyle.foraligmentitem}>
-                                                        <TouchableOpacity
-                                                            onPress={() => leaveApprove(item)}
-                                                            style={LeaveListStyle.buttonTouchable}
-                                                        >
-                                                            <Text style={LeaveListStyle.approveText}>
-                                                                APPROVE
-                                                            </Text>
-                                                        </TouchableOpacity>
-
-                                                        <TouchableOpacity
-                                                            onPress={() => leaveReject(item)}
-
-                                                            style={LeaveListStyle.rejectButtonTouchable}
-                                                        >
-                                                            <Text
-                                                                style={LeaveListStyle.rejectText}
-                                                            >
-                                                                REJECT
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                    <Text style={LeaveListStyle.statusDate1}>
-                                                        {item.LeaveInDays} Days
-
-                                                    </Text>
-
-                                                </View>
-                                                :
-                                                <View
-                                                    style={LeaveListStyle.statusButton}>
-                                                    <View
-                                                        style={LeaveListStyle.statusButtonInner}>
-
-                                                        {item.IsApproved == true ? (<Text style={{ color: 'green', }}>Approved</Text>) : (item.IsRejected == true ? (<Text style={{ color: 'red', }}>Rejected</Text>) : (<Text style={{ color: '#f1b847', }}>Pending</Text>))}
-
-                                                    </View>
-
-                                                    <Text
-                                                        style={LeaveListStyle.statusDate}
-                                                    >
-                                                        {item.LeaveInDays} Days
-
-                                                    </Text>
-
-                                                </View>
-                                            }
-                                        </View>
-
+                                        <LeaveBox
+                                            item={item}
+                                            onApprove={() => leaveApprove(item)}
+                                            onReject={() => leaveReject(item)}
+                                        />
                                     }
-                                    ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction}/>}
+                                    ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction} />}
                                 />
                             </View>
                         </ScrollView>

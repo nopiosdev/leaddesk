@@ -46,7 +46,7 @@ const ReportScreen = ({ navigation, route }) => {
         { label: 'November', key: '11' },
         { label: 'December', key: '12' },
     ]);
-    const [VistNumber, setVistNumber] = useState(moment(new Date()).format("MMMM"));
+    const [VistNumber, setVistNumber] = useState(moment(new Date()).format("M"));
     const [year, setyear] = useState(moment(new Date()).format("YYYY"));
     const [workingReportList, setworkingReportList] = useState([]);
     const [companyId, setcompanyId] = useState(0);
@@ -72,7 +72,9 @@ const ReportScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetAllEmployeeAttendanceWithMonth(cId, VistNumber, year)
                 .then(res => {
-                    setworkingReportList(res?.result);
+                    console.log("res",res);
+
+                    setworkingReportList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -206,15 +208,12 @@ const ReportScreen = ({ navigation, route }) => {
                                     DailyAttendanceStyle.FlatListLeft
                                 }>
                                 <View style={{ paddingRight: 10, }}>
-                                    {item.ImageFileName !== "" ?
+                                    {item.ImageFileName ?
                                         <Image resizeMode="contain" style={
                                             DailyAttendanceStyle.ImageLocal
                                         } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={
                                             DailyAttendanceStyle.ImagestyleFromServer
                                         } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />}
-
-
-
                                 </View>
                                 <View style={DailyAttendanceStyle.RightTextView}>
                                     <Text style={
@@ -254,13 +253,13 @@ const ReportScreen = ({ navigation, route }) => {
                                             style={
                                                 [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]
                                             }>
-                                            {item.TotalPresent} d
+                                            {item.TotalPresent} 
                                         </Text>
                                     </View>
                                     <Text style={
                                         DailyAttendanceStyle.CheckinTimeText
                                     }>
-                                        {item.CheckInTimeVw !== "" ? item.CheckInTimeVw : ("")}
+                                        {item.CheckInTime !== "" ? item.CheckInTime : ("")}
 
                                     </Text>
 
@@ -281,7 +280,7 @@ const ReportScreen = ({ navigation, route }) => {
                                             style={
                                                 [DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]
                                             }>
-                                            {item.TotalStayTime} h
+                                            {(item.TotalStayTime)} h
                                         </Text>
                                     </View>
                                     <Text style={
