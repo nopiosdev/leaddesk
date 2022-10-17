@@ -12,7 +12,7 @@ import moment from 'moment';
 import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 
 
 const ReportScreen = ({ navigation, route }) => {
@@ -72,10 +72,11 @@ const ReportScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetAllEmployeeAttendanceWithMonth(cId, VistNumber, year)
                 .then(res => {
-                    console.log("res",res);
-
-                    setworkingReportList(res);
-                    setprogressVisible(false);
+                    console.log("res", res);
+                    if (res?.length > 0) {
+                        setworkingReportList(res);
+                        setprogressVisible(false);
+                    }
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -104,7 +105,7 @@ const ReportScreen = ({ navigation, route }) => {
                     selectedValue={VistNumber}
                     itemStyle={{ borderWidth: 1, borderColor: 'red', fontSize: 12, fontWeight: '500', padding: 0, borderColor: '#798187', borderRadius: 10, borderWidth: 1 }}
                     style={{ height: 50, width: 130, borderWidth: 1, marginTop: -15, padding: 0, borderColor: '#798187', borderRadius: 10, }}
-                    onValueChange={(itemValue, itemIndex) =>{
+                    onValueChange={(itemValue, itemIndex) => {
                         console.log(itemValue)
                         selectedItem(itemValue)
                     }
@@ -253,7 +254,7 @@ const ReportScreen = ({ navigation, route }) => {
                                             style={
                                                 [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]
                                             }>
-                                            {item.TotalPresent} 
+                                            {item.TotalPresent}
                                         </Text>
                                     </View>
                                     <Text style={

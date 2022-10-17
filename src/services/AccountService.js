@@ -19,8 +19,8 @@ export const CreateAccount = (UserFullName, PhoneNumber, CompanyName, Password, 
 export const ChangePasswords = async data => postApi("User/changepassword", data);
 export const ChangePasswordforEmp = async data => postApi("User/resetpassword", data);
 
-export const CreateEmployee = async data => postApi("RtEmployeeApi/CreateEmployee", data);
-export const UpdateEmployee = async data => postApi("RtEmployeeApi/UpdateEmployee", data);
+export const CreateEmployee = async data => postApi("employee/CreateEmployee", data);
+export const UpdateEmployee = async data => postApi("employee/EditEmployee", data);
 
 export const Login = async data => postApi("user/Login", data);
 

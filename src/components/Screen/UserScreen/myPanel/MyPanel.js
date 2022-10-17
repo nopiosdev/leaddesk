@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Modal from 'react-native-modalbox';
 import Timeline from 'react-native-timeline-flatlist'
@@ -46,6 +46,7 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import { urlDev, urlResource } from '../../../../services/api/config';
 import { useSelector } from 'react-redux';
 import LocalStorage from '../../../../common/LocalStorage';
+import CustomImagePicker from '../../../CustomImagePicker';
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
 
@@ -159,8 +160,8 @@ const MyPanel = ({ navigation }) => {
     const [name, setname] = useState('');
     const [gmail, setgmail] = useState('');
     const [Imageparam, setImageparam] = useState("resourcetracker");
-    const [ImageFileId, setImageFileId] = useState('');
-    const [EmployeeId, setEmployeeId] = useState(0);
+    const [ImageFileId, setImageFileId] = useState(null);
+    const [EmployeeId, setEmployeeId] = useState(null);
     const [data, setdata] = useState([]);
     const [currentLongitude, setcurrentLongitude] = useState('unknown');
     const [currentLatitude, setcurrentLatitude] = useState('unknown');
@@ -254,98 +255,101 @@ const MyPanel = ({ navigation }) => {
     const openmodalForImage = () => {
         setmodalForImage(true);
     }
-    const openmodalForprofileImg = () => {
-        _takePhoto();
-    }
+    // const openmodalForprofileImg = () => {
+    //     _takePhoto();
+    // }
 
-    const _takePhoto = async () => {
-        setmodalForImage(false);
-        await ImagePicker.getCameraPermissionsAsync()
-        await ImagePicker.getMediaLibraryPermissionsAsync();
-        let pickerResult = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            height: 250,
-            width: 250,
-        });
-        console.log(pickerResult, '.......................')
-        if (pickerResult.cancelled == false) {
-            handleUploadPhoto(pickerResult)
-        }
-    };
+    // const _takePhoto = async () => {
+    //     setmodalForImage(false);
+    //     await ImagePicker.getCameraPermissionsAsync()
+    //     await ImagePicker.getMediaLibraryPermissionsAsync();
+    //     let pickerResult = await ImagePicker.launchCameraAsync({
+    //         allowsEditing: true,
+    //         height: 250,
+    //         width: 250,
+    //     });
+    //     console.log(pickerResult, '.......................')
+    //     if (pickerResult.cancelled == false) {
+    //         handleUploadPhoto(pickerResult)
+    //     }
+    // };
 
-    const handleUploadPhoto = async (pickerResult) => {
-        const userToken = await LocalStorage.GetData("userToken");
-        console.log(pickerResult.uri, '...............send')
-        var data = new FormData();
-        data.append('BlobName', {
-            uri: pickerResult.uri,
-            name: 'my_photo.jpg',
-            type: 'image/jpg'
-        })
-        setprogressVisible(true);
-        fetch(urlDev + "RtTaskApi/UploadDocuments", {
-            headers: {
-                'Authorization': `bearer ${userToken}`,
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
-            },
-            method: "POST",
-            body: data
-        })
-            .then(response => response.json())
-            .then(response => {
-                setimage(urlResource + response.ImagePath);
-                setImageFileName(response?.ImagePath);
-                setprogressVisible(false);
+    // const handleUploadPhoto = async (pickerResult) => {
+    //     const userToken = await LocalStorage.GetData("userToken");
+    //     console.log(pickerResult.uri, '...............send')
+    //     var data = new FormData();
+    //     data.append('BlobName', {
+    //         uri: pickerResult.uri,
+    //         name: 'my_photo.jpg',
+    //         type: 'image/jpg'
+    //     })
+    //     setprogressVisible(true);
+    //     fetch(urlDev + "RtTaskApi/UploadDocuments", {
+    //         headers: {
+    //             'Authorization': `bearer ${userToken}`,
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'multipart/form-data'
+    //         },
+    //         method: "POST",
+    //         body: data
+    //     })
+    //         .then(response => response.json())
+    //         .then(response => {
+                // setimage(urlResource + response.ImagePath);
+                // setImageFileName(response?.ImagePath);
+                // setprogressVisible(false);
 
-                ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
-                updateEmployeeRecords();
-                console.log(response.ImagePath, 'return..............');
-            })
-            .catch(error => {
-                setprogressVisible(false);
-                console.log("upload error", error);
-                ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
-            });
-    };
+    //             ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
+    //             updateEmployeeRecords();
+    //             console.log(response.ImagePath, 'return..............');
+    //         })
+    //         .catch(error => {
+    //             setprogressVisible(false);
+    //             console.log("upload error", error);
+    //             ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
+    //         });
+    // };
 
-    const _pickImage = async () => {
-        setmodalForImage(false);
-        await ImagePicker.getCameraPermissionsAsync()
-        await ImagePicker.getMediaLibraryPermissionsAsync();
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            //aspect: [4, 4],
-            quality: 1,
-            height: 250,
-            width: 250,
-        });
-        if (pickerResult.cancelled == false) {
-            handleUploadPhoto(pickerResult)
-        }
-    };
+    // const _pickImage = async () => {
+    //     setmodalForImage(false);
+    //     await ImagePicker.getCameraPermissionsAsync()
+    //     await ImagePicker.getMediaLibraryPermissionsAsync();
+    //     let pickerResult = await ImagePicker.launchImageLibraryAsync({
+    //         allowsEditing: true,
+    //         //aspect: [4, 4],
+    //         quality: 1,
+    //         height: 250,
+    //         width: 250,
+    //     });
+    //     if (pickerResult.cancelled == false) {
+    //         handleUploadPhoto(pickerResult)
+    //     }
+    // };
     const updateEmployeeRecords = async () => {
-        let data = {
-            UserFullName: EmployeeName,
-            EmployeeCode: EmployeeCode,
-            DesignationName: Designation,
-            Id: EmployeeId,
-            ImageFileName: ImageFileName,
-            ImageFileId: ImageFileId,
-        };
-        console.log('data...', data);
+
+        var data = new FormData();
+        data.append('UserFullName', EmployeeName);
+        data.append('EmployeeCode', EmployeeCode);
+        data.append('DesignationName', Designation);
+        data.append('Id', EmployeeId);
+        data.append('ImageFileName', ImageFileName);
+        data.append('ImageFileId', ImageFileId);
+        data.append('AutoCheckPointTime', AutoCheckPointTime);
+        data.append('IsAutoCheckPoint', IsAutoCheckPoint);
+
+
         try {
             let response = await UpdateEmployee(data);
-            setsuccessMessage(response?.result?.message);
-            if (response && response.isSuccess) {
+            console.log('UpdateEmployee', response)
+            setsuccessMessage(response?.message);
+            if (response && response?.success) {
                 setmodalEditEmp(false);
                 getMyTodayAttendance();
-                console.log(response.result, '.....update.....')
             } else {
-                alert(response.result);
+                alert(response);
                 Alert.alert(
                     "",
-                    response.result.message,
+                    response?.message,
                     [
                         { text: 'OK', },
                     ],
@@ -406,31 +410,32 @@ const MyPanel = ({ navigation }) => {
     const goBack = () => {
         DailyAttendanceCombo();
     }
-    const getMyTodayAttendance = async (cId) => {
+    const getMyTodayAttendance = async () => {
 
         setprogressVisible(true);
         await GetMyTodayAttendance(user?.Id)
             .then(res => {
-                setattendanceModel(res?.result);
-                setEmployeeCode(res.result.EmployeeCode);
-                setEmployeeName(res.result.EmployeeName);
-                setDepartmentName(res.result.DepartmentName);
-                setDesignation(res.result.Designation);
-                setCheckInTimeVw(ConvertUtcToLocalTime(res.result.CheckInTimeVw));
-                setCheckOutTimeVw(ConvertUtcToLocalTime(res.result.CheckOutTimeVw));
-                setOfficeStayHour(res.result.OfficeStayHour);
-                setIsCheckedIn(res.result.IsCheckedIn);
-                setIsCheckedOut(res.result.IsCheckedOut);
-                setIsAutoCheckPoint(res.result.IsAutoCheckPoint);
-                setAutoCheckPointTime(res.result.AutoCheckPointTime);
-                setStatus(res.result.Status);
-                setEmployeeId(res.result.EmployeeId);
-                setImageFileName(res.result.ImageFileName);
+                console.log('GetMyTodayAttendance', res)
+                if (!res?.success && res?.success !== false) {
+                    console.log('RUN',res)
 
-                console.log("attendanceModel", res.result);
-                console.log('IsCheckedIn', IsCheckedIn);
+                    setattendanceModel(res);
+                    // setEmployeeCode(res?.EmployeeCode);
+                    setEmployeeName(res[0]?.EmployeeName);
+                    setDepartmentName(res[0]?.DepartmentName);
+                    setDesignation(res[0]?.Designation);
+                    setCheckInTimeVw(ConvertUtcToLocalTime(res[0]?.CheckInTime));
+                    setCheckOutTimeVw(ConvertUtcToLocalTime(res[0]?.CheckOutTime));
+                    setOfficeStayHour(res[0]?.OfficeStayHour);
+                    setIsCheckedIn(res[0]?.IsCheckedIn);
+                    setIsCheckedOut(res[0]?.IsCheckedOut);
+                    setIsAutoCheckPoint(res[0]?.IsAutoCheckPoint);
+                    setAutoCheckPointTime(res[0]?.AutoCheckPointTime);
+                    setStatus(res[0]?.Status);
+                    setEmployeeId(res[0]?.EmployeeId);
+                    setImageFileName(res[0]?.ImageFileName);
+                }
                 setprogressVisible(false);
-
             }).catch(() => {
                 setprogressVisible(false);
                 console.log("GetMyTodayAttendance error occured");
@@ -438,35 +443,39 @@ const MyPanel = ({ navigation }) => {
         setprogressVisible(true);
         await GetMovementDetails(user?.Id)
             .then(res => {
-                setEmpTrackList(res?.result);
-                if (data.length != 0) {
-                    setdata([]);
-                }
-                res?.result?.map((userData) => {
+                console.log('GetMovementDetails', res)
+                if (!res?.success && res?.success !== false) {
 
-                    var title = '';
-                    var color = '';
-                    if (userData.IsCheckInPoint) {
-                        title = "Checked In";
-                        color = "green"
-                    } else if (userData.IsCheckOutPoint) {
-                        title = "Checked Out";
-                        color = "red"
-                    } else {
-                        title = "Checked point";
-                        color = "gray"
+                    setEmpTrackList(res);
+                    if (data.length != 0) {
+                        setdata([]);
                     }
+                    // res?.map((userData) => {
 
-                    var myObj = {
-                        "time": ConvertUtcToLocalTime(userData.LogDateTime),
-                        "title": title,
-                        "description": userData.LogLocation,
-                        "circleColor": color
-                    };
-                    data.push(myObj);
+                    //     var title = '';
+                    //     var color = '';
+                    //     if (userData?.IsCheckInPoint) {
+                    //         title = "Checked In";
+                    //         color = "green"
+                    //     } else if (userData?.IsCheckOutPoint) {
+                    //         title = "Checked Out";
+                    //         color = "red"
+                    //     } else {
+                    //         title = "Checked point";
+                    //         color = "gray"
+                    //     }
+
+                    //     var myObj = {
+                    //         "time": ConvertUtcToLocalTime(userData?.LogDateTime),
+                    //         "title": title,
+                    //         "description": userData?.LogLocation,
+                    //         "circleColor": color
+                    //     };
+                    //     data.push(myObj);
 
 
-                })
+                    // })
+                }
                 setprogressVisible(false);
             }).catch((error) => {
                 setprogressVisible(false);
@@ -592,7 +601,7 @@ const MyPanel = ({ navigation }) => {
             const response = await CheckIn(TrackingModel);
             if (response && response.isSuccess) {
                 console.log("createCheckingIn response", response)
-                // getEmpTrackingTodayList();
+                // getEmpTrackingTodayList();GetMyTodayAttendance
                 toggle();
                 // this.setInterval();
                 getMyTodayAttendance();
@@ -853,7 +862,7 @@ const MyPanel = ({ navigation }) => {
             </View>
         )
     }
-
+console.log('EmployeeName',EmployeeName)
     return (
         <View style={MyPanelStyle.container}>
 
@@ -889,7 +898,7 @@ const MyPanel = ({ navigation }) => {
                     <View
                         style={MyPanelStyle.MainInfoBarTopRow}>
                         <View style={MyPanelStyle.MainInfoBarTopRowLeft}>
-                            {ImageFileName !== "" ? (
+                            {ImageFileName ? (
                                 <Image resizeMode='cover' style={
                                     {
                                         ...Platform.select({
@@ -1043,7 +1052,7 @@ const MyPanel = ({ navigation }) => {
                         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
                             EDIT PROFILE
                         </Text>
-                        {image == null ? (ImageFileName != "" ? (<Image style={{
+                        {image == null ? (ImageFileName ? (<Image style={{
                             ...Platform.select({
                                 ios: {
                                     width: 60, height: 60, borderRadius: 50
@@ -1174,21 +1183,13 @@ const MyPanel = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View>
-                    <View>
-                        <Text style={NoticeStyle.addPhotoText}>Add Photos</Text>
-                    </View>
-                    <View style={NoticeStyle.cemaraImageContainer}>
-                        <TouchableOpacity onPress={() => _takePhoto()} style={{ alignItems: "center", paddingLeft: 35 }}>
-                            <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../../assets/images/photo_camera_black.png')}></Image>
-                            <Text style={NoticeStyle.takePhotoText}>Take Photo</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => _pickImage()} style={{ alignItems: 'center', paddingRight: 35 }}>
-                            <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../../assets/images/Gallary.png')}></Image>
-                            <Text style={NoticeStyle.takePhotoText}>From Gallary</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <CustomImagePicker
+                    setfileList={setImageFileName}
+                    fileList={image}
+                    setprogressVisible={setprogressVisible}
+                    setmodalForImage={setmodalForImage}
+                    single={true}
+                />
             </Modal>
         </View>
     )

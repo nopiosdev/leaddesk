@@ -9,4 +9,4 @@ export const GetAttendanceFeed = async (companyId) => getApi("attendance/GetAtte
 export const GetMyTodayAttendance = async (userId) => getApi("attendance/GetMyTodayAttendance?userId=" + userId);
 export const GetMovementDetails = async (userId) => getApi("attendance/GetMovementDetails?userId=" + userId);
 export const GetMovementDetailsAll = async (companyId) => getApi("attendance/GetMovementDetailsAll?companyId=" + companyId);
-export const GetLeaderboardData = async (companyId, month, year) => getApi("RtAttendanceApi/GetLeaderboardData?companyId=" + companyId + "&month=" + month + "&year=" + year);
+export const GetLeaderboardData = async (companyId, month, year) => getApi("attendance/GetLeaderboardData?companyId=" + companyId + "&month=" + month + "&year=" + year);

@@ -8,6 +8,9 @@ import { FontAwesome, Entypo, AntDesign } from '@expo/vector-icons';
 import { GetMonthlyAttendanceDetails } from '../../../services/Report'
 import { useState } from 'react';
 import { useEffect } from 'react';
+import LocalStorage from '../../../common/LocalStorage';
+import { useIsFocused } from '@react-navigation/native';
+import moment from 'moment';
 
 
 const DetailScreen = ({ navigation, route }) => {
@@ -16,27 +19,32 @@ const DetailScreen = ({ navigation, route }) => {
     const [companyId, setcompanyId] = useState(0);
     const [progressVisible, setprogressVisible] = useState(false);
     const paramsData = route?.params;
+    const isFocused = useIsFocused();
+
     const goBack = () => {
         navigation.goBack();
     }
 
     useEffect(() => {
         getAllEmployeeAttendanceDetail();
-    }, [])
+    }, [isFocused])
 
     const getAllEmployeeAttendanceDetail = async () => {
         try {
-            const cId = await AsyncStorage.getItem("companyId");
+            const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
             setprogressVisible(true);
             await GetMonthlyAttendanceDetails(paramsData?.detailItem.UserId, cId, paramsData?.year, paramsData?.month)
                 .then(res => {
-                    setworkingDetailList(res?.result);
-                    setprogressVisible(false);
+                    console.log('GetMonthlyAttendanceDetails',res);
+                    if(res?.length > 0){
+                        setworkingDetailList(res);
+                        setprogressVisible(false);
+                    }
                 })
                 .catch(() => {
                     setprogressVisible(false);
-                    console.log("error occured");
+                    console.log("error occured detail");
                 });
 
         } catch (error) {
@@ -65,7 +73,7 @@ const DetailScreen = ({ navigation, route }) => {
                         style={CommonStyles.HeaderTextView}>
                         <Text
                             style={CommonStyles.HeaderTextstyle}>
-                            Attandance of {paramsData?.detailItem.EmployeeName}
+                            Attendance of {paramsData?.detailItem.EmployeeName}
                         </Text>
                     </View>
 
@@ -75,12 +83,12 @@ const DetailScreen = ({ navigation, route }) => {
 
 
             <ScrollView showsVerticalScrollIndicator={false}
-            // refreshControl={
-            //     <RefreshControl
-            //         refreshing={refreshing}
-            //         onRefresh={_onRefresh}
-            //     />
-            // }
+            refreshControl={
+                <RefreshControl
+                    // refreshing={progressVisible}
+                    onRefresh={getAllEmployeeAttendanceDetail}
+                />
+            }
 
             >
                 <View style={ReportStyle.summaryContiner}>
@@ -165,21 +173,20 @@ const DetailScreen = ({ navigation, route }) => {
                     {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={ReportStyle.loaderIndicator} />) : null}
 
                     <FlatList
-
                         data={workingDetailList}
                         keyExtractor={(x, i) => i.toString()}
                         renderItem={({ item }) =>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
                                 <View style={{ alignItems: 'flex-start', backgroundColor: "white", width: (width * 20) / 100, borderRadius: 10, marginBottom: 10, height: 70 }}>
                                     <View style={{ alignSelf: 'center', backgroundColor: '#6b7787', width: (width * 20) / 100, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                                        <Text style={{ textAlign: 'center', color: 'white', fontFamily: 'PRODUCT_SANS_REGULAR' }}>{item.AttendancceDayName}</Text>
+                                        <Text style={{ textAlign: 'center', color: 'white', fontFamily: 'PRODUCT_SANS_REGULAR' }}>{moment(item.AttendanceDate).format('D')}</Text>
                                     </View>
                                     <View style={{ alignSelf: 'center' }}>
                                         {
                                             !item.IsLeave ?
-                                                <Text style={{ fontSize: 35, textAlign: 'center', fontFamily: 'PRODUCT_SANS_REGULAR' }}>{item.AttendancceDayNumber}</Text>
+                                                <Text style={{ fontSize: 35, textAlign: 'center', fontFamily: 'PRODUCT_SANS_REGULAR' }}>{moment(item.AttendanceDate).format('D')}</Text>
                                                 :
-                                                <Text style={{ fontSize: 35, color: "red", textAlign: 'center', fontFamily: 'PRODUCT_SANS_REGULAR' }}>{item.AttendancceDayNumber}</Text>
+                                                <Text style={{ fontSize: 35, color: "red", textAlign: 'center', fontFamily: 'PRODUCT_SANS_REGULAR' }}>{moment(item.AttendanceDate).format('D')}</Text>
                                         }
                                     </View>
                                 </View>
@@ -224,7 +231,7 @@ const DetailScreen = ({ navigation, route }) => {
                                                         style={{
                                                             fontSize: 14, textAlign: "right", color: "#076332", fontFamily: "PRODUCT_SANS_BOLD"
                                                         }}>
-                                                        {item.CheckInTimeVw}
+                                                        {item.CheckInTime}
 
                                                     </Text>
                                                     :
@@ -232,7 +239,7 @@ const DetailScreen = ({ navigation, route }) => {
                                                         style={{
                                                             fontSize: 14, textAlign: "right", color: "red", fontFamily: "PRODUCT_SANS_BOLD"
                                                         }}>
-                                                        {item.CheckInTimeVw}
+                                                        {item.CheckInTime}
 
                                                     </Text>
                                             }
@@ -279,7 +286,7 @@ const DetailScreen = ({ navigation, route }) => {
                                                         }}>
 
 
-                                                        {item.CheckOutTimeVw}
+                                                        {item.CheckOutTime}
 
                                                     </Text>
                                                 </View>

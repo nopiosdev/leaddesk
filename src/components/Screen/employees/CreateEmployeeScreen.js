@@ -107,45 +107,45 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
     const toggleIsActiveSwitch = value => {
         setIsActive(value);
     };
-    const onFetchDepartmentRecords = async () => {
-        console.log("trying Department create..");
+    // const onFetchDepartmentRecords = async () => {
+    //     console.log("trying Department create..");
 
-        try {
-            let Departmentodel = {
-                DepartmentName: Dept.DepartmentName,
-                CompanyId: companyId,
-            };
-            if (companyId == "") {
-                ToastAndroid.show("At first create a company.", ToastAndroid.SHORT);
-                return;
-            }
+    //     try {
+    //         let Departmentodel = {
+    //             DepartmentName: Dept.DepartmentName,
+    //             CompanyId: companyId,
+    //         };
+    //         if (companyId == "") {
+    //             ToastAndroid.show("At first create a company.", ToastAndroid.SHORT);
+    //             return;
+    //         }
 
-            console.log(Departmentodel, '..depttest');
-            let response = await CreateDepartment(Departmentodel);
-            if (response && response.isSuccess) {
-                console.log('com', response);
-                alert("Department created successully");
-                departmentList.push({
-                    key: response.result.Id,
-                    label: response.result.DepartmentName
-                })
-                const depList = [];
+    //         console.log(Departmentodel, '..depttest');
+    //         let response = await CreateDepartment(Departmentodel);
+    //         if (response && response.isSuccess) {
+    //             console.log('com', response);
+    //             alert("Department created successully");
+    //             departmentList.push({
+    //                 key: response.result.Id,
+    //                 label: response.result.DepartmentName
+    //             })
+    //             const depList = [];
 
-                Object.assign(depList, departmentList);
-                console.log('tttt', depList);
-                setdepartmentList(depList);
-                console.log('dept', departmentList)
-                setDepartmentId(departmentList[0].Value);
-                setPickerSelectedVal(departmentList[0].Value);
-                console.log('deptlist', departmentList);
-            } else {
-                alert("error");
-            }
-        } catch (errors) {
-            console.log(errors);
-        }
+    //             Object.assign(depList, departmentList);
+    //             console.log('tttt', depList);
+    //             setdepartmentList(depList);
+    //             console.log('dept', departmentList)
+    //             setDepartmentId(departmentList[0].Value);
+    //             setPickerSelectedVal(departmentList[0].Value);
+    //             console.log('deptlist', departmentList);
+    //         } else {
+    //             alert("error");
+    //         }
+    //     } catch (errors) {
+    //         console.log(errors);
+    //     }
 
-    }
+    // }
     const getUniqueUserName = async () => {
         const newUser = PhoneNumber;
         console.log(newUser);
@@ -173,7 +173,7 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
             setPhoneNumber('');
         }
     };
-    
+
     const copyToClicpBord = async (username, password) => {
 
         setCopyUsername(username);
@@ -185,31 +185,31 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
     }
 
     const saveEmployee = async () => {
-        let data = {
-            UserFullName: UserFullName,
-            EmployeeCode: EmployeeCode,
-            PhoneNumber: PhoneNumber,
-            UserType: 7,
-            Designation: Designation,
-            DepartmentId: Employee.DepartmentId,
-            CompanyId: companyId,
-            Gender: value,
-            Email: Email,
-            IsAutoCheckPoint: IsAutoCheckPoint,
-            AutoCheckPointTime: AutoCheckPointTime,
-            MaximumOfficeHours: MaximumOfficeHours,
-            OfficeOutTime: OfficeOutTime,
-            IsActive: IsActive
-        };
+
+        var data = new FormData();
+        data.append('UserFullName',UserFullName);
+        data.append('EmployeeCode',EmployeeCode);
+        data.append('PhoneNumber',PhoneNumber);
+        data.append('UserType',0);
+        data.append('Designation',Designation);
+        data.append('DepartmentId',Employee?.DepartmentId);
+        data.append('CompanyId',companyId);
+        data.append('Gender',value);
+        data.append('Email',Email);
+        data.append('IsAutoCheckPoint',IsAutoCheckPoint ? 1 : 0);
+        data.append('AutoCheckPointTime',AutoCheckPointTime);
+        data.append('MaximumOfficeHours',MaximumOfficeHours);
+        data.append('OfficeOutTime',OfficeOutTime);
+
         try {
             let response = await CreateEmployee(data)
-            setsuccessMessage(response.result.Message);
+            setsuccessMessage(response?.message);
             console.log('response', response)
-            if (response && response.result.Success) {
+            if (response?.success) {
                 setmodalforusername(true);
                 resetForm();
             } else {
-                ToastAndroid.show(response.result.Message, ToastAndroid.TOP);
+                ToastAndroid.show(response?.message, ToastAndroid.TOP);
             }
         } catch (errors) {
             console.log(errors);
@@ -219,15 +219,15 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
         try {
             await GetDepartmentByCompanyId(companyId)
                 .then(res => {
-                    console.log(companyId, 'comlen', res.result);
-                    if (res.result !== null) {
-                        console.log('comlen2', res.result);
-                        if (res.result.length > 0) {
+                    console.log(companyId, 'comlen', res);
+                    if (res !== null) {
+                        console.log('comlen2', res);
+                        if (res?.length > 0) {
                             const depList = [];
-                            res.result.forEach(function (item) {
+                            res?.forEach(function (item) {
                                 const ob = {
-                                    'key': item.Id,
-                                    'label': item.DepartmentName,
+                                    'key': item?.Id,
+                                    'label': item?.DepartmentName,
                                 }
                                 depList.push(ob);
                             });

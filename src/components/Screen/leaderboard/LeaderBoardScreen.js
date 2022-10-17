@@ -32,20 +32,20 @@ const LeaderBoardScreen = ({ navigation, route }) => {
         { label: '2030', key: '2030' },
     ]);
     const [monthList, setMonthList] = useState([
-        { label: 'January', key: 'January' },
-        { label: 'February', key: 'February' },
-        { label: 'March', key: 'March' },
-        { label: 'April', key: 'April' },
-        { label: 'May', key: 'May' },
-        { label: 'June', key: 'June' },
-        { label: 'July', key: 'July' },
-        { label: 'August', key: 'August' },
-        { label: 'September', key: 'September' },
-        { label: 'October', key: 'October' },
-        { label: 'November', key: 'November' },
-        { label: 'December', key: 'December' },
+        { label: 'January', key: '1' },
+        { label: 'February', key: '2' },
+        { label: 'March', key: '3' },
+        { label: 'April', key: '4' },
+        { label: 'May', key: '5' },
+        { label: 'June', key: '6' },
+        { label: 'July', key: '7' },
+        { label: 'August', key: '8' },
+        { label: 'September', key: '9' },
+        { label: 'October', key: '10' },
+        { label: 'November', key: '11' },
+        { label: 'December', key: '12' },
     ]);
-    const [VistNumber, setVistNumber] = useState(moment(new Date()).format("MMMM"));
+    const [VistNumber, setVistNumber] = useState(moment(new Date()).format("M"));
     const [year, setyear] = useState(moment(new Date()).format("YYYY"));
     const [workingReportList, setworkingReportList] = useState([]);
     const [companyId, setcompanyId] = useState(0);
@@ -74,10 +74,11 @@ const LeaderBoardScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetLeaderboardData(cId, VistNumber, year)
                 .then(res => {
-                    res.result.forEach(element => {
+                    console.log('GetLeaderboardData',res)
+                    res?.forEach(element => {
                         element.imagePath = "http://medilifesolutions.blob.core.windows.net/resourcetracker/" + element.ImageFileName;
                     });
-                    setworkingReportList(res?.result);
+                    setworkingReportList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -123,8 +124,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
                     data={monthList}
                     initValue={selectedMonth}
                     onChange={(option) => {
-                        const newUser = option.key
-                        selectedItem(newUser)
+                        selectedItem(option.key)
                     }}
                 />
             )

@@ -86,7 +86,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
     const [resetId, setresetId] = useState('');
     const [resetToken, setresetToken] = useState('');
     const [uName, setuName] = useState('');
-    const [IsActive, setIsActive] = useState(null);
+    const [IsActive, setIsActive] = useState(false);
     const [ModaladdPeople, setModaladdPeople] = useState(false);
     const [deleteId, setdeleteId] = useState(null);
     const [modal2, setmodal2] = useState(false);
@@ -104,9 +104,9 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
     const textmailRef = createRef();
     const isFocused = useIsFocused();
 
-    const handleOnPress = (value) => {
-        setvalue(value);
-    }
+    // const handleOnPress = (value) => {
+    //     setvalue(value);
+    // }
     const toggleSwitch = value => {
         setIsAutoCheckPoint(value);
     };
@@ -117,53 +117,53 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
         navigation.goBack();
         return true;
     }
-    const openModalforaddpeople = () => {
+    // const openModalforaddpeople = () => {
 
-        setEmployee({ DepartmentId: '' })
-        setIsAutoCheckPoint(false);
-        setModaladdPeople(true);
-    }
-    const alertmethod = (id) => {
-        setdeleteId(id);
-        Alert.alert(
-            "",
-            'Are You Sure?',
-            [
-                { text: 'NO', onPress: () => console.log('Cancel Pressed!') },
-                { text: 'YES', onPress: () => DeleteEmployeemethod() },
-            ],
-            { cancelable: false }
-        )
-    }
-    const DeleteEmployeemethod = async () => {
-        try {
-            await DeleteEmployee(deleteId)
-                .then(res => {
-                    Alert.alert(
-                        "",
-                        "successfully Deleted",
-                        [
-                            { text: 'OK', },
-                        ],
-                        { cancelable: false }
-                    )
-                    getEmpAllWithCompanyId(companyId)
-                })
-                .catch(() => {
-                    Alert.alert(
-                        "Not Deleted",
-                        "Please try again...",
-                        [
-                            { text: 'OK', },
-                        ],
-                        { cancelable: false }
-                    )
-                    console.log("error occured");
-                });
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //     setEmployee({ DepartmentId: '' })
+    //     setIsAutoCheckPoint(false);
+    //     setModaladdPeople(true);
+    // }
+    // const alertmethod = (id) => {
+    //     setdeleteId(id);
+    //     Alert.alert(
+    //         "",
+    //         'Are You Sure?',
+    //         [
+    //             { text: 'NO', onPress: () => console.log('Cancel Pressed!') },
+    //             { text: 'YES', onPress: () => DeleteEmployeemethod() },
+    //         ],
+    //         { cancelable: false }
+    //     )
+    // }
+    // const DeleteEmployeemethod = async () => {
+    //     try {
+    //         await DeleteEmployee(deleteId)
+    //             .then(res => {
+    //                 Alert.alert(
+    //                     "",
+    //                     "successfully Deleted",
+    //                     [
+    //                         { text: 'OK', },
+    //                     ],
+    //                     { cancelable: false }
+    //                 )
+    //                 getEmpAllWithCompanyId(companyId)
+    //             })
+    //             .catch(() => {
+    //                 Alert.alert(
+    //                     "Not Deleted",
+    //                     "Please try again...",
+    //                     [
+    //                         { text: 'OK', },
+    //                     ],
+    //                     { cancelable: false }
+    //                 )
+    //                 console.log("error occured");
+    //             });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
     useEffect(() => {
         (async () => {
@@ -179,29 +179,29 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
         }
     }, [isFocused])
 
-    const openModal2 = () => {
-        getCompany();
-        setmodal2(true);
-    }
+    // const openModal2 = () => {
+    //     getCompany();
+    //     setmodal2(true);
+    // }
 
-    const openmodalforEmpList = () => {
-        getCompany();
-        setmodalforEmpList(true);
-    }
-    const _bootstrapAsync = () => {
-        setName(user?.UserFullName);
-        setPhone(user?.PhoneNumber);
-        setEmail(user?.Email);
-    }
+    // const openmodalforEmpList = () => {
+    //     getCompany();
+    //     setmodalforEmpList(true);
+    // }
+    // const _bootstrapAsync = () => {
+    //     setName(user?.UserFullName);
+    //     setPhone(user?.PhoneNumber);
+    //     setEmail(user?.Email);
+    // }
 
     const getEmpAllWithCompanyId = async (companyId) => {
         try {
             setprogressVisible(true);
             await GetEmployeeWithCompanyId(companyId)
                 .then(res => {
-                    setemployeeList(res?.result);
-                    setEmpImageFileName(res?.result?.ImageFileName);
-                    console.log(res.result, 'EmpREault...............')
+                    setemployeeList(res);
+                    setEmpImageFileName(res?.ImageFileName);
+                    console.log(res, 'EmpREault...............')
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -216,189 +216,191 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
 
     const closeModal = () => {
         updateEmployeeRecords();
-        setmodalforEmpEdit(false);
     }
 
     const updateEmployeeRecords = async () => {
-        let data = {
-            UserFullName: EmpUserName,
-            EmployeeCode: EmployeeCode,
-            DesignationName: EmpDesignation,
-            Id: EmployeeUserId,
-            IsAutoCheckPoint: IsAutoCheckPoint,
-            AutoCheckPointTime: AutoCheckPointTime,
-            ImageFileName: EmpImageFileName,
-            ImageFileId: ImageFileId,
-            IsActive: IsActive,
-        };
+
+        var data = new FormData();
+        data.append('UserFullName', EmpUserName);
+        data.append('EmployeeCode', EmployeeCode);
+        data.append('DesignationName', EmpDesignation);
+        data.append('Id', EmployeeUserId);
+        data.append('IsAutoCheckPoint', IsAutoCheckPoint ? 1 : 0);
+        data.append('AutoCheckPointTime', AutoCheckPointTime);
+        data.append('ImageFileName', EmpImageFileName);
+        data.append('ImageFileId', ImageFileId);
+        data.append('IsActive', IsActive ? 1 : 0);
+
         console.log(data, '.....data')
         try {
             let response = await UpdateEmployee(data);
             console.log('empr', response);
-            setserverMadePasscode(response?.result?.message)
-            if (response && response.isSuccess) {
+            setserverMadePasscode(response?.message)
+            if (response.success) {
                 ToastAndroid.show('Successfully Updated', ToastAndroid.TOP);
-                getEmpAllWithCompanyId(companyId)
+                getEmpAllWithCompanyId(companyId);
+                setmodalforEmpEdit(false);
+
             } else {
-                ToastAndroid.show(response.result.message, ToastAndroid.TOP);
-                closeProgress();
+                ToastAndroid.show(response.message, ToastAndroid.TOP);
+                setprogressVisible(false);
             }
         } catch (errors) {
             // alert("data does not saved");
-            ToastAndroid.show("data does not saved", ToastAndroid.TOP);
-            closeProgress();
-        }
-    }
-
-    const closeModalForDeptSelection = () => {
-        if (Dept.DepartmentName == '') {
-            ToastAndroid.show('Department can not be empty', ToastAndroid.TOP);
-
-        } else {
-            setModalForDeptSelection(false);
-            onFetchDepartmentRecords();
-        }
-
-    }
-    const testmethos = async (item) => {
-        setDeptName(item?.Text);
-        setDeptId(item?.Value);
-    }
-
-    const onFetchDepartmentRecords = async () => {
-        try {
-            let Departmentodel = {
-                DepartmentName: Dept.DepartmentName,
-                CompanyId: companyId,
-            };
-            if (companyId == "") {
-                ToastAndroid.show("At first create a company.", ToastAndroid.SHORT);
-                return;
-            }
-
-            console.log(Departmentodel, '..depttest');
-            let response = await CreateDepartment(Departmentodel);
-            if (response && response.isSuccess) {
-                console.log('com', response);
-                alert("Department created successully");
-                departmentList.push({
-                    key: response.result.Id,
-                    label: response.result.DepartmentName
-                })
-                const depList = [];
-
-                Object.assign(depList, departmentList);
-                console.log('tttt', depList);
-                setdepartmentList(depList)
-                console.log('dept', departmentList)
-                setDepartmentId(departmentList[0].Value);
-                setPickerSelectedVal(departmentList[0].Value);
-                console.log('deptlist', departmentList);
-            } else {
-                alert("error");
-            }
-        } catch (errors) {
-            console.log(errors);
-        }
-
-    }
-    const closemodalchangepassword = () => {
-        setprogressVisible(true);
-        if (Employee.Password == "") {
-            alert("Field can not be empty")
-            setprogressVisible(false);
-        }
-        else if (Employee.Password.length < 6) {
-            alert("Password must be at least 6 Characters");
-            setprogressVisible(false);
-
-        }
-        else {
-            changepassword();
+            ToastAndroid.show("Data does not saved", ToastAndroid.TOP);
             setprogressVisible(false);
         }
     }
-    const changepassword = async () => {
-        console.log("trying changepassword..");
-        try {
-            setprogressVisible(true);
-            let UserModel = {
-                NewPassword: Employee.Password,
-                UserId: resetId,
-                Token: resetToken
-            };
 
-            let response = await ChangePasswordforEmp(UserModel);
-            console.log('logins..', response);
-            if (response && response.isSuccess) {
-                setmodalResetPassword(false);
-                openModal2();
-                setprogressVisible(false);
-            } else {
-                setprogressVisible(false);
-                alert("Password Not Updated. Please try again");
-            }
-        } catch (errors) {
-            setprogressVisible(false);
-            console.log(errors);
-        }
-    }
-    const openmodalResetPassword = (id, username, user) => {
-        setresetId(id);
-        setuName(user);
-        const userid = id;
-        const Username = username;
-        generateRePassword(Username);
-        getTokenforResetEmpRestPass(userid);
-        setmodalResetPassword(true);
-    }
-    const getTokenforResetEmpRestPass = async (id) => {
-        try {
-            // let userId = this.props.userId;
-            await getTokenforResetEmptPass(id)
-                .then(res => {
-                    const ob = res.result;
-                    alert
-                    console.log('tokenforreset........', ob);
-                    setresetToken(ob);
-                })
-                .catch(() => {
-                    console.log("error occured");
-                    alert('failor');
-                });
-        } catch (error) {
-            console.log(error);
-            alert('failor')
-        }
-    }
+    // const closeModalForDeptSelection = () => {
+    //     if (Dept.DepartmentName == '') {
+    //         ToastAndroid.show('Department can not be empty', ToastAndroid.TOP);
 
-    const openModaladdPeople = () => {
+    //     } else {
+    //         setModalForDeptSelection(false);
+    //         onFetchDepartmentRecords();
+    //     }
 
-        if (UserFullName == "") {
-            ToastAndroid.show('Employee Name can not be empaty', ToastAndroid.SHORT);
-        } else if (Designation == "") {
-            ToastAndroid.show('Employee Designation can not be empaty', ToastAndroid.SHORT);
-        }
-        else if (PhoneNumber == "") {
-            ToastAndroid.show('Employee PhoneNumber can not be empaty', ToastAndroid.SHORT);
-        }
-        else if (Email == "") {
-            ToastAndroid.show('Employee Email can not be empaty', ToastAndroid.SHORT);
-        }
-        else if (Employee.DepartmentId == "") {
-            ToastAndroid.show('Please Select Department', ToastAndroid.SHORT);
-        }
-        else {
-            getUniqueUserName();
-            onFetchEmployeeRecords();
-        }
-    }
-    const getUniqueUserName = async () => {
+    // }
+    // const testmethos = async (item) => {
+    //     setDeptName(item?.Text);
+    //     setDeptId(item?.Value);
+    // }
 
-        const newUser = PhoneNumber;
-        console.log(newUser);
-        setEmployee({ UserName: newUser })
-    }
+    // const onFetchDepartmentRecords = async () => {
+    //     try {
+    //         let Departmentodel = {
+    //             DepartmentName: Dept.DepartmentName,
+    //             CompanyId: companyId,
+    //         };
+    //         if (companyId == "") {
+    //             ToastAndroid.show("At first create a company.", ToastAndroid.SHORT);
+    //             return;
+    //         }
+
+    //         console.log(Departmentodel, '..depttest');
+    //         let response = await CreateDepartment(Departmentodel);
+    //         if (response && response.isSuccess) {
+    //             console.log('com', response);
+    //             alert("Department created successully");
+    //             departmentList.push({
+    //                 key: response.result.Id,
+    //                 label: response.result.DepartmentName
+    //             })
+    //             const depList = [];
+
+    //             Object.assign(depList, departmentList);
+    //             console.log('tttt', depList);
+    //             setdepartmentList(depList)
+    //             console.log('dept', departmentList)
+    //             setDepartmentId(departmentList[0].Value);
+    //             setPickerSelectedVal(departmentList[0].Value);
+    //             console.log('deptlist', departmentList);
+    //         } else {
+    //             alert("error");
+    //         }
+    //     } catch (errors) {
+    //         console.log(errors);
+    //     }
+
+    // }
+    // const closemodalchangepassword = () => {
+    //     setprogressVisible(true);
+    //     if (Employee.Password == "") {
+    //         alert("Field can not be empty")
+    //         setprogressVisible(false);
+    //     }
+    //     else if (Employee.Password.length < 6) {
+    //         alert("Password must be at least 6 Characters");
+    //         setprogressVisible(false);
+
+    //     }
+    //     else {
+    //         changepassword();
+    //         setprogressVisible(false);
+    //     }
+    // }
+    // const changepassword = async () => {
+    //     console.log("trying changepassword..");
+    //     try {
+    //         setprogressVisible(true);
+    //         let UserModel = {
+    //             NewPassword: Employee.Password,
+    //             UserId: resetId,
+    //             Token: resetToken
+    //         };
+
+    //         let response = await ChangePasswordforEmp(UserModel);
+    //         console.log('logins..', response);
+    //         if (response && response.isSuccess) {
+    //             setmodalResetPassword(false);
+    //             openModal2();
+    //             setprogressVisible(false);
+    //         } else {
+    //             setprogressVisible(false);
+    //             alert("Password Not Updated. Please try again");
+    //         }
+    //     } catch (errors) {
+    //         setprogressVisible(false);
+    //         console.log(errors);
+    //     }
+    // }
+    // const openmodalResetPassword = (id, username, user) => {
+    //     setresetId(id);
+    //     setuName(user);
+    //     const userid = id;
+    //     const Username = username;
+    //     generateRePassword(Username);
+    //     getTokenforResetEmpRestPass(userid);
+    //     setmodalResetPassword(true);
+    // }
+    // const getTokenforResetEmpRestPass = async (id) => {
+    //     try {
+    //         // let userId = this.props.userId;
+    //         await getTokenforResetEmptPass(id)
+    //             .then(res => {
+    //                 const ob = res.result;
+    //                 alert
+    //                 console.log('tokenforreset........', ob);
+    //                 setresetToken(ob);
+    //             })
+    //             .catch(() => {
+    //                 console.log("error occured");
+    //                 alert('failor');
+    //             });
+    //     } catch (error) {
+    //         console.log(error);
+    //         alert('failor')
+    //     }
+    // }
+
+    // const openModaladdPeople = () => {
+
+    //     if (UserFullName == "") {
+    //         ToastAndroid.show('Employee Name can not be empaty', ToastAndroid.SHORT);
+    //     } else if (Designation == "") {
+    //         ToastAndroid.show('Employee Designation can not be empaty', ToastAndroid.SHORT);
+    //     }
+    //     else if (PhoneNumber == "") {
+    //         ToastAndroid.show('Employee PhoneNumber can not be empaty', ToastAndroid.SHORT);
+    //     }
+    //     else if (Email == "") {
+    //         ToastAndroid.show('Employee Email can not be empaty', ToastAndroid.SHORT);
+    //     }
+    //     else if (Employee.DepartmentId == "") {
+    //         ToastAndroid.show('Please Select Department', ToastAndroid.SHORT);
+    //     }
+    //     else {
+    //         getUniqueUserName();
+    //         onFetchEmployeeRecords();
+    //     }
+    // }
+    // const getUniqueUserName = async () => {
+
+    //     const newUser = PhoneNumber;
+    //     console.log(newUser);
+    //     setEmployee({ UserName: newUser })
+    // }
 
     const onShare = async (username, password) => {
         try {
@@ -435,39 +437,39 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
         onShare(username, password);
     }
 
-    const onFetchEmployeeRecords = async () => {
-        let data = {
-            UserFullName: UserFullName,
-            PhoneNumber: PhoneNumber,
-            UserType: 7,
-            Designation: Designation,
-            DepartmentId: Employee.DepartmentId,
-            CompanyId: companyId,
-            Gender: value,
-            Email: Email,
-            IsAutoCheckPoint: IsAutoCheckPoint,
-            AutoCheckPointTime: AutoCheckPointTime,
-            MaximumOfficeHours: MaximumOfficeHours,
-            OfficeOutTime: OfficeOutTime,
-            IsActive: IsActive
-        };
-        try {
+    // const onFetchEmployeeRecords = async () => {
+    //     let data = {
+    //         UserFullName: UserFullName,
+    //         PhoneNumber: PhoneNumber,
+    //         UserType: 7,
+    //         Designation: Designation,
+    //         DepartmentId: Employee.DepartmentId,
+    //         CompanyId: companyId,
+    //         Gender: value,
+    //         Email: Email,
+    //         IsAutoCheckPoint: IsAutoCheckPoint,
+    //         AutoCheckPointTime: AutoCheckPointTime,
+    //         MaximumOfficeHours: MaximumOfficeHours,
+    //         OfficeOutTime: OfficeOutTime,
+    //         IsActive: IsActive
+    //     };
+    //     try {
 
-            console.log(data, '....tex');
-            let response = await CreateEmployee(data)
-            console.log('empr', response);
-            setsuccessMessage(response?.result?.Message);
-            if (response && response?.result?.Success) {
-                setModaladdPeople(false);
-                getEmpAllWithCompanyId(companyId);
-                setmodalforusername(true);
-            } else {
-                ToastAndroid.show(response.result.Message, ToastAndroid.TOP);
-            }
-        } catch (errors) {
-            console.log(errors);
-        }
-    }
+    //         console.log(data, '....tex');
+    //         let response = await CreateEmployee(data)
+    //         console.log('empr', response);
+    //         setsuccessMessage(response?.Message);
+    //         if (response && response?.Success) {
+    //             setModaladdPeople(false);
+    //             getEmpAllWithCompanyId(companyId);
+    //             setmodalforusername(true);
+    //         } else {
+    //             ToastAndroid.show(response.Message, ToastAndroid.TOP);
+    //         }
+    //     } catch (errors) {
+    //         console.log(errors);
+    //     }
+    // }
     const getDepartment = async (companyId) => {
         try {
             await GetDepartmentByCompanyId(companyId)
@@ -508,53 +510,51 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
         setEmpPhoneNumber(item.PhoneNumber);
         setUserName(item.UserName);
         setEmpUserName(item?.UserName);
-        setEmployeeCode(item.EmployeeCode);
-        setIsAutoCheckPoint(item.IsAutoCheckPoint);
-        setAutoCheckPointTime(item.AutoCheckPointTime);
-        setImageFileName(item.ImageFileName);
-        setIsActive(item.IsActive);
+        setEmployeeCode(item?.EmployeeCode);
+        setIsAutoCheckPoint(item?.IsAutoCheckPoint === 1 ? true : false);
+        setAutoCheckPointTime(item?.AutoCheckPointTime);
+        setImageFileName(item?.ImageFileName);
+        setIsActive(item?.IsActive === 1 ? true : false);
         setmodalforEmpEdit(true);
     };
 
+    // const getCompany = async () => {
+    //     try {
+    //         await GetCompanyByUserId(user?.Id)
+    //             .then(res => {
+    //                 console.log('company', res.result);
+    //                 if (res.result === null) {
+    //                     openModal5();
+    //                 } else if (res.result.length > 0) {
 
-
-    const getCompany = async () => {
-        try {
-            await GetCompanyByUserId(user?.Id)
-                .then(res => {
-                    console.log('company', res.result);
-                    if (res.result === null) {
-                        openModal5();
-                    } else if (res.result.length > 0) {
-
-                        const cList = [];
-                        res.result.forEach(function (item) {
-                            const ob = {
-                                'Text': item.CompanyName,
-                                'Value': item.Id,
-                                'Address': item.Address,
-                                'phone': item.PhoneNumber,
-                                'MaximumOfficeHours': item.MaximumOfficeHours,
-                                'OfficeOutTime': item.OfficeOutTime,
-                            }
-                            cList.push(ob);
-                        });
-                        setcompanyList(cList);
-                        setselctedCompanyValue(companyList[0]?.Text);
-                        setselctedCompanyIndex(companyList[0]?.Value);
-                    }
-                    if (companyList.length > 0) {
-                        getDepartment(companyId);
-                        getEmpAllWithCompanyId(companyId)
-                    }
-                })
-                .catch(() => {
-                    console.log("error occured");
-                });
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //                     const cList = [];
+    //                     res.result.forEach(function (item) {
+    //                         const ob = {
+    //                             'Text': item.CompanyName,
+    //                             'Value': item.Id,
+    //                             'Address': item.Address,
+    //                             'phone': item.PhoneNumber,
+    //                             'MaximumOfficeHours': item.MaximumOfficeHours,
+    //                             'OfficeOutTime': item.OfficeOutTime,
+    //                         }
+    //                         cList.push(ob);
+    //                     });
+    //                     setcompanyList(cList);
+    //                     setselctedCompanyValue(companyList[0]?.Text);
+    //                     setselctedCompanyIndex(companyList[0]?.Value);
+    //                 }
+    //                 if (companyList.length > 0) {
+    //                     getDepartment(companyId);
+    //                     getEmpAllWithCompanyId(companyId)
+    //                 }
+    //             })
+    //             .catch(() => {
+    //                 console.log("error occured");
+    //             });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
     const goToCreatScreen = () => {
         navigation.navigate('EmployeeCreateScreen')
     }
@@ -667,7 +667,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                                     <View style={{ paddingRight: 10, }}>
 
 
-                                        {item.ImageFileName !== "" ?
+                                        {item.ImageFileName ?
                                             (<Image style={EmpSetScreenStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />)
                                             :
                                             (<Image style={
@@ -728,8 +728,6 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                 isDisabled={isDisabled}
                 backdropPressToClose={false}
                 swipeToClose={false}
-            // onOpened={() => this.setState({ floatButtonHide: true })}
-            // onClosed={() => this.setState({ floatButtonHide: false })}
             >
                 <View style={{ justifyContent: "space-between", flexDirection: "column" }}>
                     <View style={{ alignItems: "flex-start" }}></View>
@@ -755,7 +753,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
 
                 </View>
 
-                <KeyboardAvoidingView
+                {/* <KeyboardAvoidingView
                     // behavior="padding"
                     style={{
                         // flex: 1,
@@ -886,10 +884,14 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
-                </KeyboardAvoidingView>
+                </KeyboardAvoidingView> */}
 
             </Modal>
-            <Modal style={[EmpSetScreenStyle.modal2]} position={"center"} isOpen={modalforusername} isDisabled={isDisabled}
+            <Modal
+                style={[EmpSetScreenStyle.modal2]}
+                position={"center"}
+                isOpen={modalforusername}
+                isDisabled={isDisabled}
                 // onClosed={() => this.setState({ floatButtonHide: !floatButtonHide })}
                 backdropPressToClose={false}
             // onOpened={() => this.setState({ floatButtonHide: true })}
@@ -936,7 +938,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
             </Modal >
 
-            <Modal style={[EmpSetScreenStyle.modal31]} position={"center"} isOpen={modalResetPassword} isDisabled={isDisabled}
+            {/* <Modal style={[EmpSetScreenStyle.modal31]} position={"center"} isOpen={modalResetPassword} isDisabled={isDisabled}
                 backdropPressToClose={false}
                 swipeToClose={false}
             >
@@ -959,8 +961,8 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                     <View
                         style={EmpSetScreenStyle.horizontalLine}
                     />
-                    {/* <Image resizeMode="contain" style={EmpSetScreenStyle.addPeopleImg} source={require('../../../../assets/images/people.png')}>
-                    </Image> */}
+                    <Image resizeMode="contain" style={EmpSetScreenStyle.addPeopleImg} source={require('../../../../assets/images/people.png')}>
+                    </Image>
                 </View>
                 <View style={{ alignItems: 'center', }}>
                     <View style={{ flexDirection: 'row', marginBottom: 10, }}>
@@ -986,7 +988,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                         <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>Save</Text>
                     </TouchableOpacity>
                 </View>
-            </Modal>
+            </Modal> */}
             <Modal style={[EmpSetScreenStyle.modalForEditProfile]} position={"center"} isOpen={modalforEmpEdit} isDisabled={isDisabled}
                 backdropPressToClose={false}
                 swipeToClose={false}
@@ -1009,12 +1011,12 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'column', }}>
-                        <Text>Employee Code</Text>
+                        {/* <Text>Employee Code</Text>
                         <TextInput
                             style={EmpSetScreenStyle.modalEmpEditTextBox}
                             value={EmployeeCode}
                             onChangeText={(txt) => setEmployeeCode(txt)}
-                        />
+                        /> */}
                         <Text>Name</Text>
                         <TextInput
                             style={EmpSetScreenStyle.modalEmpEditTextBox}
@@ -1024,7 +1026,6 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                         <Text>Designation</Text>
                         <TextInput
                             style={EmpSetScreenStyle.modalEmpEditTextBox}
-
                             value={EmpDesignation}
                             onChangeText={(txt) => setEmpDesignation(txt)}
                         />
@@ -1059,7 +1060,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                                         (EmpSetScreenStyle.CheckpointSliderAndroidText) :
                                         (EmpSetScreenStyle.CheckpointSliderIosText)
                                 ]}>
-                                    {IsAutoCheckPoint ? 'ON' : 'OFF'}
+                                    {IsAutoCheckPoint == 1 ? 'ON' : 'OFF'}
                                 </Text>
                                 <Switch
                                     onValueChange={toggleSwitch}

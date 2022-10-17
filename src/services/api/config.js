@@ -2,8 +2,8 @@
 
 export const googlemapApiForAutoCheckPoint="put your google map api key here";
 
- export const urlDev = "https://a121-185-127-136-53.eu.ngrok.io/api/index.php/"; 
- export const urlResource = "https://a121-185-127-136-53.eu.ngrok.io/assets/uploads/";
+ export const urlDev = "https://72fe-185-127-136-53.eu.ngrok.io/api/index.php/"; 
+ export const urlResource = "https://72fe-185-127-136-53.eu.ngrok.io/assets/uploads/";
 
 export var initialUrl = urlDev;
 export default {
@@ -13,3 +13,6 @@ export default {
   interstitialUnitId: "",
   rewardedUnitId: ""
 };
+
+// empPass=mv5jnD
+// ph no:9898

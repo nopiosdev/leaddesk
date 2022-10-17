@@ -79,11 +79,10 @@ const LoginForm = ({ navigation, phoneno }) => {
                     LocalStorage.SetData("Login", "Login");
                     LocalStorage.SetData("userToken", '123123');
                     LocalStorage.SetData("companyId", response?.CompanyId.toString());
-                    // await getUserClaim(response?.Id);
+                  //  await getUserClaim(response?.Id);
                     dispatch(addUser(response))
                     LocalStorage.SetData("CurrentUser", JSON.stringify(response));
-                    dispatch(toggleUser('Login'))
-                    
+                    dispatch(toggleUser('Login'))                    
 
                     setUserName('');
                     setpassword('');
