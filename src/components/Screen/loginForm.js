@@ -139,7 +139,6 @@ const LoginForm = ({ navigation, phoneno }) => {
                     style={styles.InputIcon} />
                 <TextInput style={styles.TextInput}
                     placeholder="Your Password"
-                    keyboardType="numeric"
                     placeholderTextColor="#bcbcbc"
                     underlineColorAndroid="transparent"
                     onChangeText={changePassNameHandler}

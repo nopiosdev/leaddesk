@@ -81,8 +81,8 @@ const TaskList = ({ navigation, route }) => {
             await GetRelatedToMeTasks(userId)
                 .then(res => {
                     console.log('TASK',res)
-                    settaskList(res?.filter(x => x.StatusId !== 4 && x.StatusName !== 6))
-                    settempList(res?.filter(x => x.StatusId !== 4 && x.StatusName !== 6))
+                    settaskList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
+                    settempList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                     setisLoaded(true);
@@ -149,18 +149,9 @@ const TaskList = ({ navigation, route }) => {
                         </View>
                     </View>
                     {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />) : null}
-                    <ScrollView
-                        keyboardShouldPersistTaps='always'
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={refreshing}
-                                onRefresh={_onRefresh}
-                            />
-                        }
-                    >
+                    
                         {<Searchbar searchFilterFunction={searchFilterFunction}/>}
-                        <TaskLists itemList={taskList} />
-                    </ScrollView>
+                        <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh}/>
                 </View >
                 :
                 <Loader />
