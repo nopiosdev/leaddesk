@@ -1,8 +1,8 @@
 import { postApi,  getApi } from "../api";
 
-export const CheckIn = async data =>  postApi("RtAttendanceApi/CheckIn",data);
-export const CheckOut = async data =>  postApi("RtAttendanceApi/CheckOut",data);
-export const CheckPoint = async data =>  postApi("RtAttendanceApi/CheckPoint",data);
+export const CheckIn = async data =>  postApi("attendance/CheckIn",data);
+export const CheckOut = async data =>  postApi("attendance/CheckOut",data);
+export const CheckPoint = async data =>  postApi("attendance/CheckPoint",data);
 
 export const GetMovementDetails = async (userId) => getApi("attendance/GetMovementDetails?userId="+userId);
 export const GetAttendanceFeed = async (companyId) => getApi("employee/GetEmpAttendanceFeed?companyId="+companyId);

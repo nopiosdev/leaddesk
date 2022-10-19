@@ -15,7 +15,8 @@ import { GetAttendanceFeed } from '../../../../services/UserService/EmployeeTrac
 import { MyPanelCombo } from '../../../MenuDrawer/DrawerContent';
 import { urlDev, urlResource } from '../../../../services/api/config';
 import LocalStorage from '../../../../common/LocalStorage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleActive } from '../../../../Redux/Slices/UserSlice';
 
 
 const DailyAttendances = ({ navigation }) => {
@@ -27,7 +28,7 @@ const DailyAttendances = ({ navigation }) => {
     const [CompanyId, setCompanyId] = useState(0);
     const [employeeDetail, setemployeeDetail] = useState({});
     const user = useSelector((state) => state.user.currentUser);
-
+    const dispatch = useDispatch();
     const handleBackButton = () => {
         BackHandler.exitApp()
         return true;
@@ -239,7 +240,7 @@ const DailyAttendances = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={DailyAttendanceStyle.TimeContainer}>
-                    <TouchableOpacity onPress={() => navigation.navigate('MyPanel')}>
+                    <TouchableOpacity onPress={() => { dispatch(toggleActive(3)); navigation.navigate('MyPanel') }}>
                         <Image resizeMode="contain" style={{
                             width: 67,
                             height: 56

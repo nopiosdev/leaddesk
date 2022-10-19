@@ -21,6 +21,7 @@ import call from 'react-native-phone-call'
 import { useSelector, useDispatch } from "react-redux";
 import { setClientId, updateUserEmployee, updateUserPhone } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
+import CustomTimeLine from '../../CustomTimeLine';
 
 
 
@@ -146,24 +147,7 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
         getEmpTrackInfo();
     };
     const renderTrackList = () => {
-        return (
-            <View style={styles.container}>
-                <Timeline
-                    style={styles.list}
-                    data={data}
-                    circleSize={20}
-                    circleColor={"circleColor"}
-                    lineColor='rgb(45,156,219)'
-                    timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
-                    timeStyle={{ textAlign: 'center', backgroundColor: '#ff9797', color: 'white', padding: 5, borderRadius: 13, marginTop: 5, }}
-                    descriptionStyle={{ color: 'gray' }}
-                    options={{
-                        style: { paddingTop: 5 }
-                    }}
-                    innerCircle={'dot'}
-                />
-            </View>
-        );
+        return <CustomTimeLine data={data} />
     }
 
     return (
@@ -214,29 +198,18 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
                     }}>
                     <View style={{ backgroundColor: '#ffffff' }}>
                         <View style={{ flexDirection: 'column' }}>
-                            {!refreshing? data?.length > 0 ? renderTrackList() : <View style={{width:'100%',padding:10}}><Text style={{textAlign:'center'}}>No Activities Found!</Text></View>:<ActivityIndicator/>}
+                            {!refreshing ? data?.length > 0 ? renderTrackList() : <View style={{ width: '100%', padding: 10 }}><Text style={{ textAlign: 'center' }}>No Activities Found!</Text></View> : <ActivityIndicator />}
                         </View>
                     </View>
                 </View>
             </ScrollView>
-         
-            </View >
-        );
+
+        </View >
+    );
 }
 
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20, paddingTop: 0,
 
-        backgroundColor: 'white'
-    },
-    list: {
-        flex: 1,
-        marginTop: 20,
-    },
-});
 
 export default DailyAttendanceDetails;
 

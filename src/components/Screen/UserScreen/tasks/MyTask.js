@@ -70,10 +70,12 @@ const MyTask = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await GetRelatedToMeTasks(user?.Id)
                 .then(res => {
-                    settaskList(res?.result);
-                    setTempList(res?.result);
-                    setprogressVisible(false);
-                    console.log(tempList, 'taskresutl...');
+                    console.log(res, 'taskresutl...');
+                    if(res?.success){
+                        settaskList(res);
+                        setTempList(res);
+                        setprogressVisible(false);
+                    }
                 })
                 .catch(() => {
                     setprogressVisible(false);

@@ -6,7 +6,7 @@ import { googlemapApiForAutoCheckPoint } from '../../../../services/api/config';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
-
+import NetInfo from "@react-native-community/netinfo";
 import { MyPanelStyle } from './MyPanelStyle';
 
 import {
@@ -47,6 +47,8 @@ import { urlDev, urlResource } from '../../../../services/api/config';
 import { useSelector } from 'react-redux';
 import LocalStorage from '../../../../common/LocalStorage';
 import CustomImagePicker from '../../../CustomImagePicker';
+import CustomTimeLine from '../../../CustomTimeLine';
+import { upLoadImage } from '../../../../services/TaskService';
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
 
@@ -82,20 +84,21 @@ const _getLocationAsync = async () => {
 
 const createCheckPoint = async (Latitude, Longitude, loglocation) => {
     try {
-        var TrackingModel = {
-            UserId: uIdd,
-            Latitude: Latitude,
-            Longitude: Longitude,
-            LogLocation: loglocation,
-            DeviceName: "Ioo",
-            DeviceOSVersion: Platform.OS === 'ios' ? Platform.systemVersion : Platform.Version,
-            CompanyId: comIdd
-        };
-        console.log("TrackingModel response", TrackingModel)
+        
+        var data = new FormData();
+        data.append('Latitude', Latitude);
+        data.append('Longitude', Longitude);
+        data.append('userId', uIdd);
+        data.append('LogLocation', loglocation?loglocation:'');
+        data.append('DeviceName', "Ioo");
+        data.append('DeviceOSVersion', Platform.OS === 'ios' ? Platform.systemVersion : Platform.Version);
+        data.append('companyId', comIdd);
+
+        console.log("TrackingModel response", data)
 
 
-        const response = await CheckPoint(TrackingModel);
-        if (response && response.isSuccess) {
+        const response = await CheckPoint(data);
+        if (response && response.success) {
             console.log("createCheckPoint response", response)
 
         }
@@ -180,7 +183,6 @@ const MyPanel = ({ navigation }) => {
 
 
 
-
     const _onRefresh = async () => {
         setrefreshing(true);
         setTimeout(function () {
@@ -191,7 +193,7 @@ const MyPanel = ({ navigation }) => {
 
 
 
-    const _takeSelfiePhoto = async (currentLatitude, currentLongitude) => {
+    const _takeSelfiePhoto = async () => {
         await ImagePicker.getCameraPermissionsAsync()
         await ImagePicker.getMediaLibraryPermissionsAsync();
         let pickerResult = await ImagePicker.launchCameraAsync({
@@ -200,32 +202,31 @@ const MyPanel = ({ navigation }) => {
             width: 250,
         });
         if (pickerResult.cancelled == false) {
-            handleSelfiePhoto(currentLatitude, currentLongitude, pickerResult)
+            handleSelfiePhoto(pickerResult)
         }
     };
 
-    const handleSelfiePhoto = async (currentLatitude, currentLongitude, pickerResult) => {
-        const userToken = await LocalStorage.GetData("userToken");
+    const handleSelfiePhoto = async (pickerResult) => {
+        let filename = pickerResult?.uri?.split('/')?.pop();
+        let match = /\.(\w+)$/.exec(filename);
+        let type = match ? `image/${match[1]}` : `image`;
+
         var data = new FormData();
-        data.append('BlobName', {
+        data.append('thumb', {
             uri: pickerResult.uri,
-            name: 'my_photo.jpg',
-            type: 'image/jpg'
+            name: filename,
+            type: type
         })
         setprogressVisible(true);
-        fetch(urlDev + "UploadFile/Upload", {
-            headers: {
-                'Authorization': `bearer ${userToken}`,
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
-            },
-            method: "POST",
-            body: data
-        })
-            .then(response => response.json())
+        upLoadImage(data)
             .then(response => {
                 setprogressVisible(false);
-                _sendToServer(currentLatitude, currentLongitude, response.ImagePath)
+                console.log('ImagePath', response)
+                if (response?.success) {
+                    _sendToServer(response.image)
+                } else {
+                    ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
+                }
             })
             .catch(error => {
                 setprogressVisible(false);
@@ -234,16 +235,17 @@ const MyPanel = ({ navigation }) => {
             });
     };
 
-    const _sendToServer = async (currentLatitude, currentLongitude, fileId) => {
-        var s = await getLocation(currentLatitude, currentLongitude);
-        if (pointcheck == "CheckIn") {
-            createCheckingIn(currentLatitude, currentLongitude, s, fileId);
-        } else if (pointcheck == "CheckPoint") {
-            createCheckPoint(currentLatitude, currentLongitude, s, fileId);
-        } else {
-            createCheckOut(currentLatitude, currentLongitude, s, fileId);
-        }
+    const _sendToServer = async (fileId) => {
+        var s = await getLocation(Latitude, Longitude);
         setLogLocation(s);
+        console.log(Latitude,'Latitude','Longitude',Longitude,'_sendToServer setLogLocation', s)
+        if (pointcheck == "CheckIn") {
+            createCheckingIn(fileId);
+        } else if (pointcheck == "CheckPoint") {
+            createCheckPoint(fileId);
+        } else {
+            createCheckOut(fileId);
+        }
     }
 
     const closeModalEditProfile = () => {
@@ -255,76 +257,7 @@ const MyPanel = ({ navigation }) => {
     const openmodalForImage = () => {
         setmodalForImage(true);
     }
-    // const openmodalForprofileImg = () => {
-    //     _takePhoto();
-    // }
 
-    // const _takePhoto = async () => {
-    //     setmodalForImage(false);
-    //     await ImagePicker.getCameraPermissionsAsync()
-    //     await ImagePicker.getMediaLibraryPermissionsAsync();
-    //     let pickerResult = await ImagePicker.launchCameraAsync({
-    //         allowsEditing: true,
-    //         height: 250,
-    //         width: 250,
-    //     });
-    //     console.log(pickerResult, '.......................')
-    //     if (pickerResult.cancelled == false) {
-    //         handleUploadPhoto(pickerResult)
-    //     }
-    // };
-
-    // const handleUploadPhoto = async (pickerResult) => {
-    //     const userToken = await LocalStorage.GetData("userToken");
-    //     console.log(pickerResult.uri, '...............send')
-    //     var data = new FormData();
-    //     data.append('BlobName', {
-    //         uri: pickerResult.uri,
-    //         name: 'my_photo.jpg',
-    //         type: 'image/jpg'
-    //     })
-    //     setprogressVisible(true);
-    //     fetch(urlDev + "RtTaskApi/UploadDocuments", {
-    //         headers: {
-    //             'Authorization': `bearer ${userToken}`,
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'multipart/form-data'
-    //         },
-    //         method: "POST",
-    //         body: data
-    //     })
-    //         .then(response => response.json())
-    //         .then(response => {
-                // setimage(urlResource + response.ImagePath);
-                // setImageFileName(response?.ImagePath);
-                // setprogressVisible(false);
-
-    //             ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
-    //             updateEmployeeRecords();
-    //             console.log(response.ImagePath, 'return..............');
-    //         })
-    //         .catch(error => {
-    //             setprogressVisible(false);
-    //             console.log("upload error", error);
-    //             ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
-    //         });
-    // };
-
-    // const _pickImage = async () => {
-    //     setmodalForImage(false);
-    //     await ImagePicker.getCameraPermissionsAsync()
-    //     await ImagePicker.getMediaLibraryPermissionsAsync();
-    //     let pickerResult = await ImagePicker.launchImageLibraryAsync({
-    //         allowsEditing: true,
-    //         //aspect: [4, 4],
-    //         quality: 1,
-    //         height: 250,
-    //         width: 250,
-    //     });
-    //     if (pickerResult.cancelled == false) {
-    //         handleUploadPhoto(pickerResult)
-    //     }
-    // };
     const updateEmployeeRecords = async () => {
 
         var data = new FormData();
@@ -336,6 +269,8 @@ const MyPanel = ({ navigation }) => {
         data.append('ImageFileId', ImageFileId);
         data.append('AutoCheckPointTime', AutoCheckPointTime);
         data.append('IsAutoCheckPoint', IsAutoCheckPoint);
+        data.append('IsActive', null);
+
 
 
         try {
@@ -346,7 +281,6 @@ const MyPanel = ({ navigation }) => {
                 setmodalEditEmp(false);
                 getMyTodayAttendance();
             } else {
-                alert(response);
                 Alert.alert(
                     "",
                     response?.message,
@@ -384,7 +318,7 @@ const MyPanel = ({ navigation }) => {
 
         return () => {
             BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-            clearInterval();
+            ClearInterval();
         }
     }, [])
 
@@ -396,20 +330,20 @@ const MyPanel = ({ navigation }) => {
     }
     const getAutoLocation = async () => {
         setpointcheck("CheckPoint");
-        if (IsCheckedIn === true && IsCheckedOut == false) getLoction();
+        if (IsCheckedIn === 1 && IsCheckedOut !== 1) getLocationInfo();
         console.log('I do not leak!', new Date());
     }
 
-    const clearInterval = () => {
+    const ClearInterval = () => {
         clearInterval(interval);
     }
     const handleBackButton = () => {
         BackHandler.exitApp()
         return true;
     }
-    const goBack = () => {
-        DailyAttendanceCombo();
-    }
+    // const goBack = () => {
+    //     DailyAttendanceCombo();
+    // }
     const getMyTodayAttendance = async () => {
 
         setprogressVisible(true);
@@ -417,23 +351,21 @@ const MyPanel = ({ navigation }) => {
             .then(res => {
                 console.log('GetMyTodayAttendance', res)
                 if (!res?.success && res?.success !== false) {
-                    console.log('RUN',res)
-
                     setattendanceModel(res);
-                    // setEmployeeCode(res?.EmployeeCode);
-                    setEmployeeName(res[0]?.EmployeeName);
-                    setDepartmentName(res[0]?.DepartmentName);
-                    setDesignation(res[0]?.Designation);
-                    setCheckInTimeVw(ConvertUtcToLocalTime(res[0]?.CheckInTime));
-                    setCheckOutTimeVw(ConvertUtcToLocalTime(res[0]?.CheckOutTime));
-                    setOfficeStayHour(res[0]?.OfficeStayHour);
-                    setIsCheckedIn(res[0]?.IsCheckedIn);
-                    setIsCheckedOut(res[0]?.IsCheckedOut);
-                    setIsAutoCheckPoint(res[0]?.IsAutoCheckPoint);
-                    setAutoCheckPointTime(res[0]?.AutoCheckPointTime);
-                    setStatus(res[0]?.Status);
-                    setEmployeeId(res[0]?.EmployeeId);
-                    setImageFileName(res[0]?.ImageFileName);
+                    setEmployeeCode(res?.EmployeeCode);
+                    setEmployeeName(res?.EmployeeName);
+                    setDepartmentName(res?.DepartmentName);
+                    setDesignation(res?.Designation);
+                    setCheckInTimeVw(ConvertUtcToLocalTime(res?.CheckInTime));
+                    setCheckOutTimeVw(ConvertUtcToLocalTime(res?.CheckOutTime));
+                    setOfficeStayHour(res?.OfficeStayHour);
+                    setIsCheckedIn(res?.CheckInTime && !res?.CheckOutTime ? 1 : 0);
+                    setIsCheckedOut(res?.CheckInTime && res?.CheckOutTime ? 1 : 0);
+                    setIsAutoCheckPoint(res?.IsAutoCheckPoint);
+                    setAutoCheckPointTime(res?.AutoCheckPointTime);
+                    setStatus(res?.Status);
+                    setEmployeeId(res?.EmployeeId);
+                    setImageFileName(res?.ImageFileName);
                 }
                 setprogressVisible(false);
             }).catch(() => {
@@ -443,6 +375,7 @@ const MyPanel = ({ navigation }) => {
         setprogressVisible(true);
         await GetMovementDetails(user?.Id)
             .then(res => {
+                setdata([]);
                 console.log('GetMovementDetails', res)
                 if (!res?.success && res?.success !== false) {
 
@@ -450,31 +383,31 @@ const MyPanel = ({ navigation }) => {
                     if (data.length != 0) {
                         setdata([]);
                     }
-                    // res?.map((userData) => {
+                    let tempData=[];
+                    res?.map((userData) => {
 
-                    //     var title = '';
-                    //     var color = '';
-                    //     if (userData?.IsCheckInPoint) {
-                    //         title = "Checked In";
-                    //         color = "green"
-                    //     } else if (userData?.IsCheckOutPoint) {
-                    //         title = "Checked Out";
-                    //         color = "red"
-                    //     } else {
-                    //         title = "Checked point";
-                    //         color = "gray"
-                    //     }
+                        var title = '';
+                        var color = '';
+                        if (userData?.IsCheckedInPoint === 1) {
+                            title = "Checked In";
+                            color = "green"
+                        } else if (userData?.IsCheckedOutPoint === 1) {
+                            title = "Checked Out";
+                            color = "red"
+                        } else {
+                            title = "Checked point";
+                            color = "gray"
+                        }
 
-                    //     var myObj = {
-                    //         "time": ConvertUtcToLocalTime(userData?.LogDateTime),
-                    //         "title": title,
-                    //         "description": userData?.LogLocation,
-                    //         "circleColor": color
-                    //     };
-                    //     data.push(myObj);
-
-
-                    // })
+                        var myObj = {
+                            "time": ConvertUtcToLocalTime(userData?.LogDateTime),
+                            "title": title,
+                            "description": userData?.LogLocation,
+                            "circleColor": color
+                        };
+                        tempData.push(myObj);
+                    })
+                    setdata(tempData);
                 }
                 setprogressVisible(false);
             }).catch((error) => {
@@ -483,14 +416,15 @@ const MyPanel = ({ navigation }) => {
             });
     }
 
-    const getLoction = async () => {
-        // var that = this;
+    const getLocationInfo = async () => {
+        console.log('_getLocationAsync')
+        var that = this;
         //Checking for the permission just after component loaded
         if (Platform.OS === 'android' && !Constants.isDevice) {
             seterrorMessage('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
             ToastAndroid.show(errorMessage, ToastAndroid.TOP);
         } else {
-            await _getLocationAsync();
+        await _getLocationAsync();
         }
     }
 
@@ -512,32 +446,32 @@ const MyPanel = ({ navigation }) => {
             setLatitude(currentLatitude);
             setLongitude(currentLongitude);
             if (pointcheck == "CheckPoint") {
-                _sendCheckpointToServer(currentLatitude, currentLongitude);
+                _sendCheckpointToServer();
             }
             else {
-                _takeSelfiePhoto(currentLatitude, currentLongitude);
+                _takeSelfiePhoto();
             }
         });
     };
 
-    const _sendCheckpointToServer = async (currentLatitude, currentLongitude) => {
+    const _sendCheckpointToServer = async () => {
         var s = await getLocation(currentLatitude, currentLongitude);
-        createCheckPoint(currentLatitude, currentLongitude, s);
         setLogLocation(s);
+        createCheckPoint();
     }
-    const _getLocationAsyncforgps = async () => {
+    // const _getLocationAsyncforgps = async () => {
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                setLatitude(position?.coords?.latitude);
-                setLongitude(position?.coords?.longitude);
-                seterror(null);;
-            },
-            (error) => seterror(error?.message),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
-        );
+    //     navigator.geolocation.getCurrentPosition(
+    //         (position) => {
+    //             setLatitude(position?.coords?.latitude);
+    //             setLongitude(position?.coords?.longitude);
+    //             seterror(null);;
+    //         },
+    //         (error) => seterror(error?.message),
+    //         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    //     );
 
-    }
+    // }
     const getMinute = (value) => {
         var timeList = value.split(":");
         var hours = parseInt(timeList[0]),
@@ -564,125 +498,107 @@ const MyPanel = ({ navigation }) => {
         setisRegistered(!isRegistered);
     };
     const renderTrackList = () => {
-        return (
-            <View style={styles.container}>
-                <Timeline
-                    style={styles.list}
-                    data={data}
-                    circleSize={20}
-                    circleColor={"circleColor"}
-                    lineColor='rgb(45,156,219)'
-                    timeContainerStyle={{ minWidth: 52, marginTop: -5 }}
-                    timeStyle={{ textAlign: 'center', backgroundColor: '#ff9797', color: 'white', padding: 5, borderRadius: 13, marginTop: 5, }}
-                    descriptionStyle={{ color: 'gray' }}
-                    options={{
-                        style: { paddingTop: 5 }
-                    }}
-                    innerCircle={'dot'}
-                />
-            </View>
-        )
+        return <CustomTimeLine data={data} />
     }
 
-    const createCheckingIn = async (Latitude, Longitude, loglocation, fileId) => {
+    const createCheckingIn = async (fileId) => {
         try {
-            const TrackingModel = {
-                UserId: UserId,
-                Latitude: Latitude,
-                Longitude: Longitude,
-                LogLocation: loglocation,
-                DeviceName: DeviceName,
-                DeviceOSVersion: DeviceOSVersion,
-                CompanyId: CompanyId,
-                CheckInTimeFile: fileId
-            };
+            var data = new FormData();
+            data.append('Latitude', Latitude);
+            data.append('Longitude', Longitude);
+            data.append('userId', user?.Id);
+            data.append('LogLocation', LogLocation?LogLocation:'');
+            data.append('DeviceName', '');
+            data.append('DeviceOSVersion', DeviceOSVersion);
+            data.append('companyId', CompanyId);
+            data.append('CheckInTimeFile', fileId);
 
-            progressVisible = true;
-            const response = await CheckIn(TrackingModel);
-            if (response && response.isSuccess) {
-                console.log("createCheckingIn response", response)
+            setprogressVisible(true);
+            const response = await CheckIn(data);
+            console.log("createCheckingIn response", response)
+            if (response.success) {
                 // getEmpTrackingTodayList();GetMyTodayAttendance
                 toggle();
                 // this.setInterval();
                 getMyTodayAttendance();
-                progressVisible = false
+                setprogressVisible(false);
 
             } else {
                 ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
-                progressVisible = false;
+                setprogressVisible(false);
             }
         } catch (errors) {
             console.log("createCheckingIn Errors", errors);
-            progressVisible = false;
+            setprogressVisible(false);
         }
     }
 
-    const createCheckPoint = async (Latitude, Longitude, loglocation) => {
+    const createCheckPoint = async () => {
         try {
             setprogressVisible(true);
-            const TrackingModel = {
-                UserId: UserId,
-                Latitude: Latitude,
-                Longitude: Longitude,
-                LogLocation: loglocation,
-                DeviceName: DeviceName,
-                DeviceOSVersion: DeviceOSVersion,
-                CompanyId: CompanyId
-            };
-            console.log("TrackingModel response", TrackingModel)
+
+            var data = new FormData();
+            data.append('Latitude', Latitude);
+            data.append('Longitude', Longitude);
+            data.append('userId', user?.Id);
+            data.append('LogLocation', LogLocation?LogLocation:'');
+            data.append('DeviceName', '');
+            data.append('DeviceOSVersion', DeviceOSVersion);
+            data.append('companyId', CompanyId);
 
 
-            const response = await CheckPoint(TrackingModel);
-            if (response && response.isSuccess) {
-                console.log("createCheckPoint response", response)
+            const response = await CheckPoint(data);
+            console.log("createCheckPoint response", response)
+            if (response && response.success) {
                 toggle();
                 //  this.getEmpTrackingTodayList();
                 getMyTodayAttendance();
 
-                progressVisible = false;
+                setprogressVisible(false);
             } else {
                 ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
-                progressVisible = false;
+                setprogressVisible(false);
             }
         } catch (errors) {
             console.log("createCheckPoint Errors", errors);
-            progressVisible = false;
+            setprogressVisible(false);
         }
     }
 
-    const createCheckOut = async (Latitude, Longitude, loglocation, fileId) => {
+    const createCheckOut = async (fileId) => {
         try {
-            const TrackingModel = {
-                UserId: UserId,
-                Latitude: Latitude,
-                Longitude: Longitude,
-                LogLocation: loglocation,
-                DeviceName: DeviceName,
-                DeviceOSVersion: DeviceOSVersion,
-                CompanyId: CompanyId,
-                CheckOutTimeFile: fileId
-            };
 
-            const response = await CheckOut(TrackingModel)
-            progressVisible = true;
-            console.log("CheckOut TrackingModel", TrackingModel);
+            var data = new FormData();
+            data.append('Latitude', Latitude);
+            data.append('Longitude', Longitude);
+            data.append('userId', user?.Id);
+            data.append('LogLocation', LogLocation?LogLocation:'');
+            data.append('DeviceName', '');
+            data.append('DeviceOSVersion', DeviceOSVersion);
+            data.append('companyId', CompanyId);
+            data.append('CheckInTimeFile', fileId);
+            data.append('LessTimeReason', '');
 
-            if (response && response.isSuccess) {
 
-                console.log("createCheckOut response", response)
+            const response = await CheckOut(data);
+            setprogressVisible(true);
+
+            console.log("createCheckOut response", response)
+            if (response && response.success) {
+
                 //  getEmpTrackingTodayList();
                 getMyTodayAttendance();
-                clearInterval();
+                ClearInterval();
                 toggle();
-                progressVisible = false;
+                setprogressVisible(false);
 
             } else {
                 ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
-                progressVisible = false;
+                setprogressVisible(false);
             }
         } catch (errors) {
             console.log("createCheckOut Errors", errors);
-            progressVisible = false;
+            setprogressVisible(false);
         }
     }
 
@@ -695,10 +611,10 @@ const MyPanel = ({ navigation }) => {
         console.log('check for getCheckIn', IsCheckedIn);
 
 
-        if (IsCheckedOut === false) {
-            if (IsCheckedIn === false) {
+        if (IsCheckedOut !== 1) {
+            if (IsCheckedIn !== 1) {
                 setprogressVisible(true);
-                await getLoction();
+                await getLocationInfo();
                 settouchabledisablepointcheckin(false);
             } else {
                 setprogressVisible(false);
@@ -715,20 +631,19 @@ const MyPanel = ({ navigation }) => {
         //     ToastAndroid.show("No Internet Detected", ToastAndroid.TOP);
         // }
     }
-
     const getCheckOut = async () => {
 
-
-        setpointcheck('CheckOut')
-        settouchabledisablepointcheckout(true);
-        settouchabledisable(true);
-        setprogressVisible(true);
         console.log('check for getCheckOut', IsCheckedOut);
 
-        if (IsCheckedOut == false) {
-            if (IsCheckedIn === true && IsCheckedOut == false) {
+        setpointcheck('CheckOut')
+        // settouchabledisablepointcheckout(true);
+        settouchabledisable(true);
+        setprogressVisible(true);
+
+        if (IsCheckedOut !== 1) {
+            if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
                 setprogressVisible(false);
-                await getLoction();
+                await getLocationInfo();
 
             } else {
                 setprogressVisible(false);
@@ -750,14 +665,14 @@ const MyPanel = ({ navigation }) => {
         setprogressVisible(true);
 
         console.log('check for getCheckPoint', IsCheckedIn);
-        if (IsCheckedOut) {
+        if (IsCheckedOut === 1) {
             setprogressVisible(false);
             settouchabledisablepoint(false);
             return ToastAndroid.show('You have already checked out today', ToastAndroid.TOP);
         }
-        if (IsCheckedIn === true && IsCheckedOut == false) {
+        if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
 
-            getLoction();
+            getLocationInfo();
             // console.log("clicked");
             setprogressVisible(false);
             settouchabledisablepoint(false);
@@ -837,7 +752,7 @@ const MyPanel = ({ navigation }) => {
                     <View
                         style={MyPanelStyle.AllTimePanelRow}>
                         <Text>
-                            {OfficeStayHour ?
+                            {CheckOutTimeVw ?
                                 (<AntDesign name="arrowup"
                                     size={18}
                                     style={{ marginTop: 3, }}
@@ -862,7 +777,7 @@ const MyPanel = ({ navigation }) => {
             </View>
         )
     }
-console.log('EmployeeName',EmployeeName)
+
     return (
         <View style={MyPanelStyle.container}>
 
