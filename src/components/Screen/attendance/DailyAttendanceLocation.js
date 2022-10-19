@@ -20,12 +20,12 @@ import { CommonStyles } from '../../../common/CommonStyles';
 
 import call from 'react-native-phone-call'
 import { useState } from 'react';
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { updateUserEmployee } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
 
 
-const DailyAttendanceLocation =({navigation})=> {
+const DailyAttendanceLocation = ({ navigation }) => {
 
     const [DepartmentName, setDepartmentName] = useState('');
     const [Designation, setDesignation] = useState('');
@@ -40,10 +40,10 @@ const DailyAttendanceLocation =({navigation})=> {
     const [refreshing, setrefreshing] = useState(false);
     const [svgLinHeight, setsvgLinHeight] = useState(null);
     const user = useSelector((state) => state.user.currentUser);
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
     const clientId = useSelector((state) => state.user.clientId);
     const isFocused = useIsFocused();
-    
+
     const Call = () => {
         //handler to make a call
         const args = {
@@ -54,65 +54,67 @@ const DailyAttendanceLocation =({navigation})=> {
     }
 
     useEffect(() => {
-        (async()=>{
-        getEmpTrackInfo();
-        getEmpInfo();
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-    })();
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-      }
+        (async () => {
+            getEmpTrackInfo();
+            getEmpInfo();
+            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+        })();
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        }
     }, [isFocused])
-    
+
 
     const handleBackButton = () => {
         navigation.navigate('DailyAttendance');
         return true;
     }
-    console.log('clientId',clientId)
+    console.log('clientId', clientId)
     const getEmpTrackInfo = async () => {
         try {
             await GetMovementDetails(clientId)
                 .then(res => {
-                    setEmpTrackList(res)
                     console.log('movement details', res)
-                    res?.map((userData, index) => {
-                        var title = '';
-                        var color = '';
-                        if (userData.IsCheckInPoint) {
-                            title = "Checked In";
-                            color = "green"
-                        } else if (userData.IsCheckOutPoint) {
-                            title = "Checked Out";
-                            color = "red"
-                        } else {
-                            title = "Checked point";
-                            color = "gray"
-                        }
-                        var myObj = {
-                            "time": userData.LogTimeVw,
-                            "title": title,
-                            "description": userData.LogLocation,
-                            "circleColor": color
-                        };
-                        var newMarkerObj = {
-                            "title": title + " " + (index + 1),
-                            "description": userData.LogLocation,
-                            coordinates: {
-                                "latitude":Number(userData.Latitude),
-                                "longitude": Number(userData.Longitude)
-                            },
-                        }
-                        // setmarkers([...markers,...newMarkerObj])
-                        setmarkers([newMarkerObj])
-                    });
-                    console.log('Lat',res[res?.length - 1])
+                    if (!res?.success && res?.success !== false) {
+                        setEmpTrackList(res)
+                        res?.map((userData, index) => {
+                            var title = '';
+                            var color = '';
+                            if (userData.IsCheckInPoint) {
+                                title = "Checked In";
+                                color = "green"
+                            } else if (userData.IsCheckOutPoint) {
+                                title = "Checked Out";
+                                color = "red"
+                            } else {
+                                title = "Checked point";
+                                color = "gray"
+                            }
+                            var myObj = {
+                                "time": userData.LogTimeVw,
+                                "title": title,
+                                "description": userData.LogLocation,
+                                "circleColor": color
+                            };
+                            var newMarkerObj = {
+                                "title": title + " " + (index + 1),
+                                "description": userData.LogLocation,
+                                coordinates: {
+                                    "latitude": Number(userData.Latitude),
+                                    "longitude": Number(userData.Longitude)
+                                },
+                            }
+                            // setmarkers([...markers,...newMarkerObj])
+                            setmarkers([newMarkerObj])
+                        });
+                        console.log('Lat', res[res?.length - 1])
 
-                    setLongitude(Number(res[res?.length - 1]?.Longitude));
-                    setLatitude(Number(res[res?.length - 1]?.Latitude));
-                    setLogLocation(res[res?.length - 1]?.LogLocation);
-                    const tcount = 60 * res?.length - 60;
-                    setsvgLinHeight(tcount === 0 ? 60 : tcount);
+                        setLongitude(Number(res[res?.length - 1]?.Longitude));
+                        setLatitude(Number(res[res?.length - 1]?.Latitude));
+                        setLogLocation(res[res?.length - 1]?.LogLocation);
+                        const tcount = 60 * res?.length - 60;
+                        setsvgLinHeight(tcount === 0 ? 60 : tcount);
+                    }
                 })
                 .catch((ex) => {
                     console.log(ex, "GetMovementDetails error occured");
@@ -123,8 +125,8 @@ const DailyAttendanceLocation =({navigation})=> {
         }
     }
 
-    const goBack=()=> {
-         navigation.navigate('DailyAttendance');
+    const goBack = () => {
+        navigation.navigate('DailyAttendance');
     };
 
     const getEmpInfo = async () => {
@@ -133,7 +135,7 @@ const DailyAttendanceLocation =({navigation})=> {
             await GetMyTodayAttendance(clientId)
                 .then(res => {
                     console.log(res, "getEmpInfo");
-                    
+
                     setEmployeeName(res?.EmployeeName);
                     setDepartmentName(res?.DepartmentName);
                     setDesignation(res?.Designation);
@@ -196,12 +198,12 @@ const DailyAttendanceLocation =({navigation})=> {
                         }}
 
                     >
-                        {markers?.map((marker,i) => (
+                        {markers?.map((marker, i) => (
                             <MapView.Marker
                                 coordinate={marker?.coordinates}
                                 title={marker?.title}
                                 description={marker?.description}
-                                key={i.toString()+"_"}
+                                key={i.toString() + "_"}
                             />
                         ))}
                         <MapView.Marker coordinate={{
@@ -213,54 +215,54 @@ const DailyAttendanceLocation =({navigation})=> {
             </View>
         )
     }
-        return (
-            <View style={DailyAttendanceStyle.container}>
-              
+    return (
+        <View style={DailyAttendanceStyle.container}>
+
+            <View
+                style={CommonStyles.HeaderContent}>
                 <View
-                    style={CommonStyles.HeaderContent}>
+                    style={CommonStyles.HeaderFirstView}>
+                    <TouchableOpacity
+                        style={CommonStyles.HeaderMenuicon}
+                        onPress={() => { goBack() }}>
+                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
+                            source={require('../../../../assets/images/left_arrow.png')}>
+                        </Image>
+                    </TouchableOpacity>
                     <View
-                        style={CommonStyles.HeaderFirstView}>
-                        <TouchableOpacity
-                            style={CommonStyles.HeaderMenuicon}
-                            onPress={() => { goBack() }}>
-                            <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                                source={require('../../../../assets/images/left_arrow.png')}>
-                            </Image>
-                        </TouchableOpacity>
-                        <View
-                            style={CommonStyles.HeaderTextView}>
-                            <Text
-                                style={CommonStyles.HeaderTextstyle}>
-                                {EmployeeName}
+                        style={CommonStyles.HeaderTextView}>
+                        <Text
+                            style={CommonStyles.HeaderTextstyle}>
+                            {EmployeeName}
 
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={{ alignItems: 'flex-end' }}>
-                        <TouchableOpacity
-                            onPress={Call}
-                            style={{
-                                padding: 8, paddingVertical: 2,
-
-                            }}>
-                            <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
-                                resizeMode='contain'
-                                source={require('../../../../assets/images/call.png')}>
-                            </Image>
-                        </TouchableOpacity>
+                        </Text>
                     </View>
                 </View>
-                <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
-                {renderMapView()}
+                <View style={{ alignItems: 'flex-end' }}>
+                    <TouchableOpacity
+                        onPress={Call}
+                        style={{
+                            padding: 8, paddingVertical: 2,
+
+                        }}>
+                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
+                            resizeMode='contain'
+                            source={require('../../../../assets/images/call.png')}>
+                        </Image>
+                    </TouchableOpacity>
+                </View>
             </View>
-        );
+            <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
+            {renderMapView()}
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20, paddingTop: 0,
-        
+
         backgroundColor: 'white'
     },
     list: {
@@ -269,6 +271,6 @@ const styles = StyleSheet.create({
     },
 });
 
-export default  DailyAttendanceLocation;
+export default DailyAttendanceLocation;
 
 

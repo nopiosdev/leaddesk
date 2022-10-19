@@ -39,11 +39,8 @@ const CompleteTaskFilter = ({ navigation, route }) => {
     };
 
     useEffect(() => {
-        (async () => {
-            getTaskList(true);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-        })
-
+        getTaskList(true);
+        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         return () => {
             BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
         }
@@ -138,17 +135,9 @@ const CompleteTaskFilter = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <Searchbar searchFilterFunction={searchFilterFunction} />
             {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />) : null}
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={_onRefresh}
-                    />
-                }
-            >
-                <TaskLists itemList={taskList} headerRenderer={<Searchbar searchFilterFunction={searchFilterFunction}/>} />
-            </ScrollView>
+                <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh} />
         </View >
     )
 }

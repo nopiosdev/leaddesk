@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, TouchableOpacity, ScrollView, RefreshControl, BackHandler } from 'react-native';
-import Iconic from 'react-native-vector-icons/Feather'
-import { CommonStyles } from '../../../common/CommonStyles';
 import { DailyAttendanceStyle } from './DailyAttendanceStyle';
 import Modal from 'react-native-modalbox';
 import { GetCompanyByUserId } from "../../../services/CompanyService"
@@ -9,10 +7,10 @@ import { useSelector } from "react-redux";
 import { GetAttendanceFeed } from '../../../services/EmployeeTrackService';
 import { urlResource } from '../../../services/api/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import { DrawerContentStyle } from "../../MenuDrawer/DrawerContentStyle"
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
+import Header from '../../Header';
 
 const AdminTodayAttendance = ({ navigation }) => {
 
@@ -47,7 +45,7 @@ const AdminTodayAttendance = ({ navigation }) => {
     }
 
     const ShowImageViewer = (f) => {
-        var images = [{ url: urlResource + f, },];
+        var images = [{ url: urlResource + f }];
         setZoomImage(images)
         setViewerModal(true);
     }
@@ -67,10 +65,10 @@ const AdminTodayAttendance = ({ navigation }) => {
                 setdisplayAbleEmployeeList(employeeList);
                 break;
             case 2: //checked in
-                setdisplayAbleEmployeeList(employeeList?.filter(x => x.IsCheckedIn || x.IsCheckedOut));
+                setdisplayAbleEmployeeList(employeeList?.filter(x => x.CheckInTime || x.CheckOutTime));
                 break;
             case 3: //not attend
-                setdisplayAbleEmployeeList(employeeList?.filter(x => x.NotAttend));
+                setdisplayAbleEmployeeList(employeeList?.filter(x => !x.CheckInTime || !x.CheckOutTime));
                 break;
         }
     };
@@ -273,37 +271,11 @@ const AdminTodayAttendance = ({ navigation }) => {
         <>
             {isLoaded ?
                 <View style={DailyAttendanceStyle.container}>
-                    <View
-                        style={CommonStyles.HeaderContent}>
-                        <View
-                            style={CommonStyles.HeaderFirstView}>
-                            <TouchableOpacity
-                                style={CommonStyles.HeaderMenuicon}
-                                onPress={() => { navigation.openDrawer(); }}>
-                                <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                                    source={require('../../../../assets/images/menu_b.png')}>
-                                </Image>
-                            </TouchableOpacity>
-                            <View
-                                style={[DrawerContentStyle.logoImage, {
-
-                                }]}>
-                                <TouchableOpacity
-                                    style={DrawerContentStyle.CompanyModalStyle}
-                                    onPress={() => setCompanyModal(true)}
-                                >
-                                    <Text
-                                        style={DrawerContentStyle.CompanyModalTextStyle}>
-                                        {selctedCompanyValue}
-                                    </Text>
-                                    <Iconic
-                                        name="chevrons-down" size={14} color="#d6d6d6"
-                                        style={DrawerContentStyle.CompanyModalIconStyle}>
-                                    </Iconic>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
+                    <Header
+                        onSelect={() => setCompanyModal(true)}
+                        selected={selctedCompanyValue}
+                        onPress={() => { navigation.openDrawer(); }}
+                    />
                     <View
                         style={
                             DailyAttendanceStyle.ListContainer
@@ -379,15 +351,15 @@ const AdminTodayAttendance = ({ navigation }) => {
                                     </TouchableOpacity>
 
                                     <View style={DailyAttendanceStyle.TimeContainer}>
-                                        <TouchableOpacity onPress={() => ShowImageViewer(item.CheckInTimeFile)}>
+                                        <TouchableOpacity onPress={() => ShowImageViewer(item.ImageFileName)}>
                                             <View style={DailyAttendanceStyle.AttendanceImageView1}>
                                                 <Image resizeMode='cover' style={
                                                     DailyAttendanceStyle.AttendanceImage
-                                                } source={{ uri: urlResource + item.CheckInTimeFile }} />
+                                                } source={{ uri: urlResource + item.ImageFileName }} />
                                                 <Text style={
                                                     DailyAttendanceStyle.CheckinTimeText
                                                 }>
-                                                    {item.CheckInTimeVw !== "" ? item.CheckInTimeVw : ("")}</Text>
+                                                    {item.CheckInTime !== "" ? item.CheckInTime : ("")}</Text>
                                             </View>
 
                                         </TouchableOpacity>
@@ -398,7 +370,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 } source={{ uri: urlResource + item.CheckOutTimeFile }} />
                                                 <Text style={
                                                     DailyAttendanceStyle.CheckOutTimeText
-                                                }>{item.IsCheckedOut ? item.CheckOutTimeVw : ("")}</Text>
+                                                }>{item.CheckOutTime ? item.CheckOutTime : ("")}</Text>
                                             </View>
                                         </TouchableOpacity>
 

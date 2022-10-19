@@ -1,4 +1,5 @@
 import React from 'react';
+import { RefreshControl } from 'react-native';
 import { View, FlatList, StyleSheet } from 'react-native';
 import TaskLists from './TaskListRowCompoent';
 
@@ -20,7 +21,12 @@ const TaskListComponent = (props) => (
             data={props.itemList}
             keyExtractor={(x, i) => i.toString()}
             renderItem={({ item }) => <TaskLists navigation={props?.navigation} itemData={item} />}
-            refreshControl={props?.refreshControl}
+            refreshControl={
+                <RefreshControl
+                    refreshing={props?.refreshing}
+                    onRefresh={props?._onRefresh}
+                />
+            } 
         />
 
     </View>

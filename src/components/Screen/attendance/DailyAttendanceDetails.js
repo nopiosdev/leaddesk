@@ -22,6 +22,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setClientId, updateUserEmployee, updateUserPhone } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
 import CustomTimeLine from '../../CustomTimeLine';
+import Header from '../../Header';
 
 
 
@@ -80,31 +81,33 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
             await GetMovementDetails(paramsData?.aItem?.UserId)
                 .then(res => {
                     console.log("getEmpTrackInfo", res);
-                    setEmpTrackList(res);
-                    res?.map((userData, index) => {
-                        var title = '';
-                        var color = '';
-                        if (userData.IsCheckInPoint) {
-                            title = "Checked In";
-                            color = "green"
-                        } else if (userData.IsCheckOutPoint) {
-                            title = "Checked Out";
-                            color = "red"
-                        } else {
-                            title = "Checked point";
-                            color = "gray"
-                        }
-                        var myObj = {
-                            "time": ConvertUtcToLocalTime(userData.LogDateTime),
-                            "title": title,
-                            "description": userData.LogLocation,
-                            "circleColor": color
-                        };
-                        setdata([myObj]);
-                    });
-                    setLongitude(res[res?.length - 1]?.Longitude);
-                    setLatitude(res[res?.length - 1]?.Latitude);
-                    setLogLocation(res[res?.length - 1]?.LogLocation);
+                    if (!res?.success && res?.success !== false) {
+                        setEmpTrackList(res);
+                        res?.map((userData, index) => {
+                            var title = '';
+                            var color = '';
+                            if (userData.IsCheckInPoint) {
+                                title = "Checked In";
+                                color = "green"
+                            } else if (userData.IsCheckOutPoint) {
+                                title = "Checked Out";
+                                color = "red"
+                            } else {
+                                title = "Checked point";
+                                color = "gray"
+                            }
+                            var myObj = {
+                                "time": ConvertUtcToLocalTime(userData.LogDateTime),
+                                "title": title,
+                                "description": userData.LogLocation,
+                                "circleColor": color
+                            };
+                            setdata([myObj]);
+                        });
+                        setLongitude(res[res?.length - 1]?.Longitude);
+                        setLatitude(res[res?.length - 1]?.Latitude);
+                        setLogLocation(res[res?.length - 1]?.LogLocation);
+                    }
                 })
                 .catch((ex) => {
                     console.log(ex, "GetMovementDetails error occured");
@@ -153,9 +156,14 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
     return (
         <View style={DailyAttendanceStyle.container}>
 
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
+                     <Header
+                        title={EmployeeName}
+                        navigation={navigation}
+                        goBack={true}
+                        onPress={() => { goBack() }}
+                        makeCall={makeCall}
+                    />
+                {/* <View
                     style={CommonStyles.HeaderFirstView}>
                     <TouchableOpacity
                         style={CommonStyles.HeaderMenuicon}
@@ -173,20 +181,7 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
                         </Text>
                     </View>
                 </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                    <TouchableOpacity
-                        onPress={() => makeCall()}
-                        style={{
-                            padding: 8, paddingVertical: 2,
-
-                        }}>
-                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
-                            resizeMode='contain'
-                            source={require('../../../../assets/images/call.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                 */}
 
 
             <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
