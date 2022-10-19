@@ -10,7 +10,7 @@ import { SearchBar } from 'react-native-elements';
 import _ from "lodash";
 import { TaskStyle } from './TaskStyle';
 import { GetRelatedToMeTasks } from '../../../../services/UserService/TaskService';
-import TaskLists from "./TaskListComponent"
+import TaskLists from "../../tasks/TaskListComponent"
 import { useDispatch, useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { toggleActive } from '../../../../Redux/Slices/UserSlice';
@@ -35,7 +35,7 @@ const MyTask = ({ navigation, route }) => {
             setrefreshing(false);
         }, 2000);
 
-        // getTaskList(false);
+        getTaskList(false);
     };
 
     useEffect(() => {
@@ -71,11 +71,11 @@ const MyTask = ({ navigation, route }) => {
             await GetRelatedToMeTasks(user?.Id)
                 .then(res => {
                     console.log(res, 'taskresutl...');
-                    if(res?.success){
+                    if(!res?.success && res?.success !== false){
                         settaskList(res);
                         setTempList(res);
-                        setprogressVisible(false);
                     }
+                    setprogressVisible(false);
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -135,17 +135,11 @@ const MyTask = ({ navigation, route }) => {
             {progressVisible == true ?
                 (<ActivityIndicator size="large" color="#1B7F67"
                     style={TaskStyle.loaderIndicator} />) :
-                <ScrollView
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={_onRefresh}
-                        />
-                    }
-                >
+                <>
                     {<Searchbar searchFilterFunction={searchFilterFunction}/>}
-                    <TaskLists itemList={taskList}/>
-                </ScrollView>
+                    {/* <TaskLists itemList={taskList}/> */}
+                    <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh}/>
+                </>
             }
         </View >
     )

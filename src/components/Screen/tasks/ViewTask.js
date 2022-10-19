@@ -257,7 +257,7 @@ const ViewTask = ({ navigation, route }) => {
 
             await TaskStatus()
                 .then(res => {
-                    // console.log(res, 'TaskStatusList...View');
+                    console.log(res, 'TaskStatusList...View');
                     setTaskStatusList(res);
                     setprogressVisible(false);
                 })
@@ -476,7 +476,7 @@ const ViewTask = ({ navigation, route }) => {
                         </View>
                     </View>
                     <View style={{ flex: 1, }}>
-                        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, }}>
+                        {/* <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, }}> */}
                             <View style={{ flex: 1, }}>
                                 <View
                                     style={TaskStyle.titleInputRow}>
@@ -651,7 +651,7 @@ const ViewTask = ({ navigation, route }) => {
                                     />
                                 </View>
                             </View>
-                        </ScrollView>
+                        {/* </ScrollView> */}
                     </View>
                     <View style={{
                         justifyContent: 'flex-end',

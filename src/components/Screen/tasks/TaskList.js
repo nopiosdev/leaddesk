@@ -80,9 +80,14 @@ const TaskList = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await GetRelatedToMeTasks(userId)
                 .then(res => {
-                    console.log('TASK',res)
-                    settaskList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
-                    settempList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
+                    console.log('TASK', res)
+                    if (user?.UserType == 'admin') {
+                        settaskList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
+                        settempList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
+                    } else {
+                        settaskList(res?.filter(x => x.AssignedToId == user?.Id))
+                        settempList(res?.filter(x => x.AssignedToId == user?.Id))
+                    }
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                     setisLoaded(true);
@@ -149,9 +154,9 @@ const TaskList = ({ navigation, route }) => {
                         </View>
                     </View>
                     {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />) : null}
-                    
-                        {<Searchbar searchFilterFunction={searchFilterFunction}/>}
-                        <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh}/>
+
+                    {<Searchbar searchFilterFunction={searchFilterFunction} />}
+                    <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh} />
                 </View >
                 :
                 <Loader />

@@ -48,8 +48,9 @@ const LeaveApply = ({ navigation, route }) => {
 
             await GetLeaveStatusList()
                 .then(res => {
-                    setLeaveArray(res?.result);
-                    console.log(res.result, "statusList");
+                    console.log('GetLeaveStatusList', res)
+                    setLeaveArray(res);
+                    console.log(res, "statusList");
                 })
                 .catch(() => {
                     console.log("error occured");
@@ -90,36 +91,32 @@ const LeaveApply = ({ navigation, route }) => {
 
     const CreateLeave = async () => {
 
-            let leaveModel = {
-                CompanyId: CompanyId,
-                UserId: user?.Id,
-                LeaveApplyFrom: moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss a'),
-                LeaveApplyTo: moment(new Date(date1)).format('YYYY-MM-DD HH:mm:ss a'),
-                IsHalfDay: IsHalfDay,
-                LeaveTypeId: leave.LeaveArrayText,
-                LeaveReason: LeaveReason,
-                CreatedAt: CreatedAt,
-                IsApproved: IsApproved,
-                IsRejected: IsRejected,
-                RejectReason: RejectReason,
-                ApprovedById: ApprovedById,
-                ApprovedAt: ApprovedAt,
-            };
-            console.log("leaveModel", leaveModel);
+        var data = new FormData();
+        data.append('CompanyId', CompanyId);
+        data.append('UserId', user?.Id);
+        data.append('LeaveApplyFrom', moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss a'));
+        data.append('LeaveApplyTo', moment(new Date(date1)).format('YYYY-MM-DD HH:mm:ss a'));
+        data.append('IsHalfDay', IsHalfDay);
+        data.append('LeaveTypeId', leave.LeaveArrayText);
+        data.append('LeaveReason', LeaveReason);
+        data.append('CreatedAt', CreatedAt);
 
-            if (leaveModel.LeaveTypeId != "") {
-                if (leaveModel.LeaveReason != "") {
-                    let response = await createLeave(leaveModel);
-                    ToastAndroid.show('Leave applied successfully', ToastAndroid.TOP);
-                    goBack();
-                }
-                else {
-                    ToastAndroid.show('Please Enter Reason', ToastAndroid.TOP);
-                }
+        console.log("leaveModel", data);
+
+        if (data.LeaveTypeId != "") {
+            if (data.LeaveReason != "") {
+                let response = await createLeave(data);
+                console.log('createLeave', response)
+                ToastAndroid.show('Leave applied successfully', ToastAndroid.TOP);
+                goBack();
             }
             else {
-                ToastAndroid.show('Please Enter Cause', ToastAndroid.TOP);
+                ToastAndroid.show('Please Enter Reason', ToastAndroid.TOP);
             }
+        }
+        else {
+            ToastAndroid.show('Please Enter Cause', ToastAndroid.TOP);
+        }
 
     }
 
@@ -305,7 +302,6 @@ const LeaveApply = ({ navigation, route }) => {
                             </View>
                         </View>
                         <View
-                        // style={{ paddingVertical: 20, }}
                         >
                             <ScrollView showsVerticalScrollIndicator={false}
                                 style={{ height: (height * 50) / 100, }}>

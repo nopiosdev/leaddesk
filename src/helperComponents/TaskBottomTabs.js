@@ -32,12 +32,12 @@ const TaskBottomTabs = ({ navigation }) => {
                 </>
                 :
                 <>
-                    <Pressable onPress={() => { setUserActive('Assigned'); navigation.navigate('MyTask') }} style={{ zIndex: 1, width: '50%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <Pressable onPress={() => { setUserActive('Assigned'); navigation.navigate('TaskListScreen') }} style={{ zIndex: 1, width: '50%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <MaterialCommunityIcons name="account-arrow-left" size={23} color={userActive === 'Assigned' ? "#2c82a1" : "#4a535b"} style={{ marginTop: 10 }} />
                         <Text style={{ marginTop: 10, color: userActive === 'Assigned' ? 'green' : 'black', marginLeft: 10 }}>Assigned To Me</Text>
                     </Pressable>
 
-                    <Pressable onPress={() => { setUserActive('Created'); navigation.navigate('CreateByMe') }} style={{ zIndex: 1, width: '50%', flexDirection: 'row', alignItems: 'center' }}>
+                    <Pressable onPress={() => { setUserActive('Created'); navigation.navigate('CompleteTaskFilter') }} style={{ zIndex: 1, width: '50%', flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialCommunityIcons name="card-bulleted-outline" size={30} color={userActive === 'Created' ? "#2c82a1" : "#4a535b"} style={{ marginTop: 10 }} />
                         <Text style={{ marginTop: 10, color: userActive === 'Created' ? 'green' : 'black', marginLeft: 10 }}>Created By Me</Text>
                     </Pressable>

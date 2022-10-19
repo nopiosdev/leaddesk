@@ -70,8 +70,13 @@ const CompleteTaskFilter = ({ navigation, route }) => {
             await GetRelatedToMeTasks(user.Id)
                 .then(res => {
                     console.log(res)
-                    settaskList(res?.filter(x => x.StatusId === 4 || x.StatusId === 5 || x.StatusId === 6));
-                    settempList(res?.filter(x => x.StatusId === 4 || x.StatusId === 5 || x.StatusId === 6));
+                    if (user?.UserType == 'admin') {
+                        settaskList(res?.filter(x => x.StatusId === 4 || x.StatusId === 5 || x.StatusId === 6));
+                        settempList(res?.filter(x => x.StatusId === 4 || x.StatusId === 5 || x.StatusId === 6));
+                    } else {
+                        settaskList(res?.filter(x => x.CreatedById == user?.Id))
+                        settempList(res?.filter(x => x.CreatedById == user?.Id))
+                    }                    
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                 })

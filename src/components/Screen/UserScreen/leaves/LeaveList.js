@@ -50,12 +50,14 @@ const LeaveList = ({ navigation, route }) => {
         BackHandler.exitApp()
         return true;
     }
+
     const getLeaveList = async (isProgress) => {
         try {
             setprogressVisible(isProgress);
             await GetLeaveList(user?.Id)
                 .then(res => {
-                    setleaveList(res?.result);
+                    console.log('GetLeaveList',res)
+                    setleaveList(res);
                     setprogressVisible(false);
                 })
                 .catch(() => {

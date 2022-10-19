@@ -1,9 +1,9 @@
-import { postApi,  getApi } from "../api";
+import { postApi, getApi } from "../api";
 
-export const createLeave = async data => postApi("RtLeaveApi/CreateLeave", {}, data);
+export const createLeave = async data => postApi("leave/CreateLeave", data);
 
-export const GetLeaveList = async (userId) => getApi("RtLeaveApi/GetUserLeaves?userId="+userId, {}, {});
+export const GetLeaveList = async (userId) => getApi("leave/GetUserLeaves?userId=" + userId);
 
-export const GetLeaveStatusList = async () => getApi("RtLeaveApi/GetLeaveTypeList", {}, {});
+export const GetLeaveStatusList = async () => getApi("leave/GetLeaveTypeList");
 
 

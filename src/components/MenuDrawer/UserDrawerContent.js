@@ -29,7 +29,7 @@ const MyPanelCombo = (navigation, dispatch) => {
   drawerSelectedOption(3, dispatch);
 }
 const LeavesCombo = (navigation, dispatch) => {
-  navigation.navigate('LeaveListUser');
+  navigation.navigate('LeaveList');
   drawerSelectedOption(4, dispatch);
 }
 

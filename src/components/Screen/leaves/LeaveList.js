@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshControl, TouchableOpacity, View, Text, FlatList, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { GetLeaveList, LeaveApproved, LeaveRejected } from '../../../services/Leave';
-import { LeaveListStyle } from './LeaveListStyle';
-import { SearchBar } from 'react-native-elements';
+import { LeaveApproved, LeaveRejected } from '../../../services/Leave';
+import { LeaveListStyle } from '../UserScreen/leaves/LeaveListStyle';
 import { CommonStyles } from '../../../common/CommonStyles';
 import { useSelector } from 'react-redux';
 import LocalStorage from '../../../common/LocalStorage';
@@ -10,6 +9,8 @@ import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
 import Searchbar from '../../Searchbar';
 import LeaveBox from '../../LeaveBox';
+import { GetLeaveList } from '../../../services/UserService/Leave';
+import { FontAwesome } from '@expo/vector-icons';
 
 
 const LeaveList = ({ navigation, route }) => {
@@ -34,9 +35,6 @@ const LeaveList = ({ navigation, route }) => {
 
         getLeaveList(companyId, false);
     };
-    const goBack = () => {
-        navigation.goBack();
-    }
 
     const searchFilterFunction = text => {
         if (text !== '') {
@@ -65,17 +63,31 @@ const LeaveList = ({ navigation, route }) => {
     const getLeaveList = async (companyId, isProgress) => {
         try {
             setprogressVisible(isProgress);
-            await GetLeaveList(companyId)
-                .then(res => {
-                    console.log('GetLeaveList', res)
-                    setleaveList(res);
-                    setTempList(res);
-                    setprogressVisible(false);
-                })
-                .catch(() => {
-                    setprogressVisible(false);
-                    console.log("error occured");
-                });
+            if (user.UserType == 'admin') {
+                await GetLeaveList(companyId)
+                    .then(res => {
+                        console.log('GetLeaveList', res)
+                        setleaveList(res);
+                        setTempList(res);
+                        setprogressVisible(false);
+                    })
+                    .catch(() => {
+                        setprogressVisible(false);
+                        console.log("error occured");
+                    });
+            } else {
+                await GetLeaveList(user?.Id)
+                    .then(res => {
+                        console.log('GetLeaveList', res)
+                        setleaveList(res);
+                        setTempList(res);
+                        setprogressVisible(false);
+                    })
+                    .catch(() => {
+                        setprogressVisible(false);
+                        console.log("error occured");
+                    });
+            }
 
         } catch (error) {
             setprogressVisible(false);
@@ -107,7 +119,8 @@ const LeaveList = ({ navigation, route }) => {
 
     return (
         <>
-            {isLoaded ?
+            {
+            // isLoaded ?
                 <View style={LeaveListStyle.container}>
                     <View
                         style={CommonStyles.HeaderContent}>
@@ -128,12 +141,26 @@ const LeaveList = ({ navigation, route }) => {
                                 </Text>
                             </View>
                         </View>
+                        <View style={LeaveListStyle.ApplyButtonContainer}>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('LeaveApply')}
+                                style={LeaveListStyle.ApplyButtonTouch}>
+                                <View style={LeaveListStyle.plusButton}>
+                                    <FontAwesome
+                                        name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
+                                    </FontAwesome>
+                                </View>
+                                <View style={LeaveListStyle.ApplyTextButton}>
+                                    <Text style={LeaveListStyle.ApplyButtonText}>
+                                        LEAVE
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={{ flex: 1, }}>
 
-                        {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />) : null}
-
-                        <ScrollView showsVerticalScrollIndicator={false}>
+                        {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />) :
                             <View style={{ flex: 1, }}>
 
                                 <FlatList
@@ -155,10 +182,11 @@ const LeaveList = ({ navigation, route }) => {
                                     ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction} />}
                                 />
                             </View>
-                        </ScrollView>
+                        }
                     </View>
-                </View> :
-                <Loader />
+                </View> 
+                // :
+                // <Loader />
             }
         </>
     );

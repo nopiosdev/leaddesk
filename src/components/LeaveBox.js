@@ -2,8 +2,11 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { LeaveListStyle } from './Screen/leaves/LeaveListStyle'
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 
 const LeaveBox = ({ item, onApprove, onReject }) => {
+    const user = useSelector((state) => state.user.currentUser);
+
     return (
         <View
             style={LeaveListStyle.listContainer}
@@ -58,7 +61,8 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
                     Leave Type:
                 </Text>
                 <Text style={LeaveListStyle.causeText1}>
-                    {item.LeaveType}
+                    {item.LeaveTypeId===1&&'Casual'}
+                    {item.LeaveTypeId===2&&'Sick'}
                 </Text>
             </View>
 
@@ -90,7 +94,7 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
                 </View>
             }
 
-            {(!item.IsApproved && !item.IsRejected) ?
+            {(!item.IsApproved && !item.IsRejected && user.UserType == 'admin') ?
                 <View
                     style={LeaveListStyle.buttonContainer}>
                     <View style={LeaveListStyle.foraligmentitem}>
@@ -120,11 +124,11 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
                     style={LeaveListStyle.statusButton}>
                     <View
                         style={LeaveListStyle.statusButtonInner}>
-                        {item.IsApproved == true ?
+                        {item.IsApproved === 1 ?
                             (<Text style={{ color: 'green', }}>
                                 Approved
                             </Text>)
-                            : (item.IsRejected == true ?
+                            : (item.IsRejected === 1 ?
                                 (<Text style={{ color: 'red', }}>
                                     Rejected
                                 </Text>)
