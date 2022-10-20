@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "158653068827",
+    "project_id": "lead-desk-49aae",
+    "storage_bucket": "lead-desk-49aae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158653068827:android:ca94d5f2da40256c8d2abe",
+        "android_client_info": {
+          "package_name": "com.theleaddesk.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158653068827-u2vk9vk5qlvph3cmgh24fag3i8nae2qs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUNE6RMSn2Nwj9jEkeZhlaYMxPyPgKlmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158653068827-u2vk9vk5qlvph3cmgh24fag3i8nae2qs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

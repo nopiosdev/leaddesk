@@ -1,12 +1,21 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
 import { DrawerContentStyle } from './MenuDrawer/DrawerContentStyle';
 import { CommonStyles } from '../common/CommonStyles';
 import Iconic from 'react-native-vector-icons/Feather'
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Menu, Divider } from 'react-native-paper';
 
-const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title }) => {
+const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, btnTitle, btnAction, saveImg, deleteAction,btnContainerStyle,btnStyle }) => {
+
+    const [showMenu, setShowMenu] = useState(false);
+
+    const deleteTask = () => {
+        setShowMenu(false);
+        deleteAction();
+    }
     return (
         <>
             <View style={CommonStyles.HeaderContent}>
@@ -61,6 +70,42 @@ const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title })
                             </Image>
                         </TouchableOpacity>
                     </View>}
+                {btnAction &&
+                    <View
+                        style={CommonStyles.createTaskButtonContainer}>
+                        <TouchableOpacity
+                            onPress={btnAction}
+                            style={CommonStyles.createTaskButtonTouch}>
+                            <View style={[CommonStyles.plusButton,btnStyle]}>
+                                {saveImg ?
+                                    <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" /> :
+                                    <FontAwesome
+                                        name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
+                                    </FontAwesome>}
+                            </View>
+                            <View style={[CommonStyles.ApplyTextButton,btnContainerStyle]}>
+                                <Text style={CommonStyles.ApplyButtonText}>
+                                    {btnTitle}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        {deleteAction && <TouchableOpacity onPress={() => setShowMenu(true)}>
+                            <View style={{ alignItems: 'flex-end' }}>
+                                <Menu visible={showMenu} onDismiss={() => setShowMenu(false)}
+                                    anchor={<MaterialCommunityIcons
+                                        name="dots-vertical" size={28}
+                                        color="#bec3c8"
+                                        style={{ padding: 2, }}
+                                        onPress={() => setShowMenu(true)}
+                                    />}>
+                                    <Divider />
+                                    <Menu.Item style={{ borderColor: 'red' }} onPress={() => deleteTask()} title='Delete Task' />
+                                    <Divider />
+                                </Menu>
+                            </View>
+                        </TouchableOpacity>}
+                    </View>
+                }
             </View>
         </>
     )

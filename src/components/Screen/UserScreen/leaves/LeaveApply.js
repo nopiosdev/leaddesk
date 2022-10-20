@@ -17,6 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { createLeave, GetLeaveStatusList } from '../../../../services/UserService/Leave';
 import LocalStorage from '../../../../common/LocalStorage';
 import { useSelector } from 'react-redux';
+import Header from '../../../Header';
 
 
 
@@ -68,7 +69,7 @@ const LeaveApply = ({ navigation, route }) => {
     }
 
     const goBack = () => {
-        navigation.navigate('LeaveListUser');
+        navigation.navigate('LeaveList');
     }
 
     useEffect(() => {
@@ -143,8 +144,17 @@ const LeaveApply = ({ navigation, route }) => {
     var { height, width } = Dimensions.get('window');
     return (
         <View style={LeaveApplyStyle.container}>
-
-            <View
+             <Header
+                    title={'Leave Apply'}
+                    goBack={true}
+                    onPress={() => { navigation.goBack() }}
+                    btnAction={() => CreateLeave()}
+                    btnTitle='REQUEST'
+                    btnContainerStyle={LeaveListStyle.ApplyTextButton}
+                    btnStyle={LeaveListStyle.plusButton}
+                    saveImg={true}
+                />   
+            {/* <View
                 style={CommonStyles.HeaderContent}>
                 <View
                     style={CommonStyles.HeaderFirstView}>
@@ -178,7 +188,7 @@ const LeaveApply = ({ navigation, route }) => {
                         </View>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </View> */}
             <View style={{ flex: 1 }}>
                 <KeyboardAvoidingView behavior="padding" enabled style={{ flex: 1, }}>
                     <ScrollView showsVerticalScrollIndicator={false}

@@ -35,7 +35,7 @@ const LeavesCombo = (navigation, dispatch) => {
 
 
 const NoticeCombo = (navigation, dispatch) => {
-  navigation.navigate('NoticeUser');
+  navigation.navigate('Notice');
   drawerSelectedOption(5, dispatch);
 }
 const LeaderBoardCombo = (navigation, dispatch) => {
@@ -43,7 +43,7 @@ const LeaderBoardCombo = (navigation, dispatch) => {
   drawerSelectedOption(6, dispatch);
 }
 const SettingsCombo = (dispatch) => {
-  drawerSelectedOption(7,dispatch);
+  drawerSelectedOption(7, dispatch);
   Alert.alert(
     'Log Out'
     ,
@@ -122,7 +122,7 @@ const UserDrawerContent = ({ navigation }) => {
         ]}>
         <Image
           resizeMode='contain'
-          style={{ height: 38, width: 108, marginVertical: 15, }}
+          style={{ height: 38, width: 38, marginVertical: 15, }}
           source={require('../../../assets/images/icon.png')} >
         </Image>
         <Text style={{
@@ -132,6 +132,7 @@ const UserDrawerContent = ({ navigation }) => {
           color: "#000000",
           fontFamily: "Montserrat_Bold",
         }}>
+          LeadDesk
         </Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>

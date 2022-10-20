@@ -40,6 +40,7 @@ import { SaveTask, PriorityList } from '../../../services/TaskService';
 import { useSelector } from "react-redux";
 import LocalStorage from '../../../common/LocalStorage';
 import CustomImagePicker from '../../CustomImagePicker';
+import Header from '../../Header';
 
 
 
@@ -99,22 +100,11 @@ const CreateTask = ({ navigation, route }) => {
     const openmodalForImage = () => {
         setmodalForImage(true);
     }
-   
+
     const gotoBordDetail = (item) => {
         setimages([{ url: urlResource + item.FileName }]);
         ImageViewer();
     }
-    // const errorToast = () => {
-    //     Toast.show('Something went wrong', {
-    //         containerStyle: {
-    //             backgroundColor: '#CB2431',
-    //             paddingHorizontal: 15,
-    //             borderRadius: 20
-    //         },
-    //         textColor: '#ffffff',
-    //         duration: 1000
-    //     })
-    // }
 
     const _showDateTimePicker = () => setisDateTimePickerVisible(true);
     const _hideDateTimePicker = () => setisDateTimePickerVisible(false);
@@ -305,50 +295,19 @@ const CreateTask = ({ navigation, route }) => {
     };
 
     return (
-        <View
-            style={{
-                flex: 1, backgroundColor: '#ffffff', flexDirection: 'column',
-            }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', flexDirection: 'column' }}>
 
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            Create Task
-                        </Text>
-                    </View>
-                </View>
-                <View
-                    style={CommonStyles.createTaskButtonContainer}>
-                    <TouchableOpacity
-                        disabled={touchabledisableForsaveTask}
-                        onPress={() => saveTask()}
-                        style={CommonStyles.createTaskButtonTouch}>
-                        <View style={CommonStyles.plusButton}>
-                            <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" />
-                        </View>
-                        <View style={CommonStyles.ApplyTextButton}>
-                            <Text style={CommonStyles.ApplyButtonText}>
-                                POST
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <Header
+                title={'Create Task'}
+                navigation={navigation}
+                goBack={true}
+                onPress={() => { navigation.goBack() }}
+                btnAction={() => goToCsaveTaskreateTask()}
+                btnTitle='POST'
+                saveImg={true}
+            />           
 
             <View style={{ flex: 1 }}>
-
                 <ScrollView keyboardShouldPersistTaps='always' showsVerticalScrollIndicator={false}
                     keyboardDismissMode="on-drag"
                     style={{ flex: 1, }}>
@@ -620,31 +579,7 @@ const CreateTask = ({ navigation, route }) => {
                     fileList={fileList}
                     setprogressVisible={setprogressVisible}
                     setmodalForImage={setmodalForImage}
-                />
-                {/* <View>
-                    <View>
-                        <Text style={{
-                            color: '#000000',
-                            fontSize: 24,
-                            textAlign: 'center',
-                            fontWeight: '500'
-                        }}>Add Photos</Text>
-                    </View>
-                    <View style={{
-                        flexDirection: 'row',
-                        padding: 15, justifyContent: 'space-between',
-                        paddingTop: 20,
-                    }}>
-                        <TouchableOpacity onPress={() => _takePhoto()} style={{ alignItems: "center", paddingLeft: 35 }}>
-                            <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../assets/images/photo_camera_black.png')}></Image>
-                            <Text style={{ textAlign: 'center', marginTop: 4, color: '#7a7a7a', fontSize: 10 }}>Take Photo</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => _pickImage()} style={{ alignItems: 'center', paddingRight: 35 }}>
-                            <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../../../assets/images/Gallary.png')}></Image>
-                            <Text style={{ textAlign: 'center', marginTop: 4, color: '#7a7a7a', fontSize: 10 }}>From Gallary</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View> */}
+                />            
             </Modal>
             <Modal1
                 visible={isModelVisible}

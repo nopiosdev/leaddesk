@@ -11,6 +11,9 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
 import Header from '../../Header';
+import { ActivityIndicator } from 'react-native';
+import { TaskStyle } from '../tasks/TaskStyle';
+import moment from 'moment';
 
 const AdminTodayAttendance = ({ navigation }) => {
 
@@ -85,6 +88,7 @@ const AdminTodayAttendance = ({ navigation }) => {
             setselctedCompanyValue(user?.CompanyName);
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
+            console.log(cId)
             getAttendanceFeed(cId);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
             setIsLoaded(true);
@@ -128,9 +132,7 @@ const AdminTodayAttendance = ({ navigation }) => {
         try {
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
-                    if (res === null) {
-                        <AppLoading></AppLoading>
-                    } else if (res?.length > 0) {
+                    if (res?.length > 0) {
 
                         const cList = [];
                         res?.forEach(function (item) {
@@ -159,11 +161,8 @@ const AdminTodayAttendance = ({ navigation }) => {
 
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
-                    console.log('compayres....',res)
-
-                    if (res === null) {
-                        <AppLoading></AppLoading>
-                    } else if (res?.length > 0) {
+                    console.log('compayres....', res)
+                    if (res?.length > 0) {
                         const cList = [];
                         res?.forEach(function (item) {
                             const ob = {
@@ -198,7 +197,7 @@ const AdminTodayAttendance = ({ navigation }) => {
 
         await GetAttendanceFeed(cId)
             .then(res => {
-                console.log('attendanvce',res)
+                console.log('attendanvce', res)
                 setemployeeList(res?.EmployeeList);
                 setdisplayAbleEmployeeList(res?.EmployeeList);
                 setstatusCount(res?.StatusCount);
@@ -307,7 +306,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 DailyAttendanceStyle.FlatListAttendanceLeft
                                             }>
                                             <View style={{ paddingRight: 10, }}>
-                                                {item.ImageFileName?
+                                                {item.ImageFileName ?
                                                     <Image resizeMode='cover' style={
                                                         DailyAttendanceStyle.ImageLocal
                                                     } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={
@@ -315,10 +314,10 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                     } resizeMode='cover' source={require('../../../../assets/images/employee.png')} />}
 
 
-                                                {item.IsCheckedOut ? (<Image resizeMode="contain"
+                                                {(item.CheckInTime && item?.CheckOutTime) ? (<Image resizeMode="contain"
                                                     style={DailyAttendanceStyle.styleForonlineOfflineIcon}
                                                     source={require('../../../../assets/images/icon_gray.png')} />)
-                                                    : (item.IsCheckedIn ?
+                                                    : ((item.CheckInTime && !item?.CheckOutTime) ?
                                                         (<Image style={DailyAttendanceStyle.styleForonlineOfflineIcon
                                                         } resizeMode='contain' source={require('../../../../assets/images/icon_green.png')} />)
                                                         : (<Image style={
@@ -350,7 +349,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                                         </View>
                                     </TouchableOpacity>
 
-                                    <View style={DailyAttendanceStyle.TimeContainer}>
+                                    {item.CheckInTime && <View style={DailyAttendanceStyle.TimeContainer}>
                                         <TouchableOpacity onPress={() => ShowImageViewer(item.ImageFileName)}>
                                             <View style={DailyAttendanceStyle.AttendanceImageView1}>
                                                 <Image resizeMode='cover' style={
@@ -359,7 +358,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 <Text style={
                                                     DailyAttendanceStyle.CheckinTimeText
                                                 }>
-                                                    {item.CheckInTime !== "" ? item.CheckInTime : ("")}</Text>
+                                                    {item.CheckInTime ? moment(item.CheckInTime).format('DD/MM/YY') : ("")}</Text>
                                             </View>
 
                                         </TouchableOpacity>
@@ -370,11 +369,11 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 } source={{ uri: urlResource + item.CheckOutTimeFile }} />
                                                 <Text style={
                                                     DailyAttendanceStyle.CheckOutTimeText
-                                                }>{item.CheckOutTime ? item.CheckOutTime : ("")}</Text>
+                                                }>{item.CheckOutTime ? moment(item.CheckOutTime).format('DD/MM/YY') : ("")}</Text>
                                             </View>
                                         </TouchableOpacity>
 
-                                    </View>
+                                    </View>}
                                 </View>
                             }>
                         </FlatList>
@@ -452,7 +451,8 @@ const AdminTodayAttendance = ({ navigation }) => {
                     </Modal>
 
                 </View> :
-                <Loader />
+                <ActivityIndicator size="large" color="#1B7F67"
+                    style={TaskStyle.loaderIndicator} />
             }
         </>
     )

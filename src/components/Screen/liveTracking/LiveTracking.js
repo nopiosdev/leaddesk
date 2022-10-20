@@ -27,6 +27,8 @@ import { useState } from 'react';
 import { useSelector } from "react-redux";
 import { useEffect } from 'react';
 import Searchbar from '../../Searchbar';
+import Header from '../../Header';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -52,7 +54,7 @@ const LiveTracking = ({ navigation, route }) => {
     const [companyId, setcompanyId] = useState(null);
     const [employeeModal, setemployeeModal] = useState(false);
     const [tempList, setTempList] = useState([]);
-
+    const isFocused = useIsFocused();
     let mapView = null;
 
     const user = useSelector((state) => state.user.currentUser);
@@ -69,7 +71,7 @@ const LiveTracking = ({ navigation, route }) => {
         return () => {
             BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
         }
-    }, [])
+    }, [isFocused])
 
     const handleBackButton = () => {
         navigation.navigate('DailyAttendance');
@@ -100,7 +102,7 @@ const LiveTracking = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetEmployeeWithCompanyId(companyId)
                 .then(res => {
-                    console.log('EMp',res)
+                    console.log('EMp', res)
                     setemployeeList(res);
                     setTempList(res);
                     setprogressVisible(false);
@@ -142,7 +144,7 @@ const LiveTracking = ({ navigation, route }) => {
                                     "description": userData.LogLocation,
                                     "color": color,
                                     coordinates: {
-                                        "latitude":Number(userData.Latitude),
+                                        "latitude": Number(userData.Latitude),
                                         "longitude": Number(userData.Longitude)
                                     },
                                 }
@@ -235,7 +237,7 @@ const LiveTracking = ({ navigation, route }) => {
             setemployeeList(tempList)
         }
     };
- 
+
 
     const onReady = (result) => {
         mapView.fitToCoordinates(result.coordinates, {
@@ -312,39 +314,11 @@ const LiveTracking = ({ navigation, route }) => {
     return (
         <View style={LiveTrackingStyle.container}>
 
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer(); }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={[DrawerContentStyle.logoImage, {
-                            flexDirection: 'row', justifyContent: "center", alignItems: "center"
-                        }]}>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center" }}
-                            onPress={() => setemployeeModal(true)}>
-                            <Text
-                                style={DrawerContentStyle.employeeModalTextStyle}>
-                                {selctedEmployeeValue}
-
-                            </Text>
-                            <Iconic
-                                name="chevrons-down" size={14} color="#d6d6d6"
-                                style={DrawerContentStyle.employeeModalIconStyle}>
-                            </Iconic>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-            </View>
-            <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
+            <Header
+                onSelect={() => setemployeeModal(true)}
+                selected={selctedEmployeeValue}
+                onPress={() => { navigation.openDrawer(); }}
+            />
             {renderMapView()}
             <Modal style={{
                 height: "85%",
@@ -373,39 +347,39 @@ const LiveTracking = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={{ paddingVertical: 20, }}>
-                        <Searchbar searchFilterFunction={searchFilterFunction}/> 
-                            <FlatList
-                                data={employeeList}
-                                keyExtractor={(x, i) => i.toString()}
-                                style={{height:'100%'}}
-                                renderItem={({ item }) =>
-                                    <TouchableOpacity onPress={() => closeEmployeeModal(item)}>
-                                        <View
-                                            style={LiveTrackingStyle.FlatlistMainView}>
-                                            <View style={{ paddingRight: 10, }}>
-                                                {item.ImageFileName?
-                                                    (<Image style={LiveTrackingStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />) :
-                                                    (<Image style={
-                                                        LiveTrackingStyle.imageradious
-                                                    } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />)}
+                    <Searchbar searchFilterFunction={searchFilterFunction} />
+                    <FlatList
+                        data={employeeList}
+                        keyExtractor={(x, i) => i.toString()}
+                        style={{ height: '100%' }}
+                        renderItem={({ item }) =>
+                            <TouchableOpacity onPress={() => closeEmployeeModal(item)}>
+                                <View
+                                    style={LiveTrackingStyle.FlatlistMainView}>
+                                    <View style={{ paddingRight: 10, }}>
+                                        {item.ImageFileName ?
+                                            (<Image style={LiveTrackingStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />) :
+                                            (<Image style={
+                                                LiveTrackingStyle.imageradious
+                                            } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />)}
 
-                                            </View>
-                                            <View>
-                                                <Text style={LiveTrackingStyle.EmpText}>
-                                                    {item.UserName}
-                                                </Text>
-                                                <Text style={LiveTrackingStyle.EmpText}>
-                                                    {item.Designation}
-                                                </Text>
-                                                <Text style={LiveTrackingStyle.EmpText}>
-                                                    {item.DepartmentName}
-                                                </Text>
-                                            </View>
+                                    </View>
+                                    <View>
+                                        <Text style={LiveTrackingStyle.EmpText}>
+                                            {item.UserName}
+                                        </Text>
+                                        <Text style={LiveTrackingStyle.EmpText}>
+                                            {item.Designation}
+                                        </Text>
+                                        <Text style={LiveTrackingStyle.EmpText}>
+                                            {item.DepartmentName}
+                                        </Text>
+                                    </View>
 
-                                        </View>
-                                    </TouchableOpacity>
-                                }
-                            />
+                                </View>
+                            </TouchableOpacity>
+                        }
+                    />
                 </View>
             </Modal>
         </View>

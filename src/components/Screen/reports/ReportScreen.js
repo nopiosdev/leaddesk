@@ -13,6 +13,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
+import Header from '../../Header';
 
 
 const ReportScreen = ({ navigation, route }) => {
@@ -54,7 +55,7 @@ const ReportScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        getAllEmployeeAttendanceWithMonth();
+        getAllEmployeeAttendanceWithMonth(VistNumber, year);
 
     }, [isFocused])
 
@@ -63,20 +64,22 @@ const ReportScreen = ({ navigation, route }) => {
     }
     const selectedItem = async (itemValue) => {
         setVistNumber(itemValue);
-        getAllEmployeeAttendanceWithMonth();
+        getAllEmployeeAttendanceWithMonth(itemValue, year);
     }
-    const getAllEmployeeAttendanceWithMonth = async () => {
+    const getAllEmployeeAttendanceWithMonth = async (monthNo, yearNo) => {
         try {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
             setprogressVisible(true);
-            await GetAllEmployeeAttendanceWithMonth(cId, VistNumber, year)
+            await GetAllEmployeeAttendanceWithMonth(cId, monthNo, yearNo)
                 .then(res => {
                     console.log("res", res);
-                    if (res?.length > 0) {
+                    if (!res?.success && res?.success !== false) {
                         setworkingReportList(res);
-                        setprogressVisible(false);
+                    } else {
+                        setworkingReportList(res);
                     }
+                    setprogressVisible(false);
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -92,7 +95,7 @@ const ReportScreen = ({ navigation, route }) => {
 
     const selectedItemYear = async (itemValue) => {
         setyear(itemValue);
-        getAllEmployeeAttendanceWithMonth();
+        getAllEmployeeAttendanceWithMonth(VistNumber, itemValue);
     }
     const goToDetail = (item) => {
         navigation.navigate("DetailScreen", { detailItem: item, month: VistNumber, year: year });
@@ -160,29 +163,10 @@ const ReportScreen = ({ navigation, route }) => {
 
     return (
         <View style={ReportStyle.container}>
-
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
-
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            ATTENDANCE REPORT
-                        </Text>
-                    </View>
-
-                </View>
-            </View>
+            <Header
+                title={'ATTENDANCE REPORT'}
+                onPress={() => { navigation.openDrawer() }}
+            />
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 10, marginBottom: 0, padding: 10, paddingBottom: 0, }}>
                 <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
                     <Text style={{ color: '#d2d6d9', fontFamily: 'PRODUCT_SANS_BOLD', fontSize: 16 }}>Month:</Text>
@@ -194,131 +178,89 @@ const ReportScreen = ({ navigation, route }) => {
                     {renderDropDownYear()}
                 </View>
             </View>
-            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={ReportStyle.loaderIndicator} />) : null}
-            <FlatList
-
-                data={workingReportList}
-                keyExtractor={(x, i) => i.toString()}
-                renderItem={({ item }) =>
-                    <TouchableOpacity onPress={() => goToDetail(item)}>
-                        <View style={
-                            DailyAttendanceStyle.FlatListTouchableOpacitywork
-                        }>
-                            <View
-                                style={
-                                    DailyAttendanceStyle.FlatListLeft
-                                }>
-                                <View style={{ paddingRight: 10, }}>
-                                    {item.ImageFileName ?
-                                        <Image resizeMode="contain" style={
-                                            DailyAttendanceStyle.ImageLocal
-                                        } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={
-                                            DailyAttendanceStyle.ImagestyleFromServer
-                                        } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />}
+            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={ReportStyle.loaderIndicator} />) :
+                workingReportList?.length > 0 &&
+                <FlatList
+                    data={workingReportList}
+                    keyExtractor={(x, i) => i.toString()}
+                    renderItem={({ item }) =>
+                        <TouchableOpacity onPress={() => goToDetail(item)}>
+                            <View style={DailyAttendanceStyle.FlatListTouchableOpacitywork}>
+                                <View style={DailyAttendanceStyle.FlatListLeft}>
+                                    <View style={{ paddingRight: 10, }}>
+                                        {item.ImageFileName ?
+                                            <Image resizeMode="contain" style={
+                                                DailyAttendanceStyle.ImageLocal
+                                            } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={
+                                                DailyAttendanceStyle.ImagestyleFromServer
+                                            } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />}
+                                    </View>
+                                    <View style={DailyAttendanceStyle.RightTextView}>
+                                        <Text style={DailyAttendanceStyle.NameText}>
+                                            {item.EmployeeName}
+                                        </Text>
+                                        <Text style={DailyAttendanceStyle.DesignationText}>
+                                            {item.Designation}
+                                        </Text>
+                                        <Text style={DailyAttendanceStyle.DepartmentText}>
+                                            {item.DepartmentName}
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View style={DailyAttendanceStyle.RightTextView}>
-                                    <Text style={
-                                        DailyAttendanceStyle.NameText
-                                    }
-                                    >
-                                        {item.EmployeeName}
-                                    </Text>
-                                    <Text style={
-                                        DailyAttendanceStyle.DesignationText
-                                    }
-                                    >
-                                        {item.Designation}
-                                    </Text>
-                                    <Text style={
-                                        DailyAttendanceStyle.DepartmentText
-                                    }
-                                    >
-                                        {item.DepartmentName}
-                                    </Text>
+                                <View style={DailyAttendanceStyle.TimeContainerwork}>
+                                    <View style={DailyAttendanceStyle.TimeContentwork}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text
+                                                style={
+                                                    [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]}>
+                                                Present:
+                                            </Text>
+
+                                            <Text
+                                                style={
+                                                    [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]}>
+                                                {item.TotalPresent}
+                                            </Text>
+                                        </View>
+                                        <Text style={DailyAttendanceStyle.CheckinTimeText}>
+                                            {item.CheckInTime ? moment(item.CheckInTime).format('DD/MM/YY') : ("")}
+
+                                        </Text>
+
+                                    </View>
+
+                                    <View style={DailyAttendanceStyle.CheckOutTimeView}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={[DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]}>
+                                                Completed:
+                                            </Text>
+                                            <Text style={[DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]}>
+                                                {(item.TotalStayTime)} h
+                                            </Text>
+                                        </View>
+                                        <Text style={DailyAttendanceStyle.CheckOutTimeText}></Text>
+                                    </View>
+
+                                    <View style={DailyAttendanceStyle.CheckOutTimeView}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text
+                                                style={
+                                                    [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]}>
+                                                No Checked Out:
+                                            </Text>
+                                            <Text style={[DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]}>
+                                                {item.TotalCheckedOutMissing}
+                                            </Text>
+                                        </View>
+                                        <Text style={DailyAttendanceStyle.CheckOutMissingTimeText}></Text>
+                                    </View>
+
                                 </View>
                             </View>
-                            <View style={DailyAttendanceStyle.TimeContainerwork}>
-                                <View
-                                    style={
-                                        DailyAttendanceStyle.TimeContentwork
-                                    }>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text
-                                            style={
-                                                [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]
-                                            }>
-                                            Present:
-                                        </Text>
-
-                                        <Text
-                                            style={
-                                                [DailyAttendanceStyle.CheckintimeStyle, { color: '#c49602' }]
-                                            }>
-                                            {item.TotalPresent}
-                                        </Text>
-                                    </View>
-                                    <Text style={
-                                        DailyAttendanceStyle.CheckinTimeText
-                                    }>
-                                        {item.CheckInTime !== "" ? item.CheckInTime : ("")}
-
-                                    </Text>
-
-                                </View>
-
-                                <View
-                                    style={
-                                        DailyAttendanceStyle.CheckOutTimeView
-                                    }>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text
-                                            style={
-                                                [DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]
-                                            }>
-                                            Completed:
-                                        </Text>
-                                        <Text
-                                            style={
-                                                [DailyAttendanceStyle.CheckOutTimetext, { color: '#3b875e' }]
-                                            }>
-                                            {(item.TotalStayTime)} h
-                                        </Text>
-                                    </View>
-                                    <Text style={
-                                        DailyAttendanceStyle.CheckOutTimeText
-                                    }></Text>
-                                </View>
-
-                                <View
-                                    style={
-                                        DailyAttendanceStyle.CheckOutTimeView
-                                    }>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text
-                                            style={
-                                                [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]
-                                            }>
-                                            No Checked Out:
-                                        </Text>
-                                        <Text
-                                            style={
-                                                [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]
-                                            }>
-                                            {item.TotalCheckedOutMissing} d
-                                        </Text>
-                                    </View>
-                                    <Text style={
-                                        DailyAttendanceStyle.CheckOutMissingTimeText
-                                    }></Text>
-                                </View>
-
-                            </View>
-                        </View>
-                        <View style={{ borderBottomColor: '#edeeef', borderBottomWidth: 1, marginLeft: "24%", marginRight: 10, }}></View>
-                    </TouchableOpacity>
-                }>
-            </FlatList>
-
+                            <View style={{ borderBottomColor: '#edeeef', borderBottomWidth: 1, marginLeft: "24%", marginRight: 10, }}></View>
+                        </TouchableOpacity>
+                    } />
+            }
 
         </View>
     );

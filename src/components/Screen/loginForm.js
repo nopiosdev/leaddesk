@@ -79,7 +79,7 @@ const LoginForm = ({ navigation, phoneno }) => {
                     LocalStorage.SetData("Login", "Login");
                     LocalStorage.SetData("userToken", '123123');
                     LocalStorage.SetData("companyId", response?.CompanyId.toString());
-                  //  await getUserClaim(response?.Id);
+                    // await getUserClaim(response?.Id);
                     dispatch(addUser(response))
                     LocalStorage.SetData("CurrentUser", JSON.stringify(response));
                     dispatch(toggleUser('Login'))                    
@@ -95,22 +95,21 @@ const LoginForm = ({ navigation, phoneno }) => {
         });
     }
 
-    const getUserClaim = async (userKey) => {
-        try {
-            await GetUserClaim(userKey)
-                .then(res => {
-                    const ob = res;
-                    console.log('empInfo', ob);
-                    if (ob != null) {
-                        dispatch(addUser(ob))
-                        LocalStorage.SetData("CurrentUser", JSON.stringify(ob));
-                        dispatch(toggleUser('Login'))
-                    }
-                })
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    // const getUserClaim = async (userKey) => {
+    //     try {
+    //         await GetUserClaim(userKey)
+    //             .then(res => {
+    //                 console.log('empInfo', res);
+    //                 if (!res?.success && res?.success !== false) {
+    //                     // dispatch(addUser(ob))
+    //                     // LocalStorage.SetData("CurrentUser", JSON.stringify(ob));
+    //                     // dispatch(toggleUser('Login'))
+    //                 }
+    //             })
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
     useEffect(() => {
         setUserName(phoneno);
     }, [Isfocused])

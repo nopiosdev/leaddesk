@@ -9,6 +9,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from "react-redux";
 import Searchbar from '../../Searchbar';
 import LeaveBox from '../../LeaveBox';
+import Header from '../../Header';
 
 
 const UserSpecificLeave = ({ navigation }) => {
@@ -59,7 +60,7 @@ const UserSpecificLeave = ({ navigation }) => {
 
         if (search) {
             const newData = tempList?.filter(item => {
-                const itemData = `${item.EmployeeName.toUpperCase()} ${item.EmployeeName.toUpperCase()} ${item.EmployeeName.toUpperCase()}`;
+                const itemData = `${item.EmployeeName.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
                 return itemData.indexOf(textData) > -1;
@@ -123,68 +124,39 @@ const UserSpecificLeave = ({ navigation }) => {
 
     return (
         <View style={LeaveListStyle.container}>
-
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { handleBackButton() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            {user?.aItemEmployeeName}
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                    <TouchableOpacity
-                        onPress={Call}
-                        style={{
-                            padding: 8, paddingVertical: 2,
-
-                        }}>
-                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
-                            resizeMode='contain'
-                            source={require('../../../../assets/images/call.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-
+            <Header
+                title={user.aItemEmployeeName}
+                navigation={navigation}
+                goBack={true}
+                onPress={() => { handleBackButton() }}
+                makeCall={Call}
+            />
             <View style={{ flex: 1, }}>
 
-                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />) : null}
-
-                {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-                <View style={{ flex: 1, padding: 10, }}>
-                    {<Searchbar searchFilterFunction={searchFilterFunction}/>}
-                    {leaveList?.length > 0 && <FlatList
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={refreshing}
-                                onRefresh={_onRefresh}
-                            />
-                        }
-                        data={leaveList}
-                        keyExtractor={(x, i) => i.toString()}
-                        renderItem={({ item }) =>
-                        <LeaveBox 
-                           item={item}
-                           onApprove={() => leaveApprove(item)}
-                           onReject={() => leaveReject(item)}
-                        />                        
-                        }
-                    />}
-                </View>
-                {/* </ScrollView> */}
+                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />)
+                    :
+                    <View style={{ flex: 1, padding: 10, }}>
+                        {<Searchbar searchFilterFunction={searchFilterFunction} />}
+                        {leaveList?.length > 0 && <FlatList
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={_onRefresh}
+                                />
+                            }
+                            keyboardShouldPersistTaps='always'
+                            data={leaveList}
+                            keyExtractor={(x, i) => i.toString()}
+                            renderItem={({ item }) =>
+                                <LeaveBox
+                                    item={item}
+                                    onApprove={() => leaveApprove(item)}
+                                    onReject={() => leaveReject(item)}
+                                />
+                            }
+                        />}
+                    </View>
+                }
             </View>
         </View>
     );

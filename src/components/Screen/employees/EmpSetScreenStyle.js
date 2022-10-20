@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, Dimensions } from 'react-native';
 
 export const EmpSetScreenStyle = StyleSheet.create({
     renderCboListStyle: {
@@ -208,7 +208,7 @@ export const EmpSetScreenStyle = StyleSheet.create({
         color: '#535353'
     },
     modalForEditProfile: {
-        height: "85%",
+        height: Dimensions.get('window').height/1.2,
         width: "85%",
         borderRadius: 20,
         marginTop: 35,

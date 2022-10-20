@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import LocalStorage from '../../../common/LocalStorage';
 import { toggleUser } from '../../../Redux/Slices/UserSlice';
 import { ChangePassword } from '../../../services/AccountService';
+import Header from '../../Header';
 
 const SettingScreen = ({ navigation, route }) => {
 
@@ -85,14 +86,14 @@ const SettingScreen = ({ navigation, route }) => {
     const openModal2 = () => {
         navigation.navigate('CompanysetupScreen');
     }
-    const gotoExpense = () => {
-        navigation.navigate('Expenses');
+    // const gotoExpense = () => {
+    //     navigation.navigate('Expenses');
 
-    }
-    const gotoIncome = () => {
-        navigation.navigate('Incomes');
+    // }
+    // const gotoIncome = () => {
+    //     navigation.navigate('Incomes');
 
-    }
+    // }
     const openmodalforEmpList = () => {
         navigation.navigate('EmployeeSetupScreen');
     }
@@ -130,27 +131,10 @@ const SettingScreen = ({ navigation, route }) => {
 
     return (
         <View style={SettingStyle.container}>
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer(); }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
-
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            SETTINGS
-                        </Text>
-                    </View>
-                </View>
-            </View>
+            <Header
+                title={'Settings'}
+                onPress={() => { navigation.openDrawer() }}
+            />           
             <KeyboardAvoidingView>
             <ScrollView showsVerticalScrollIndicator={false}>
 
@@ -310,9 +294,11 @@ const SettingScreen = ({ navigation, route }) => {
 
 
 
-                <Modal style={[SettingStyle.modal3]} position={"center"}
+
+            </ScrollView>
+            </KeyboardAvoidingView>
+            <Modal style={[SettingStyle.modal3]} position={"center"}
                     isOpen={modalforchangepassword}
-                // onOpened={() => this.setState({ floatButtonHide: true })}
                 >
                     <View style={{ justifyContent: "space-between", flexDirection: "column" }}>
                         <View style={{ alignItems: "flex-start" }}></View>
@@ -375,8 +361,6 @@ const SettingScreen = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                 </Modal>
-            </ScrollView>
-            </KeyboardAvoidingView>
         </View >
     );
 }

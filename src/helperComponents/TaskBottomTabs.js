@@ -9,9 +9,9 @@ const TaskBottomTabs = ({ navigation }) => {
     const [userActive, setUserActive] = useState('Assigned');
     const user = useSelector((state) => state.user.currentUser);
     const isFocused = useIsFocused();
-    useEffect(() => {
-      setActive('Pending')
-    }, [isFocused])
+    // useEffect(() => {
+    //   setActive('Pending')
+    // }, [isFocused])
     
     return (
         <View style={{ borderTopWidth: 0.5, flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}>

@@ -206,7 +206,7 @@ export const MyPanelStyle = StyleSheet.create({
         flexDirection: 'row', marginBottom: 0, height: 45
     },
     modalForEditProfile: {
-        height: "85%",
+        height: Dimensions.get('window').height/1.5,
         width: "85%",
         borderRadius: 20,
 

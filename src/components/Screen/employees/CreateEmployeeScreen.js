@@ -16,6 +16,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import LocalStorage from '../../../common/LocalStorage';
 import * as Clipboard from 'expo-clipboard';
 import { useIsFocused } from '@react-navigation/native';
+import Header from '../../Header';
 
 const withPreventDoubleClick = (WrappedComponent) => {
     const PreventDoubleClick = (props) => {
@@ -258,9 +259,9 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
         goBack();
         return true;
     }
-    const openModalForDeptSelection = () => {
-        setModalForDeptSelection(true);
-    }
+    // const openModalForDeptSelection = () => {
+    //     setModalForDeptSelection(true);
+    // }
     const closeSuccessModal = () => {
         setmodalforusername(false);
         navigation.navigate('EmployeeSetupScreen');
@@ -324,44 +325,17 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
         <View style={{
             flex: 1, flexDirection: 'column',
         }}>
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            Create Employee
-                        </Text>
-                    </View>
-                </View>
-                <View
-                    style={CommonStyles.createTaskButtonContainer}>
-                    <ButtonEx
-                        onPress={() => openModaladdPeople()}
-                        style={CommonStyles.createTaskButtonTouch}>
-                        <View style={CommonStyles.plusButton}>
-                            <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" />
-                        </View>
-                        <View style={CommonStyles.ApplyTextButton}>
-                            <Text style={CommonStyles.ApplyButtonText}>
-                                POST
-                            </Text>
-                        </View>
-                    </ButtonEx>
-                </View>
-            </View>
+             <Header
+                title={'Create Employee'}
+                onPress={() => { navigation.goBack() }}
+                goBack={true}
+                btnAction={() => openModaladdPeople()}
+                btnTitle='POST'
+                saveImg={true}
+            />            
             <KeyboardAvoidingView enabled style={{ flex: 1, }}>
                 <ScrollView keyboardShouldPersistTaps='always' showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag" style={{ flex: 1, }}>
-                    <View>
+                    {/* <View>
                         <Text
                             style={EmpCreateScreenStyle.createEmployeeLabel}>
                             Employee Code:
@@ -377,7 +351,7 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
                             onSubmitEditing={() => txtNameRef.current.focus()}
                         >
                         </TextInput>
-                    </View>
+                    </View> */}
 
                     <View>
                         <Text

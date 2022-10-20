@@ -60,29 +60,19 @@ const TaskListBottomTab = () => {
 
     return (
         <Tab.Navigator tabBar={props => <TaskBottomTabs {...props} />} initialRouteName={'TaskListScreen'} screenOptions={({ route }) => ({
-            // tabBarIcon: ({ focused, color, size }) => {
-            //     if (route.name === 'TaskListScreen') {
-            //         return <Image source={require('../../assets/images/list_s.png')} style={{ height: 20, width: 20, marginTop: 15, marginLeft: 25, }} resizeMode="contain"></Image>
-
-            //     } else {
-            //         return <Image source={require('../../assets/images/list_a.png')} style={{ height: 20, width: 20, marginTop: 15, marginLeft: 25, }} resizeMode="contain"></Image>
-            //     }
-            // },
-            // tabBarActiveTintColor: 'purple',
-            // tabBarInactiveTintColor: 'gray',
             tabBarHideOnKeyboard: true,
         })} >
             {/* {userDetails?.UserType == 'admin' ? */}
-                <>
-                    <Tab.Screen name="TaskListScreen" component={TaskListScreen} options={{ headerShown: false }} />
-                    <Tab.Screen name="CompleteTaskFilter" component={CompleteTaskFilter} options={{ headerShown: false }} />
-                </>
-                {/* // :
+            <>
+                <Tab.Screen name="TaskListScreen" component={TaskListScreen} options={{ headerShown: false }} />
+                <Tab.Screen name="CompleteTaskFilter" component={CompleteTaskFilter} options={{ headerShown: false }} />
+            </>
+            {/* // :
                 // <>
                 //     <Tab.Screen name="TaskListScreen" component={CreateByMe} options={{ headerShown: false }} />
                 //     <Tab.Screen name="MyTask" component={MyTask} options={{ headerShown: false }} />
                 // </> */}
-           {/* // } */}
+            {/* // } */}
         </Tab.Navigator>
     )
 }
@@ -131,19 +121,19 @@ const DashboardScreen = () => {
             <Drawer.Screen name="TaskListBottomTab" component={TaskListBottomTab} options={{ headerShown: false }} />
             <Drawer.Screen name="LeaderBoard" component={LeaderBoardScreen} options={{ headerShown: false }} />
             <Drawer.Screen name="LeaveList" component={LeaveList} options={{ headerShown: false }} />
+            <Drawer.Screen name="Notice" component={Notice} options={{ headerShown: false }} />
             {userDetails?.UserType == 'admin' ?
                 <>
                     <Drawer.Screen name="Tab" component={AdminBottomTab} options={{ headerShown: false }} />
                     <Drawer.Screen name="LiveTraking" component={LiveTracking} options={{ headerShown: false }} />
                     <Drawer.Screen name="ReportScreen" component={ReportScreen} options={{ headerShown: false }} />
-                    <Drawer.Screen name="Notice" component={Notice} options={{ headerShown: false }} />
                     <Drawer.Screen name="SettingScreen" component={SettingScreen} options={{ headerShown: false }} />
                 </>
                 :
                 <>
                     <Drawer.Screen name="MyPanel" component={MyPanel} options={{ headerShown: false }} />
                     {/* <Drawer.Screen name="LeaveListUser" component={LeaveListUser} options={{ headerShown: false }} /> */}
-                    <Drawer.Screen name="NoticeUser" component={NoticeUser} options={{ headerShown: false }} />
+                    {/* <Drawer.Screen name="NoticeUser" component={NoticeUser} options={{ headerShown: false }} /> */}
 
                 </>
             }
@@ -163,13 +153,13 @@ const MainStackNavigator = () => {
                         <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
                         <Stack.Screen name="ViewTask" component={ViewTask} options={{ headerShown: false }} />
                         <Stack.Screen name="CreateTask" component={CreateTask} options={{ headerShown: false }} />
+                        <Stack.Screen name="CreateNotice" component={CreateNotice} options={{ headerShown: false }} />
+                        <Stack.Screen name="NoticeDetail" component={NoticeDetail} options={{ headerShown: false }} />
 
                         {userDetails?.UserType == 'admin' ?
                             <>
                                 <Stack.Screen name="AdminTodayAttendance" component={AdminTodayAttendance} options={{ headerShown: false }} />
                                 <Stack.Screen name="DetailScreen" component={DetailScreen} options={{ headerShown: false }} />
-                                <Stack.Screen name="NoticeDetail" component={NoticeDetail} options={{ headerShown: false }} />
-                                <Stack.Screen name="CreateNotice" component={CreateNotice} options={{ headerShown: false }} />
                                 <Stack.Screen name="CompanysetupScreen" component={CompanysetupScreen} options={{ headerShown: false }} />
                                 <Stack.Screen name="DepartmentSetupScreen" component={DepartmentSetupScreen} options={{ headerShown: false }} />
                                 <Stack.Screen name="EmployeeSetupScreen" component={EmployeeSetupScreen} options={{ headerShown: false }} />
@@ -178,7 +168,7 @@ const MainStackNavigator = () => {
                             :
                             <>
                                 <Stack.Screen name="LeaveApply" component={LeaveApply} options={{ headerShown: false }} />
-                                <Stack.Screen name="NoticeDetailUser" component={NoticeDetailUser} options={{ headerShown: false }} />
+                                {/* <Stack.Screen name="NoticeDetailUser" component={NoticeDetailUser} options={{ headerShown: false }} /> */}
                                 {/* <Stack.Screen name="CreateTask" component={CreateUserTask} options={{ headerShown: false }} /> */}
                                 {/* <Stack.Screen name="ViewAssignToMe" component={ViewAssignToMe} options={{ headerShown: false }} /> */}
                                 {/* <Stack.Screen name="ViewTask" component={ViewUserTask} options={{ headerShown: false }} /> */}

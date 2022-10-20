@@ -7,6 +7,7 @@ import { DepartmentSetupStyle } from './DepartmentSetupStyle'
 import { GetDepartmentByCompanyId, CreateDepartment, updatedepartment } from "../../../services/DepartmentService";
 import { useIsFocused } from '@react-navigation/native';
 import LocalStorage from '../../../common/LocalStorage';
+import Header from '../../Header';
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
 const StatusBarPlaceHolder = () => {
     return (
@@ -184,48 +185,15 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
     return (
         <View style={DepartmentSetupStyle.container}>
             <StatusBarPlaceHolder />
-            <View style={NoticeStyle.headerBarforCompany}>
-
-                <View
-                    style={NoticeStyle.backIcon}>
-                    <TouchableOpacity
-                        style={NoticeStyle.backIconTouch}
-                        onPress={() => { navigation.goBack() }}>
-                        <Image resizeMode="contain" style={{ width: 20, height: 20, }}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={NoticeStyle.headerTitle}>
-                        <Text
-                            style={NoticeStyle.headerTitleText}>
-                            DEPARTMENT SETUP
-                        </Text>
-                    </View>
-                </View>
-
-                <View
-                    style={NoticeStyle.createNoticeButtonContainer}>
-                    <View
-                        style={NoticeStyle.ApplyButtonContainer}>
-                        <TouchableOpacity
-                            onPress={() => setopenModal6(true)}
-                            style={NoticeStyle.ApplyButtonTouch}>
-                            <View style={NoticeStyle.plusButtonforCompany}>
-                                <FontAwesome
-                                    name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
-                                </FontAwesome>
-                            </View>
-                            <View style={NoticeStyle.ApplyTextButtonforNotice}>
-                                <Text style={NoticeStyle.ApplyButtonText}>
-                                    NEW
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-            </View>
+            <Header
+                title={'Department Setup'}
+                onPress={() => { navigation.goBack() }}
+                goBack={true}
+                btnAction={() => setopenModal6(true)}
+                btnTitle='NEW'
+                btnContainerStyle={NoticeStyle.ApplyTextButtonforNotice}
+                btnStyle={NoticeStyle.plusButtonforCompany}
+            />
             <View style={DepartmentSetupStyle.FlatListContainer}>
                 {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}
                 <FlatList

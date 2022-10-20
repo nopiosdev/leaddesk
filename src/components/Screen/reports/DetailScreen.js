@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
+import Header from '../../Header';
 
 
 const DetailScreen = ({ navigation, route }) => {
@@ -36,8 +37,8 @@ const DetailScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetMonthlyAttendanceDetails(paramsData?.detailItem.UserId, cId, paramsData?.year, paramsData?.month)
                 .then(res => {
-                    console.log('GetMonthlyAttendanceDetails',res);
-                    if(res?.length > 0){
+                    console.log('GetMonthlyAttendanceDetails', res);
+                    if (res?.length > 0) {
                         setworkingDetailList(res);
                         setprogressVisible(false);
                     }
@@ -56,123 +57,100 @@ const DetailScreen = ({ navigation, route }) => {
     const { width, height } = Dimensions.get('window');
     return (
         <View style={ReportStyle.container}>
+            <Header
+                title={`Attendance of ${paramsData?.detailItem.EmployeeName}`}
+                onPress={() => { navigation.goBack() }}
+                goBack={true}
+            />
 
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
+            <View style={ReportStyle.summaryContiner}>
+                <View style={ReportStyle.Summaryhead}>
+                    <View style={ReportStyle.SummryheadLeft}>
+                        <Text style={ReportStyle.SummaryText}>Year : {paramsData?.year}</Text>
+                    </View>
+                    <View style={ReportStyle.CalanderIconContainer}>
+                        <FontAwesome
+                            name="calendar"
+                            size={15}
+                            style={{
+                                marginRight: 6,
+                                alignSelf: 'center'
+                            }}
+                            color="#6a6a6a"
+                        />
+                        <Text style={ReportStyle.monthText}>{paramsData?.month}</Text>
+                    </View>
+                </View>
+                <View style={ReportStyle.valueContainer}>
+                    <View style={ReportStyle.valueContainerFirst}>
+                        <View style={ReportStyle.IconContainer}>
+                            <Entypo
+                                name="controller-stop" size={18} color="#553e6b"
+                                style={{
 
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            Attendance of {paramsData?.detailItem.EmployeeName}
-                        </Text>
+                                }}>
+                            </Entypo>
+                            <Text style={ReportStyle.receiveText}>Total Office Hours</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+                            <Entypo
+                                name="controller-stop" size={18} color="#3b875e"
+                                style={{
+
+                                }}>
+                            </Entypo>
+                            <Text style={ReportStyle.depositeText}>Completed Hours</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+                            <Entypo
+                                name="controller-stop" size={18} color="#919191"
+                                style={{
+
+                                }}>
+                            </Entypo>
+                            <Text style={ReportStyle.previousText}>Over/Due Times </Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Entypo
+                                name="controller-stop" size={18} color="#c49602"
+                                style={{
+
+                                }}>
+                            </Entypo>
+                            <Text style={ReportStyle.DeuBillTExt}>Present (Days)  </Text>
+                        </View>
+
+                    </View>
+                    <View style={{ alignItems: 'flex-end', marginTop: 7, }}>
+                        <View style={{ marginBottom: 2, }}>
+                            <Text style={ReportStyle.FirstValueText}>{paramsData?.detailItem.TotalOfficeHour} hrs</Text>
+                        </View>
+                        <View style={{ marginBottom: 15, }}>
+                            <Text style={ReportStyle.SecondValueText}>{paramsData?.detailItem.TotalStayTime} hrs</Text>
+                        </View>
+                        <View style={{ marginBottom: 5, }}>
+                            <Text style={ReportStyle.ThirdValueText}>{paramsData?.detailItem.OvertimeOrDueHour} hrs</Text>
+                        </View>
+                        <View>
+                            <Text style={ReportStyle.FourthvalueText}>{paramsData?.detailItem.TotalPresent} Days</Text>
+                        </View>
+
                     </View>
 
                 </View>
+
             </View>
 
-
-
-            <ScrollView showsVerticalScrollIndicator={false}
-            refreshControl={
-                <RefreshControl
-                    // refreshing={progressVisible}
-                    onRefresh={getAllEmployeeAttendanceDetail}
-                />
-            }
-
-            >
-                <View style={ReportStyle.summaryContiner}>
-                    <View style={ReportStyle.Summaryhead}>
-                        <View style={ReportStyle.SummryheadLeft}>
-                            <Text style={ReportStyle.SummaryText}>Year : {paramsData?.year}</Text>
-                        </View>
-                        <View style={ReportStyle.CalanderIconContainer}>
-                            <FontAwesome
-                                name="calendar"
-                                size={15}
-                                style={{
-                                    marginRight: 6,
-                                    alignSelf: 'center'
-                                }}
-                                color="#6a6a6a"
-                            />
-                            <Text style={ReportStyle.monthText}>{paramsData?.month}</Text>
-                        </View>
-                    </View>
-                    <View style={ReportStyle.valueContainer}>
-                        <View style={ReportStyle.valueContainerFirst}>
-                            <View style={ReportStyle.IconContainer}>
-                                <Entypo
-                                    name="controller-stop" size={18} color="#553e6b"
-                                    style={{
-
-                                    }}>
-                                </Entypo>
-                                <Text style={ReportStyle.receiveText}>Total Office Hours</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-                                <Entypo
-                                    name="controller-stop" size={18} color="#3b875e"
-                                    style={{
-
-                                    }}>
-                                </Entypo>
-                                <Text style={ReportStyle.depositeText}>Completed Hours</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-                                <Entypo
-                                    name="controller-stop" size={18} color="#919191"
-                                    style={{
-
-                                    }}>
-                                </Entypo>
-                                <Text style={ReportStyle.previousText}>Over/Due Times </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Entypo
-                                    name="controller-stop" size={18} color="#c49602"
-                                    style={{
-
-                                    }}>
-                                </Entypo>
-                                <Text style={ReportStyle.DeuBillTExt}>Present (Days)  </Text>
-                            </View>
-
-                        </View>
-                        <View style={{ alignItems: 'flex-end', marginTop: 7, }}>
-                            <View style={{ marginBottom: 2, }}>
-                                <Text style={ReportStyle.FirstValueText}>{paramsData?.detailItem.TotalOfficeHour} hrs</Text>
-                            </View>
-                            <View style={{ marginBottom: 15, }}>
-                                <Text style={ReportStyle.SecondValueText}>{paramsData?.detailItem.TotalStayTime} hrs</Text>
-                            </View>
-                            <View style={{ marginBottom: 5, }}>
-                                <Text style={ReportStyle.ThirdValueText}>{paramsData?.detailItem.OvertimeOrDueHour} hrs</Text>
-                            </View>
-                            <View>
-                                <Text style={ReportStyle.FourthvalueText}>{paramsData?.detailItem.TotalPresent} Days</Text>
-                            </View>
-
-                        </View>
-
-                    </View>
-
-                </View>
-
-                <View style={{ margin: 10, }}>
-                    {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={ReportStyle.loaderIndicator} />) : null}
+            <View style={{ margin: 10, }}>
+                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={ReportStyle.loaderIndicator} />) :
 
                     <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={progressVisible}
+                                onRefresh={getAllEmployeeAttendanceDetail}
+                            />
+                        }
                         data={workingDetailList}
                         keyExtractor={(x, i) => i.toString()}
                         renderItem={({ item }) =>
@@ -210,11 +188,7 @@ const DetailScreen = ({ navigation, route }) => {
 
                                             width: (width * 28) / 100, flexDirection: "column", alignItems: 'center',
                                         }}>
-                                        <View
-                                            style={{
-                                                flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
-                                            }}>
-
+                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                             {
                                                 !item.IsLeave ?
                                                     <AntDesign
@@ -225,13 +199,12 @@ const DetailScreen = ({ navigation, route }) => {
                                                     </AntDesign>
                                                     : null}
 
-                                            {
-                                                !item.IsLeave ?
+                                            {!item.IsLeave ?
                                                     <Text
                                                         style={{
                                                             fontSize: 14, textAlign: "right", color: "#076332", fontFamily: "PRODUCT_SANS_BOLD"
                                                         }}>
-                                                        {item.CheckInTime}
+                                                        {moment(item.CheckInTime).format('DD/MM/YY')}
 
                                                     </Text>
                                                     :
@@ -239,7 +212,7 @@ const DetailScreen = ({ navigation, route }) => {
                                                         style={{
                                                             fontSize: 14, textAlign: "right", color: "red", fontFamily: "PRODUCT_SANS_BOLD"
                                                         }}>
-                                                        {item.CheckInTime}
+                                                        {moment(item.CheckInTime).format('DD/MM/YY')}
 
                                                     </Text>
                                             }
@@ -286,7 +259,7 @@ const DetailScreen = ({ navigation, route }) => {
                                                         }}>
 
 
-                                                        {item.CheckOutTime}
+                                                        {moment(item.CheckOutTime).format('DD/MM/YY')}
 
                                                     </Text>
                                                 </View>
@@ -307,17 +280,12 @@ const DetailScreen = ({ navigation, route }) => {
                                     <View
                                         style={{
                                             borderRightColor: 'gray',
-                                            width: (width * 30) / 100,
-                                            // flexDirection: "column",
-                                            //alignItems: 'center',
-                                            // alignSelf:'center'
+                                            width: (width * 30) / 100,                                           
                                             paddingLeft: 10,
                                         }}>
                                         <View
                                             style={{
                                                 flexDirection: 'row',
-                                                // justifyContent: 'center',
-                                                // alignItems: 'center',
                                             }}>
                                             <Entypo
                                                 name="stopwatch" size={13} color="#a1b1ff"
@@ -351,9 +319,9 @@ const DetailScreen = ({ navigation, route }) => {
                                 </View>
                             </View>
                         } />
-                </View>
-            </ScrollView>
-        </View>
+                }
+            </View>
+        </View >
     );
 }
 

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 export const SettingStyle = StyleSheet.create({
     container: {
         flex: 1,
@@ -161,7 +161,7 @@ export const SettingStyle = StyleSheet.create({
         textAlign: 'center',
         marginVertical: 4,
     }, modal3: {
-        height: "70%",
+        height: Dimensions.get('window').height / 1.5,
         width: "83%",
         borderRadius: 20,
         // justifyContent: 'center',
@@ -172,8 +172,8 @@ export const SettingStyle = StyleSheet.create({
         marginVertical: 10
     },
     changepassmodalToucah: {
-        marginLeft: 0, marginTop: 0, backgroundColor: '#ddd',
-        width: 30, height: 30, borderRadius: 30,
+        marginLeft: 0, marginTop: 5,
+        width: 40, height: 30, borderRadius: 30,
     },
     editContainer: { alignItems: 'flex-end', marginTop: '3%', },
     view1Image: {

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 export const CompanySetupStyle = StyleSheet.create({
     FlatListContainer: { flex: 1, marginTop: 10, },
     FlatListItemContainer: {
@@ -74,7 +74,7 @@ export const CompanySetupStyle = StyleSheet.create({
 
     },
     modalforCreateCompany: {
-        height: "75%",
+        height: Dimensions.get('window').height*0.7,
         width: "80%",
         borderRadius: 20,
         backgroundColor: '#EBEBEB',
@@ -84,12 +84,9 @@ export const CompanySetupStyle = StyleSheet.create({
         paddingVertical: 20,
     },
     modal3: {
-        height: "85%",
+        height: Dimensions.get('window').height/1.2,
         width: "83%",
         borderRadius: 20,
-       // flex:1,
-        // justifyContent: 'center',
-        //alignItems: 'center',
     },
     dbblModalText: {
         fontWeight: 'bold',

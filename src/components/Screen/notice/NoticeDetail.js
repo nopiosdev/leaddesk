@@ -10,6 +10,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { urlDev, urlResource } from '../../../services/api/config';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import Header from '../../Header';
 
 const NoticeDetail = ({ navigation, route }) => {
 
@@ -43,7 +44,7 @@ const NoticeDetail = ({ navigation, route }) => {
         let NoticeId = paramsData?.aItem.Id;
         await getNoticedetail(NoticeId)
             .then(res => {
-                console.log('Details',res)
+                console.log('Details', res)
                 setDetails(res?.Details);
                 setImageFileName(res?.ImageFileName);
             })
@@ -51,45 +52,37 @@ const NoticeDetail = ({ navigation, route }) => {
                 console.log("error occured");
             });
     }
-console.log(details,'Details')
+
     const images = [{ url: urlResource + ImageFileName, },];
     return (
         <View style={NoticeStyle.noticeDetailContainer}>
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.navigate('Notice'); }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            NOTICE DETAIL
-                        </Text>
-                    </View>
-                </View>
-
-            </View>
+            <Header
+                title={'Notice Detail'}
+                onPress={() => { navigation.goBack() }}
+                goBack={true}
+            />
 
             <View style={NoticeStyle.detailTextStyle}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View>
-
                         <Text style={NoticeStyle.noticeDetailTextStyle}>
                             {details}
                         </Text>
-
                     </View>
-
-                    <TouchableOpacity style={{ paddding: 10, alignSelf: 'center', }}
-                        onPress={() => imageViewer()}>
-                        <Image resizeMode='contain' style={{ height: 150, width: 150, }}
+                    <TouchableOpacity style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: "45%",
+                        margin: 5,
+                        alignItems: 'center',
+                        borderRadius: 15,
+                        borderWidth: 1,
+                        borderColor: 'gray',
+                        marginLeft: 10,
+                        height: 200,
+                        marginTop: 20
+                    }} onPress={() => imageViewer()}>
+                        <Image resizeMode='contain' style={{ height: '100%', width: 150, }}
                             source={{ uri: urlResource + ImageFileName }}>
                         </Image>
                     </TouchableOpacity>

@@ -264,7 +264,8 @@ export const NoticeStyle = StyleSheet.create({
         fontFamily: "OPENSANS_REGULAR",
         fontSize: 16,
         textAlign: "left",
-        color: "#636363"
+        color: "#636363",
+        fontWeight:'bold'
 
     },
     arrowcontainer: {

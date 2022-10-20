@@ -12,6 +12,7 @@ import { useState } from 'react';
 import LocalStorage from '../../../common/LocalStorage';
 import { useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
+import Header from '../../Header';
 
 
 
@@ -57,7 +58,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        GetLeaderboardDataWithMonth();
+        GetLeaderboardDataWithMonth(VistNumber, year);
     }, [isFocused])
 
     const goBack = () => {
@@ -65,20 +66,24 @@ const LeaderBoardScreen = ({ navigation, route }) => {
     }
     const selectedItem = async (itemValue) => {
         setVistNumber(itemValue);
-        GetLeaderboardDataWithMonth();
+        GetLeaderboardDataWithMonth(itemValue, year);
     }
-    const GetLeaderboardDataWithMonth = async () => {
+    const GetLeaderboardDataWithMonth = async (monthNo, yearNo) => {
         try {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
             setprogressVisible(true);
-            await GetLeaderboardData(cId, VistNumber, year)
+            await GetLeaderboardData(cId, monthNo, yearNo)
                 .then(res => {
-                    console.log('GetLeaderboardData',res)
-                    res?.forEach(element => {
-                        element.imagePath = "http://medilifesolutions.blob.core.windows.net/resourcetracker/" + element.ImageFileName;
-                    });
-                    setworkingReportList(res);
+                    console.log('GetLeaderboardData', res)
+                    if (!res?.success && res?.success !== false) {
+                        res?.forEach(element => {
+                            element.imagePath = "http://medilifesolutions.blob.core.windows.net/resourcetracker/" + element.ImageFileName;
+                        });
+                        setworkingReportList(res);
+                    } else {
+                        setworkingReportList([]);
+                    }
                     setprogressVisible(false);
                 })
                 .catch(() => {
@@ -95,7 +100,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
 
     const selectedItemYear = async (itemValue) => {
         setyear(itemValue);
-        GetLeaderboardDataWithMonth();
+        GetLeaderboardDataWithMonth(VistNumber, itemValue);
     }
     const goToDetail = (item) => {
         navigation.navigate("DetailScreen", { detailItem: item, month: VistNumber, year: year })
@@ -160,28 +165,10 @@ const LeaderBoardScreen = ({ navigation, route }) => {
 
     return (
         <View style={LeaderBoardStyle.container}>
-
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            LEADER BOARD
-                        </Text>
-                    </View>
-
-                </View>
-            </View>
+            <Header
+                title={'Leader Board'}
+                onPress={() => { navigation.openDrawer() }}
+            />
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 10, marginBottom: 0, padding: 10, paddingBottom: 0, }}>
                 <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
                     <Text style={{ color: '#d2d6d9', fontFamily: 'PRODUCT_SANS_BOLD', fontSize: 16 }}>Month:</Text>

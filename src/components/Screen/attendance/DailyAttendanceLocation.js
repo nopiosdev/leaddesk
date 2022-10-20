@@ -23,6 +23,9 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { updateUserEmployee } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
+import Header from '../../Header';
+import { ActivityIndicator } from 'react-native';
+import { TaskStyle } from '../tasks/TaskStyle';
 
 
 const DailyAttendanceLocation = ({ navigation }) => {
@@ -71,6 +74,7 @@ const DailyAttendanceLocation = ({ navigation }) => {
     }
     console.log('clientId', clientId)
     const getEmpTrackInfo = async () => {
+        setrefreshing(true);
         try {
             await GetMovementDetails(clientId)
                 .then(res => {
@@ -90,12 +94,12 @@ const DailyAttendanceLocation = ({ navigation }) => {
                                 title = "Checked point";
                                 color = "gray"
                             }
-                            var myObj = {
-                                "time": userData.LogTimeVw,
-                                "title": title,
-                                "description": userData.LogLocation,
-                                "circleColor": color
-                            };
+                            // var myObj = {
+                            //     "time": userData.LogTimeVw,
+                            //     "title": title,
+                            //     "description": userData.LogLocation,
+                            //     "circleColor": color
+                            // };
                             var newMarkerObj = {
                                 "title": title + " " + (index + 1),
                                 "description": userData.LogLocation,
@@ -104,7 +108,6 @@ const DailyAttendanceLocation = ({ navigation }) => {
                                     "longitude": Number(userData.Longitude)
                                 },
                             }
-                            // setmarkers([...markers,...newMarkerObj])
                             setmarkers([newMarkerObj])
                         });
                         console.log('Lat', res[res?.length - 1])
@@ -115,13 +118,16 @@ const DailyAttendanceLocation = ({ navigation }) => {
                         const tcount = 60 * res?.length - 60;
                         setsvgLinHeight(tcount === 0 ? 60 : tcount);
                     }
+                    setrefreshing(false);
                 })
                 .catch((ex) => {
                     console.log(ex, "GetMovementDetails error occured");
+                    setrefreshing(false);
                 });
         }
         catch (error) {
             console.log(error);
+            setrefreshing(false);
         }
     }
 
@@ -134,12 +140,12 @@ const DailyAttendanceLocation = ({ navigation }) => {
 
             await GetMyTodayAttendance(clientId)
                 .then(res => {
-                    console.log(res, "getEmpInfo");
-
-                    setEmployeeName(res?.EmployeeName);
-                    setDepartmentName(res?.DepartmentName);
-                    setDesignation(res?.Designation);
-                    dispatch(updateUserEmployee(res?.EmployeeName));
+                    if (res) {
+                        setEmployeeName(res?.EmployeeName);
+                        setDepartmentName(res?.DepartmentName);
+                        setDesignation(res?.Designation);
+                        dispatch(updateUserEmployee(res?.EmployeeName));
+                    }
                 })
                 .catch(() => {
                     console.log("error occured");
@@ -217,43 +223,15 @@ const DailyAttendanceLocation = ({ navigation }) => {
     }
     return (
         <View style={DailyAttendanceStyle.container}>
-
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            {EmployeeName}
-
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                    <TouchableOpacity
-                        onPress={Call}
-                        style={{
-                            padding: 8, paddingVertical: 2,
-
-                        }}>
-                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
-                            resizeMode='contain'
-                            source={require('../../../../assets/images/call.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
-            {renderMapView()}
+            <Header
+                title={EmployeeName}
+                navigation={navigation}
+                goBack={true}
+                onPress={() => { goBack() }}
+                makeCall={Call}
+            />
+            {refreshing ? <ActivityIndicator size="large" color="#1B7F67"
+                style={TaskStyle.loaderIndicator} /> : renderMapView()}
         </View>
     );
 }

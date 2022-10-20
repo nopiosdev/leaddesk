@@ -24,6 +24,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from 'react-redux';
 import { Clipboard } from '@react-native-community/clipboard'
 import { useIsFocused } from '@react-navigation/native';
+import Header from '../../Header';
 
 const EmployeeSetupScreen = ({ navigation, route }) => {
 
@@ -603,70 +604,26 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
     }
     return (
         <View style={EmpSetScreenStyle.container}>
-
-            <View style={CommonStyles.HeaderContent}>
-
-                <View
-                    style={NoticeStyle.backIcon}>
-                    <TouchableOpacity
-                        style={NoticeStyle.backIconTouch}
-                        onPress={() => { navigation.goBack() }}>
-                        <Image resizeMode="contain" style={{ width: 20, height: 20, }}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={NoticeStyle.headerTitle}>
-                        <Text
-                            style={NoticeStyle.headerTitleText}>
-                            EMPLOYEE SETUP
-                        </Text>
-                    </View>
-                </View>
-
-                <View
-                    style={NoticeStyle.createNoticeButtonContainer}>
-                    <View
-                        style={NoticeStyle.ApplyButtonContainer}>
-                        <TouchableOpacity
-                            // onPress={() => openModalforaddpeople()}
-                            onPress={() => goToCreatScreen()}
-                            style={NoticeStyle.ApplyButtonTouch}>
-                            <View style={NoticeStyle.plusButtonforCompany}>
-                                <FontAwesome
-                                    name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
-                                </FontAwesome>
-                            </View>
-                            <View style={NoticeStyle.ApplyTextButtonforNotice}>
-                                <Text style={NoticeStyle.ApplyButtonText}>
-                                    NEW
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-            </View>
-
-
+            <Header
+                title={'Employee Setup'}
+                onPress={() => { navigation.goBack() }}
+                goBack={true}
+                btnAction={() => goToCreatScreen()}
+                btnTitle='NEW'
+                btnContainerStyle={NoticeStyle.ApplyTextButtonforNotice}
+                btnStyle={NoticeStyle.plusButtonforCompany}
+            />
             {progressVisible == true ?
                 (<ActivityIndicator size="large" color="#1B7F67"
                     style={EmpSetScreenStyle.ActivityIndicatorStyle} />) :
-
                 <View style={{ flex: 1, marginTop: 10, }}>
-
                     <FlatList
                         data={employeeList}
                         keyExtractor={(x, i) => i.toString()}
                         renderItem={({ item }) =>
                             <View style={EmpSetScreenStyle.FlatlistMainView}>
-
-
                                 <View style={EmpSetScreenStyle.FlLeftside}>
-
                                     <View style={{ paddingRight: 10, }}>
-
-
                                         {item.ImageFileName ?
                                             (<Image style={EmpSetScreenStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />)
                                             :
@@ -674,14 +631,11 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                                                 EmpSetScreenStyle.imageradious
                                             } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />)
                                         }
-
                                     </View>
-
                                     <View>
                                         <Text style={EmpSetScreenStyle.EmpText}>
                                             {item.UserName}
                                         </Text>
-
                                         <Text style={EmpSetScreenStyle.EmpText}>
                                             {item.Designation}
                                         </Text>
@@ -689,7 +643,6 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                                         <Text style={EmpSetScreenStyle.EmpText}>
                                             {item.DepartmentName}
                                         </Text>
-
                                     </View>
                                 </View>
                                 <View style={EmpSetScreenStyle.FlRightSide}>
@@ -722,7 +675,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                     />
                 </View>
             }
-            <Modal style={[EmpSetScreenStyle.AddEmployeeModalStyle]}
+            {/* <Modal style={[EmpSetScreenStyle.AddEmployeeModalStyle]}
                 position={"center"}
                 isOpen={ModaladdPeople}
                 isDisabled={isDisabled}
@@ -753,7 +706,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
 
                 </View>
 
-                {/* <KeyboardAvoidingView
+                <KeyboardAvoidingView
                     // behavior="padding"
                     style={{
                         // flex: 1,
@@ -884,9 +837,9 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
-                </KeyboardAvoidingView> */}
+                </KeyboardAvoidingView>
 
-            </Modal>
+            </Modal> */}
             <Modal
                 style={[EmpSetScreenStyle.modal2]}
                 position={"center"}

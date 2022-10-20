@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 
 const LeaveBox = ({ item, onApprove, onReject }) => {
     const user = useSelector((state) => state.user.currentUser);
-
+// console.log(new Date(item.ToDate.replace(/-/g,'/')) - new Date(item.FromDate.replace(/-/g,'/')))
     return (
         <View
             style={LeaveListStyle.listContainer}
@@ -61,8 +61,8 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
                     Leave Type:
                 </Text>
                 <Text style={LeaveListStyle.causeText1}>
-                    {item.LeaveTypeId===1&&'Casual'}
-                    {item.LeaveTypeId===2&&'Sick'}
+                    {item.LeaveTypeId === 1 && 'Casual Leave'}
+                    {item.LeaveTypeId === 2 && 'Sick Leave'}
                 </Text>
             </View>
 
@@ -116,7 +116,7 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
                         </TouchableOpacity>
                     </View>
                     <Text style={LeaveListStyle.statusDate1}>
-                        {item.LeaveInDays} Days
+                        {item?.leaveInDays} Days
                     </Text>
                 </View>
                 :
@@ -140,7 +140,7 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
 
                     <Text
                         style={LeaveListStyle.statusDate}>
-                        {item.LeaveInDays} Days
+                        {item?.leaveInDays} Days
                     </Text>
                 </View>
             }

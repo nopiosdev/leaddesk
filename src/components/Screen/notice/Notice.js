@@ -17,6 +17,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import Searchbar from '../../Searchbar';
+import moment from 'moment';
+import Header from '../../Header';
 
 const Notice = ({ navigation, route }) => {
 
@@ -87,7 +89,7 @@ const Notice = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await getNotice(companyId)
                 .then(res => {
-                    console.log('.....noticeresult',res);
+                    console.log('.....noticeresult', res);
                     setprogressVisible(false);
                     setnoticeList(res);
                     settempList(res);
@@ -105,61 +107,26 @@ const Notice = ({ navigation, route }) => {
 
     return (
         <View style={NoticeStyle.container}>
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer(); }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
-
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            Notice Board
-                        </Text>
-                    </View>
-                </View>
-                <View
-                    style={NoticeStyle.createNoticeButtonContainer}>
-                    <View
-                        style={NoticeStyle.ApplyButtonContainer}>
-                        <TouchableOpacity
-                            onPress={() => goToCreateNotice()}
-                            style={NoticeStyle.ApplyButtonTouch}>
-                            <View style={NoticeStyle.plusButton}>
-                                <FontAwesome
-                                    name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
-                                </FontAwesome>
-                            </View>
-                            <View style={NoticeStyle.ApplyTextButton}>
-                                <Text style={NoticeStyle.ApplyButtonText}>
-                                    NOTICE
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-            </View>
+            <Header
+                title={'Notice Board'}
+                onPress={() => { navigation.openDrawer() }}
+                btnAction={() => goToCreateNotice()}
+                btnTitle='NOTICE'
+                btnContainerStyle={NoticeStyle.ApplyTextButton}
+                btnStyle={NoticeStyle.plusButton}
+            />
             <View style={{ flex: 1, }}>
-                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={NoticeStyle.loaderIndicator} />) : null}
-                <ScrollView
-                    keyboardShouldPersistTaps='always'
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={_onRefresh}
-                        />
-                    }>
+                {<Searchbar searchFilterFunction={searchFilterFunction} />}
+                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={NoticeStyle.loaderIndicator} />) :
                     <View style={{ flex: 1, padding: 10, }}>
-                        {<Searchbar searchFilterFunction={searchFilterFunction}/>}
                         <FlatList
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={_onRefresh}
+                                />
+                            }
+                            keyboardShouldPersistTaps='always'
                             data={noticeList}
                             keyExtractor={(x, i) => i.toString()}
                             renderItem={({ item }) =>
@@ -173,7 +140,7 @@ const Notice = ({ navigation, route }) => {
                                                     <Text style={{}}>{item.Details}</Text>
                                                 </View>
                                             </View>
-                                             : <View style={{
+                                            : <View style={{
                                                 justifyContent: 'space-between', flexDirection: 'row',
                                                 borderBottomColor: 'white', borderBottomWidth: 2, paddingBottom: 10,
                                             }}>
@@ -205,7 +172,7 @@ const Notice = ({ navigation, route }) => {
                                             <View style={{ alignItems: 'flex-end', }}>
                                                 <Text style={NoticeStyle.createDateStyle}>
 
-                                                    {item.CreatedDate}
+                                                    {moment(item.CreatedDate).format('MM/DD/YYYY')}
                                                 </Text>
                                             </View>
                                         </View>
@@ -215,7 +182,7 @@ const Notice = ({ navigation, route }) => {
                             }
                         />
                     </View>
-                </ScrollView>
+                }
             </View>
 
         </View>

@@ -49,6 +49,8 @@ import LocalStorage from '../../../../common/LocalStorage';
 import CustomImagePicker from '../../../CustomImagePicker';
 import CustomTimeLine from '../../../CustomTimeLine';
 import { upLoadImage } from '../../../../services/TaskService';
+import Header from '../../../Header';
+import Loader from '../../../Loader';
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
 
@@ -84,12 +86,12 @@ const _getLocationAsync = async () => {
 
 const createCheckPoint = async (Latitude, Longitude, loglocation) => {
     try {
-        
+
         var data = new FormData();
         data.append('Latitude', Latitude);
         data.append('Longitude', Longitude);
         data.append('userId', uIdd);
-        data.append('LogLocation', loglocation?loglocation:'');
+        data.append('LogLocation', loglocation ? loglocation : '');
         data.append('DeviceName', "Ioo");
         data.append('DeviceOSVersion', Platform.OS === 'ios' ? Platform.systemVersion : Platform.Version);
         data.append('companyId', comIdd);
@@ -238,7 +240,7 @@ const MyPanel = ({ navigation }) => {
     const _sendToServer = async (fileId) => {
         var s = await getLocation(Latitude, Longitude);
         setLogLocation(s);
-        console.log(Latitude,'Latitude','Longitude',Longitude,'_sendToServer setLogLocation', s)
+        console.log(Latitude, 'Latitude', 'Longitude', Longitude, '_sendToServer setLogLocation', s)
         if (pointcheck == "CheckIn") {
             createCheckingIn(fileId);
         } else if (pointcheck == "CheckPoint") {
@@ -380,10 +382,7 @@ const MyPanel = ({ navigation }) => {
                 if (!res?.success && res?.success !== false) {
 
                     setEmpTrackList(res);
-                    if (data.length != 0) {
-                        setdata([]);
-                    }
-                    let tempData=[];
+                    let tempData = [];
                     res?.map((userData) => {
 
                         var title = '';
@@ -423,8 +422,9 @@ const MyPanel = ({ navigation }) => {
         if (Platform.OS === 'android' && !Constants.isDevice) {
             seterrorMessage('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
             ToastAndroid.show(errorMessage, ToastAndroid.TOP);
+            setprogressVisible(false)
         } else {
-        await _getLocationAsync();
+            await _getLocationAsync();
         }
     }
 
@@ -507,7 +507,7 @@ const MyPanel = ({ navigation }) => {
             data.append('Latitude', Latitude);
             data.append('Longitude', Longitude);
             data.append('userId', user?.Id);
-            data.append('LogLocation', LogLocation?LogLocation:'');
+            data.append('LogLocation', LogLocation ? LogLocation : '');
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
@@ -541,7 +541,7 @@ const MyPanel = ({ navigation }) => {
             data.append('Latitude', Latitude);
             data.append('Longitude', Longitude);
             data.append('userId', user?.Id);
-            data.append('LogLocation', LogLocation?LogLocation:'');
+            data.append('LogLocation', LogLocation ? LogLocation : '');
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
@@ -572,7 +572,7 @@ const MyPanel = ({ navigation }) => {
             data.append('Latitude', Latitude);
             data.append('Longitude', Longitude);
             data.append('userId', user?.Id);
-            data.append('LogLocation', LogLocation?LogLocation:'');
+            data.append('LogLocation', LogLocation ? LogLocation : '');
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
@@ -780,168 +780,150 @@ const MyPanel = ({ navigation }) => {
 
     return (
         <View style={MyPanelStyle.container}>
-
-            <View
-                style={MyPanelStyle.HeaderContent}>
-                <View
-                    style={MyPanelStyle.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={MyPanelStyle.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer(); }}>
-                        <Image resizeMode="contain" style={MyPanelStyle.HeaderMenuiconstyle}
-                            source={require('../../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
+            <Header
+                title={"My Panel"}
+                onPress={() => navigation.openDrawer()}
+            />
+            {!progressVisible ?
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={_onRefresh}
+                        />
+                    }>
                     <View
-                        style={MyPanelStyle.HeaderTextView}>
-                        <Text
-                            style={MyPanelStyle.HeaderTextstyle}>
-                            MY PANEL
-                        </Text>
-                    </View>
-                </View>
-            </View>
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={_onRefresh}
-                    />
-                }>
-                <View
-                    style={MyPanelStyle.MainInfoBar}>
-                    <View
-                        style={MyPanelStyle.MainInfoBarTopRow}>
-                        <View style={MyPanelStyle.MainInfoBarTopRowLeft}>
-                            {ImageFileName ? (
-                                <Image resizeMode='cover' style={
-                                    {
-                                        ...Platform.select({
-                                            ios: {
-                                                width: 80,
-                                                height: 80,
-                                                marginRight: 10,
-                                                borderRadius: 40,
-                                            },
-                                            android: {
-                                                width: 80,
-                                                height: 80,
-                                                // elevation: 10 ,
-                                                borderRadius: 40,
-                                            },
-                                        }),
-                                    }
-                                } source={{ uri: urlResource + ImageFileName }} />) :
+                        style={MyPanelStyle.MainInfoBar}>
+                        <View
+                            style={MyPanelStyle.MainInfoBarTopRow}>
+                            <View style={MyPanelStyle.MainInfoBarTopRowLeft}>
+                                {ImageFileName ? (
+                                    <Image resizeMode='cover' style={
+                                        {
+                                            ...Platform.select({
+                                                ios: {
+                                                    width: 80,
+                                                    height: 80,
+                                                    marginRight: 10,
+                                                    borderRadius: 40,
+                                                },
+                                                android: {
+                                                    width: 80,
+                                                    height: 80,
+                                                    // elevation: 10 ,
+                                                    borderRadius: 40,
+                                                },
+                                            }),
+                                        }
+                                    } source={{ uri: urlResource + ImageFileName }} />) :
 
-                                (<Image style={
-                                    {
-                                        ...Platform.select({
-                                            ios: {
-                                                width: 80,
-                                                height: 80,
-                                                marginRight: 10,
-                                                borderRadius: 40,
-                                            },
-                                            android: {
-                                                width: 80,
-                                                height: 80,
-                                                // elevation: 10 ,
-                                                borderRadius: 600,
-                                            },
-                                        }),
-                                    }
-                                } resizeMode='contain' source={require('../../../../../assets/images/employee.png')} />)}
-                            <View
-                                style={MyPanelStyle.TextInfoBar}>
-                                <Text style={MyPanelStyle.UserNameTextStyle}>
-                                    {EmployeeName}
-                                </Text>
-                                <Text style={MyPanelStyle.DesignationTextStyle}>
-                                    {Designation}
-                                </Text>
-                                <Text style={MyPanelStyle.DepartmentTextStyle}>
-                                    {DepartmentName}
-                                </Text>
+                                    (<Image style={
+                                        {
+                                            ...Platform.select({
+                                                ios: {
+                                                    width: 80,
+                                                    height: 80,
+                                                    marginRight: 10,
+                                                    borderRadius: 40,
+                                                },
+                                                android: {
+                                                    width: 80,
+                                                    height: 80,
+                                                    // elevation: 10 ,
+                                                    borderRadius: 600,
+                                                },
+                                            }),
+                                        }
+                                    } resizeMode='contain' source={require('../../../../../assets/images/employee.png')} />)}
+                                <View
+                                    style={MyPanelStyle.TextInfoBar}>
+                                    <Text style={MyPanelStyle.UserNameTextStyle}>
+                                        {EmployeeName}
+                                    </Text>
+                                    <Text style={MyPanelStyle.DesignationTextStyle}>
+                                        {Designation}
+                                    </Text>
+                                    <Text style={MyPanelStyle.DepartmentTextStyle}>
+                                        {DepartmentName}
+                                    </Text>
+                                </View>
                             </View>
+                            <View style={MyPanelStyle.MainInfoBarTopRowRight}>
+                                <TouchableOpacity
+                                    onPress={() => openModalEditProfile()}
+                                    style={MyPanelStyle.EditButtonContainer}>
+                                    <Image
+                                        resizeMode='contain'
+                                        source={require('../../../../../assets/images/editprofie.png')}
+                                        style={{ width: 47, height: 50 }}>
+                                    </Image>
+                                </TouchableOpacity>
+                            </View >
                         </View>
-                        <View style={MyPanelStyle.MainInfoBarTopRowRight}>
-                            <TouchableOpacity
-                                onPress={() => openModalEditProfile()}
-                                style={MyPanelStyle.EditButtonContainer}>
-                                <Image
-                                    resizeMode='contain'
-                                    source={require('../../../../../assets/images/editprofie.png')}
-                                    style={{ width: 47, height: 50 }}>
-                                </Image>
-                            </TouchableOpacity>
-                        </View >
                     </View>
-                </View>
-                <View>
+                    <View>
 
-                    {renderTimeStatusList()}
-                </View>
-                <View
-                    style={MyPanelStyle.ButtonBar}>
-                    <TouchableOpacity
-                        disabled={touchabledisablepointcheckin}
-                        onPress={() => getCheckIn()}
-                        style={MyPanelStyle.ButtonContainer}>
-                        <Image
-                            resizeMode='contain'
-                            source={require('../../../../../assets/images/checkin.png')}
-                            style={MyPanelStyle.ButtonImage}>
-                        </Image>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        disabled={touchabledisablepoint}
-                        onPress={() => getCheckPoint()}
-                        style={MyPanelStyle.ButtonContainer}>
-                        <Image
-                            resizeMode='contain'
-                            source={require('../../../../../assets/images/checkpoint.png')}
-                            style={MyPanelStyle.ButtonImage}>
-                        </Image>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        disabled={touchabledisablepointcheckout}
-                        onPress={() => getCheckOut()}
-                        style={MyPanelStyle.ButtonContainer}>
-                        <Image
-                            resizeMode='contain'
-                            source={require('../../../../../assets/images/checkout.png')}
-                            style={MyPanelStyle.ButtonImage}>
-                        </Image>
-                    </TouchableOpacity>
-                </View >
-
-                <View
-                    style={MyPanelStyle.TimeLineMainView}>
+                        {renderTimeStatusList()}
+                    </View>
                     <View
-                        style={MyPanelStyle.TimeLineHeaderBar}>
-                        <Image
-                            resizeMode="contain"
-                            style={{
-                                width: 19.8,
-                                height: 19.8,
-                            }}
-                            source={require('../../../../../assets/images/goal.png')}>
-                        </Image>
-                        <Text
-                            style={MyPanelStyle.TimeLineHeaderText}>
-                            Timeline
-                        </Text>
-                    </View>
-                    {progressVisible == true ?
-                        (<ActivityIndicator size="large" color="#1B7F67"
-                            style={MyPanelStyle.loaderIndicator} />) : null}
-                    <View style={{}}>
+                        style={MyPanelStyle.ButtonBar}>
+                        <TouchableOpacity
+                            disabled={touchabledisablepointcheckin}
+                            onPress={() => getCheckIn()}
+                            style={MyPanelStyle.ButtonContainer}>
+                            <Image
+                                resizeMode='contain'
+                                source={require('../../../../../assets/images/checkin.png')}
+                                style={MyPanelStyle.ButtonImage}>
+                            </Image>
+                        </TouchableOpacity>
 
-                        {renderTrackList()}
+                        <TouchableOpacity
+                            disabled={touchabledisablepoint}
+                            onPress={() => getCheckPoint()}
+                            style={MyPanelStyle.ButtonContainer}>
+                            <Image
+                                resizeMode='contain'
+                                source={require('../../../../../assets/images/checkpoint.png')}
+                                style={MyPanelStyle.ButtonImage}>
+                            </Image>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            disabled={touchabledisablepointcheckout}
+                            onPress={() => getCheckOut()}
+                            style={MyPanelStyle.ButtonContainer}>
+                            <Image
+                                resizeMode='contain'
+                                source={require('../../../../../assets/images/checkout.png')}
+                                style={MyPanelStyle.ButtonImage}>
+                            </Image>
+                        </TouchableOpacity>
+                    </View >
+
+                    <View
+                        style={MyPanelStyle.TimeLineMainView}>
+                        <View
+                            style={MyPanelStyle.TimeLineHeaderBar}>
+                            <Image
+                                resizeMode="contain"
+                                style={{
+                                    width: 19.8,
+                                    height: 19.8,
+                                }}
+                                source={require('../../../../../assets/images/goal.png')}>
+                            </Image>
+                            <Text
+                                style={MyPanelStyle.TimeLineHeaderText}>
+                                Timeline
+                            </Text>
+                        </View>
+                        <View style={{}}>
+
+                            {renderTrackList()}
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+                : <Loader />}
 
             <Modal style={[MyPanelStyle.modalForEditProfile]} position={"center"} isOpen={modalEditEmp}
                 backdropPressToClose={false}
@@ -1028,7 +1010,7 @@ const MyPanel = ({ navigation }) => {
                             style={MyPanelStyle.loaderIndicator} />) : null}
                     <View style={{ width: "100%" }}>
 
-                        <TextInput
+                        {/* <TextInput
                             style={{ height: 40, margin: 15, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
                             value={EmployeeCode}
                             placeholder="Employee Code"
@@ -1036,9 +1018,9 @@ const MyPanel = ({ navigation }) => {
                             autoCapitalize="none"
                             onChangeText={text => setEmployeeCode(text)}
                         >
-                        </TextInput>
+                        </TextInput> */}
                         <TextInput
-                            style={{ height: 40, margin: 15, padding: 5, marginTop: 0, backgroundColor: "#f1f4f6", borderRadius: 10, }}
+                            style={{ height: 40, margin: 15, padding: 5,  backgroundColor: "#f1f4f6", borderRadius: 10, }}
                             value={EmployeeName}
                             placeholder="Employee Name"
                             placeholderTextColor="#dee1e5"

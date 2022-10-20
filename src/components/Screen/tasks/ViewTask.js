@@ -9,8 +9,6 @@ import { TaskStyle } from './TaskStyle';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { EmployeeList } from '../../../services/EmployeeTrackService';
 import { TaskStatus, SaveTask, deleteTask, PriorityList, GetTaskAttachments } from '../../../services/TaskService';
-// import { Menu, MenuItem, MenuDivider, Position } from "react-native-enhanced-popup-menu";
-import { Menu, Divider } from 'react-native-paper';
 import { NoticeStyle } from '../notice/NoticeStyle'
 import Modal from 'react-native-modalbox';
 import moment from 'moment';
@@ -27,6 +25,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';
 import CustomImagePicker from '../../CustomImagePicker';
+import Header from '../../Header';
 
 const { width, height } = Dimensions.get('window');
 
@@ -64,7 +63,6 @@ const ViewTask = ({ navigation, route }) => {
     const [photo, setphoto] = useState(null);
     const [touchabledisableForsaveExpense, settouchabledisableForsaveExpense] = useState(false);
     const [modalPriority, setmodalPriority] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
     const [isLoaded, setisLoaded] = useState(false);
 
 
@@ -111,14 +109,14 @@ const ViewTask = ({ navigation, route }) => {
                 break;
         }
     }
-
+console.log(paramsData?.TaskModel.Title)
     useFocusEffect(
         useCallback(
             () => {
                 (async () => {
                     setisLoaded(false);
                     settaskModel(paramsData?.TaskModel);
-                    setTitle(paramsData?.TaskModel.Title);
+                    setTitle(paramsData?.TaskModel?.Title);
                     setDescription(paramsData?.TaskModel?.Description);
                     setAssignedToId(paramsData?.TaskModel?.AssignedToId);
                     setAssignToName(paramsData?.TaskModel?.AssignToName);
@@ -126,7 +124,7 @@ const ViewTask = ({ navigation, route }) => {
                     setTaskId(paramsData?.TaskModel?.Id);
                     setDueDate(paramsData?.TaskModel?.DueDate);
                     setTaskNo(paramsData?.TaskModel?.TaskNo);
-                    setPriorityName(paramsData?.TaskModel?.PriorityId === 1 ? 'Normal' : paramsData?.TaskModel?.PriorityId === 2 ? 'High' : paramsData?.TaskModel?.PriorityId === 3 ? 'Low' :'Normal');
+                    setPriorityName(paramsData?.TaskModel?.PriorityId === 1 ? 'Normal' : paramsData?.TaskModel?.PriorityId === 2 ? 'High' : paramsData?.TaskModel?.PriorityId === 3 ? 'Low' : 'Normal');
                     setStatusName(paramsData?.TaskModel?.StatusId === 1 ? 'Todo' : paramsData?.TaskModel?.StatusId === 2 ? 'In Progress' : paramsData?.TaskModel?.StatusId === 3 ? 'Pause' : paramsData?.TaskModel?.StatusId === 4 ? 'Completed' : paramsData?.TaskModel?.StatusId === 5 ? 'Done' : paramsData?.TaskModel?.StatusId === 6 ? 'Cancelled' : 'Todo')
                     const cId = await LocalStorage.GetData("companyId");
                     getEmployeeList(cId);
@@ -180,7 +178,7 @@ const ViewTask = ({ navigation, route }) => {
         try {
             await deleteTask(TaskId)
                 .then(res => {
-                    console.log('DELEDTED',res)
+                    console.log('DELEDTED', res)
                     ToastAndroid.show('Task Deleted successfully', ToastAndroid.TOP);
                     refreshOnBack();
                 })
@@ -282,7 +280,7 @@ const ViewTask = ({ navigation, route }) => {
         });
         if (Title === "") return ToastAndroid.show('Please enter title ', ToastAndroid.TOP);
         try {
-            console.log("StatusId" , fileList)
+            console.log("StatusId", fileList)
 
             setprogressVisible(true);
 
@@ -302,7 +300,7 @@ const ViewTask = ({ navigation, route }) => {
 
             SaveTask(data).then(response => {
                 console.log('SAVE', response)
-                if(response?.success){
+                if (response?.success) {
                     setprogressVisible(false);
                     ToastAndroid.show('Task Updated successfully', ToastAndroid.TOP);
                     refreshOnBack();
@@ -310,7 +308,7 @@ const ViewTask = ({ navigation, route }) => {
             })
                 .catch(error => {
                     setprogressVisible(false);
-                    console.log("error occured",error);
+                    console.log("error occured", error);
                     settouchabledisableForsaveExpense(true);
                 });
         } catch (error) {
@@ -407,251 +405,201 @@ const ViewTask = ({ navigation, route }) => {
 
 
     const onPress = () => showMenu();
-    const DeleteEmp = () => {
-        setShowMenu(false);
-        alertmethod();
-    }
+
 
     return (
         <>
             {isLoaded ?
-                <View
-                    style={TaskStyle.viewTaskContainer}>
-
-                    <View
-                        style={CommonStyles.HeaderContent}>
-                        <View
-                            style={CommonStyles.HeaderFirstView}>
-                            <TouchableOpacity
-                                style={CommonStyles.HeaderMenuicon}
-                                onPress={() => navigation.goBack()}
-                            >
-                                <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                                    source={require('../../../../assets/images/left_arrow.png')}>
-                                </Image>
-                            </TouchableOpacity>
-                            <View
-                                style={CommonStyles.HeaderTextView}>
-                                <Text
-                                    style={CommonStyles.HeaderTextstyle}>
-                                    VIEW TASK
-                                </Text>
-                            </View>
-                        </View>
-
-
-                        <View style={CommonStyles.HeaderMenuLeft}>
-                            <View
-                                style={CommonStyles.createTaskButtonContainer}>
-                                <TouchableOpacity
-                                    onPress={() => callsave()}
-                                    style={CommonStyles.createTaskButtonTouch}>
-                                    <View style={CommonStyles.plusButton}>
-                                        <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" />
-                                    </View>
-                                    <View style={CommonStyles.ApplyTextButton}>
-                                        <Text style={CommonStyles.ApplyButtonText}>
-                                            SAVE
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-
-                            <TouchableOpacity onPress={() => setShowMenu(true)}>
-                                <View style={{ alignItems: 'flex-end' }}>
-                                    <Menu visible={showMenu} onDismiss={() => setShowMenu(false)}
-                                        anchor={<MaterialCommunityIcons
-                                            name="dots-vertical" size={28}
-                                            color="#bec3c8"
-                                            style={{ padding: 2, }}
-                                            onPress={() => setShowMenu(true)}
-                                        />}>
-                                        <Divider />
-                                        <Menu.Item style={{ borderColor: 'red' }} onPress={DeleteEmp} title='Delete Task' />
-                                        <Divider />
-                                    </Menu>
-                                </View>
-                            </TouchableOpacity>
-
-                        </View>
-                    </View>
+                <View style={TaskStyle.viewTaskContainer}>
+                    <Header
+                        title={'View Task'}
+                        goBack={true}
+                        onPress={() => { navigation.goBack() }}
+                        btnAction={() => goToCsaveTaskreateTask()}
+                        btnTitle='Save'
+                        saveImg={true}
+                        deleteAction={() => {
+                            alertmethod();
+                        }}
+                    />
+                    
                     <View style={{ flex: 1, }}>
-                        {/* <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, }}> */}
-                            <View style={{ flex: 1, }}>
+                        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, }}>
+                        <View style={{ flex: 1, }}>
+                            <View
+                                style={TaskStyle.titleInputRow}>
+                                <Text
+                                    style={TaskStyle.createTaskTitleLabel1}>
+                                    Title:
+                                </Text>
+                                <TextInput
+                                    style={TaskStyle.createTaskTitleTextBox1}
+                                    value={Title}
+                                    placeholderTextColor="#dee1e5"
+                                    autoCapitalize="none"
+                                    onChangeText={text => setTitle(text)}
+                                >
+                                </TextInput>
+                            </View>
+
+                            <View
+                                style={TaskStyle.descriptionInputRow}>
+                                <Text
+                                    style={TaskStyle.createTaskTitleLabel11}>
+                                    Description:
+                                </Text>
+                                <TextInput
+                                    style={TaskStyle.createTaskDescriptionTextBox1}
+                                    value={Description}
+                                    placeholderTextColor="#dee1e5"
+                                    multiline={true}
+                                    autoCapitalize="none"
+                                    onChangeText={text => setDescription(text)}
+                                >
+                                </TextInput>
+                            </View>
+                            <View
+                                style={TaskStyle.viewTaskBodyContainer}>
                                 <View
-                                    style={TaskStyle.titleInputRow}>
+                                    style={TaskStyle.viewTaskStatusContainer}>
                                     <Text
-                                        style={TaskStyle.createTaskTitleLabel1}>
-                                        Title:
+                                        style={TaskStyle.viewTaskStatusLabel}>
+                                        Status:
                                     </Text>
-                                    <TextInput
-                                        style={TaskStyle.createTaskTitleTextBox1}
-                                        value={Title}
-                                        placeholderTextColor="#dee1e5"
-                                        autoCapitalize="none"
-                                        onChangeText={text => setTitle(text)}
+                                    <TouchableOpacity onPress={() => setmodalforstatus(true)}
+                                        style={[TaskStyle.viewTaskStatusCheckboxContainer, { backgroundColor: statuscolor }, { borderRadius: 5 }]}
                                     >
-                                    </TextInput>
-                                </View>
 
-                                <View
-                                    style={TaskStyle.descriptionInputRow}>
-                                    <Text
-                                        style={TaskStyle.createTaskTitleLabel11}>
-                                        Description:
-                                    </Text>
-                                    <TextInput
-                                        style={TaskStyle.createTaskDescriptionTextBox1}
-                                        value={Description}
-                                        placeholderTextColor="#dee1e5"
-                                        multiline={true}
-                                        autoCapitalize="none"
-                                        onChangeText={text => setDescription(text)}
-                                    >
-                                    </TextInput>
-                                </View>
-                                <View
-                                    style={TaskStyle.viewTaskBodyContainer}>
-                                    <View
-                                        style={TaskStyle.viewTaskStatusContainer}>
-                                        <Text
-                                            style={TaskStyle.viewTaskStatusLabel}>
-                                            Status:
-                                        </Text>
-                                        <TouchableOpacity onPress={() => setmodalforstatus(true)}
-                                            style={[TaskStyle.viewTaskStatusCheckboxContainer, { backgroundColor: statuscolor }, { borderRadius: 5 }]}
-                                        >
+                                        {StatusName === "" ?
+                                            <Text
+                                                style={TaskStyle.viewTaskStatusText}>
+                                                {taskModel?.StatusName}
+                                            </Text> :
+                                            <Text
+                                                style={TaskStyle.viewTaskStatusText}>
+                                                {StatusName}
+                                            </Text>
+                                        }
 
-                                            {StatusName === "" ?
-                                                <Text
-                                                    style={TaskStyle.viewTaskStatusText}>
-                                                    {taskModel?.StatusName}
-                                                </Text> :
-                                                <Text
-                                                    style={TaskStyle.viewTaskStatusText}>
-                                                    {StatusName}
-                                                </Text>
-                                            }
-
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View
-                                        style={TaskStyle.viewTaskDueDateContainer}>
-                                        <Text
-                                            style={TaskStyle.viewTaskDueDateLabel}>
-                                            Due Date:
-                                        </Text>
-                                        <TouchableOpacity onPress={_showDateTimePicker}>
-                                            <View
-                                                style={TaskStyle.viewTaskDueDateValueContainer}>
-                                                <MaterialCommunityIcons
-                                                    name="clock"
-                                                    size={20}
-                                                    color="black"
-                                                >
-                                                </MaterialCommunityIcons>
-                                                <Text
-                                                    style={TaskStyle.viewTaskDueDateValue}>
-                                                    {DueDate === null ? " " : moment(DueDate).format("DD MMMM YYYY")}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        <DateTimePicker
-                                            isVisible={isDateTimePickerVisible}
-                                            onConfirm={_handleDatePicked}
-                                            onCancel={_hideDateTimePicker}
-                                            mode={'date'}
-                                        />
-                                    </View>
-                                </View>
-                                <View
-                                    style={[TaskStyle.viewTaskBodyContainer,
-                                    { marginVertical: -4, }
-                                    ]}>
-                                    <View
-                                        style={TaskStyle.viewTaskStatusContainer}>
-                                        <TouchableOpacity onPress={() => setmodalPriority(true)}>
-                                            <View
-                                                style={{
-                                                    width: (width * 45) / 100, height: 35,
-                                                    borderRadius: 5, flexDirection: 'row',
-                                                    alignItems: 'center', justifyContent: 'center',
-                                                    padding: 5, backgroundColor: "#f6f7f9",
-                                                }}>
-                                                <MaterialCommunityIcons name="priority-high" size={18} style={{ marginHorizontal: 5, }} color="#4a535b" />
-                                                <TextInput
-                                                    style={[TaskStyle.assigneePeopleTextBox]}
-                                                    placeholder="Select Priority"
-                                                    placeholderTextColor="#4a535b"
-                                                    editable={false}
-                                                    autoCapitalize="none"
-                                                    value={PriorityName}
-                                                >
-                                                </TextInput>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View
-                                        style={TaskStyle.viewTaskDueDateContainer}>
-                                        <TouchableOpacity
-                                            onPress={() => setmodal1(true)}>
-                                            <View
-                                                style={{
-                                                    width: (width * 45) / 100, height: 35,
-                                                    borderRadius: 5, flexDirection: 'row',
-                                                    alignItems: 'center', justifyContent: 'center',
-                                                    padding: 5, backgroundColor: "#f6f7f9",
-                                                }}>
-                                                <Ionicons name="md-people" size={20} style={{ marginHorizontal: 5, }} color="#4a535b" />
-                                                {AssignToName === "" ?
-                                                    <Text
-                                                        style={[TaskStyle.assigneePeopleTextBox]}>
-                                                        {taskModel.AssignToName}
-                                                    </Text> :
-                                                    <Text
-                                                        style={[TaskStyle.assigneePeopleTextBox]}>
-                                                        {AssignToName}
-                                                    </Text>
-                                                }
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-
-                                <View
-                                    style={TaskStyle.viewTaskAttachmentContainer}>
-                                    <View
-                                        style={TaskStyle.viewTaskAttachmentInnerContainer}>
-                                        <Entypo name="attachment" size={14} color="black"
-                                            style={{ marginRight: 10, }} />
-
-                                        <Text
-                                            style={TaskStyle.viewTaskAttachmentLeftIcon}>
-                                            Attachments
-                                        </Text>
-                                    </View>
-                                    <TouchableOpacity
-                                        onPress={() => openmodalForImage()}
-                                        style={TaskStyle.viewTaskAttachmentPlusIcon}>
-                                        <Image
-                                            style={{ width: 20, height: 20 }} resizeMode='contain'
-                                            source={require('../../../../assets/images/leftPlusBig.png')}>
-                                        </Image>
                                     </TouchableOpacity>
                                 </View>
-                                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />) : null}
-                                <View style={TaskStyle.scrollContainerView}>
-                                    <FlatList
-                                        data={fileList}
-                                        keyExtractor={(i, index) => index.toString()}
-                                        showsVerticalScrollIndicator={false}
-                                        style={TaskStyle.taskBoardContainer}
-                                        renderItem={renderItem}
-                                        numColumns={numColumns}
+                                <View
+                                    style={TaskStyle.viewTaskDueDateContainer}>
+                                    <Text
+                                        style={TaskStyle.viewTaskDueDateLabel}>
+                                        Due Date:
+                                    </Text>
+                                    <TouchableOpacity onPress={_showDateTimePicker}>
+                                        <View
+                                            style={TaskStyle.viewTaskDueDateValueContainer}>
+                                            <MaterialCommunityIcons
+                                                name="clock"
+                                                size={20}
+                                                color="black"
+                                            >
+                                            </MaterialCommunityIcons>
+                                            <Text
+                                                style={TaskStyle.viewTaskDueDateValue}>
+                                                {DueDate === null ? " " : moment(DueDate).format("DD MMMM YYYY")}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <DateTimePicker
+                                        isVisible={isDateTimePickerVisible}
+                                        onConfirm={_handleDatePicked}
+                                        onCancel={_hideDateTimePicker}
+                                        mode={'date'}
                                     />
                                 </View>
                             </View>
-                        {/* </ScrollView> */}
+                            <View
+                                style={[TaskStyle.viewTaskBodyContainer,
+                                { marginVertical: -4, }
+                                ]}>
+                                <View
+                                    style={TaskStyle.viewTaskStatusContainer}>
+                                    <TouchableOpacity onPress={() => setmodalPriority(true)}>
+                                        <View
+                                            style={{
+                                                width: (width * 45) / 100, height: 35,
+                                                borderRadius: 5, flexDirection: 'row',
+                                                alignItems: 'center', justifyContent: 'center',
+                                                padding: 5, backgroundColor: "#f6f7f9",
+                                            }}>
+                                            <MaterialCommunityIcons name="priority-high" size={18} style={{ marginHorizontal: 5, }} color="#4a535b" />
+                                            <TextInput
+                                                style={[TaskStyle.assigneePeopleTextBox]}
+                                                placeholder="Select Priority"
+                                                placeholderTextColor="#4a535b"
+                                                editable={false}
+                                                autoCapitalize="none"
+                                                value={PriorityName}
+                                            >
+                                            </TextInput>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                                <View
+                                    style={TaskStyle.viewTaskDueDateContainer}>
+                                    <TouchableOpacity
+                                        onPress={() => setmodal1(true)}>
+                                        <View
+                                            style={{
+                                                width: (width * 45) / 100, height: 35,
+                                                borderRadius: 5, flexDirection: 'row',
+                                                alignItems: 'center', justifyContent: 'center',
+                                                padding: 5, backgroundColor: "#f6f7f9",
+                                            }}>
+                                            <Ionicons name="md-people" size={20} style={{ marginHorizontal: 5, }} color="#4a535b" />
+                                            {AssignToName === "" ?
+                                                <Text
+                                                    style={[TaskStyle.assigneePeopleTextBox]}>
+                                                    {taskModel.AssignToName}
+                                                </Text> :
+                                                <Text
+                                                    style={[TaskStyle.assigneePeopleTextBox]}>
+                                                    {AssignToName}
+                                                </Text>
+                                            }
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <View
+                                style={TaskStyle.viewTaskAttachmentContainer}>
+                                <View
+                                    style={TaskStyle.viewTaskAttachmentInnerContainer}>
+                                    <Entypo name="attachment" size={14} color="black"
+                                        style={{ marginRight: 10, }} />
+
+                                    <Text
+                                        style={TaskStyle.viewTaskAttachmentLeftIcon}>
+                                        Attachments
+                                    </Text>
+                                </View>
+                                <TouchableOpacity
+                                    onPress={() => openmodalForImage()}
+                                    style={TaskStyle.viewTaskAttachmentPlusIcon}>
+                                    <Image
+                                        style={{ width: 20, height: 20 }} resizeMode='contain'
+                                        source={require('../../../../assets/images/leftPlusBig.png')}>
+                                    </Image>
+                                </TouchableOpacity>
+                            </View>
+                            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />) : null}
+                            <View style={TaskStyle.scrollContainerView}>
+                                <FlatList
+                                    data={fileList}
+                                    keyExtractor={(i, index) => index.toString()}
+                                    showsVerticalScrollIndicator={false}
+                                    style={TaskStyle.taskBoardContainer}
+                                    renderItem={renderItem}
+                                    numColumns={numColumns}
+                                />
+                            </View>
+                        </View>
+                        </ScrollView>
                     </View>
                     <View style={{
                         justifyContent: 'flex-end',

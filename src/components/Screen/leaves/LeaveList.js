@@ -11,6 +11,7 @@ import Searchbar from '../../Searchbar';
 import LeaveBox from '../../LeaveBox';
 import { GetLeaveList } from '../../../services/UserService/Leave';
 import { FontAwesome } from '@expo/vector-icons';
+import Header from '../../Header';
 
 
 const LeaveList = ({ navigation, route }) => {
@@ -119,75 +120,41 @@ const LeaveList = ({ navigation, route }) => {
 
     return (
         <>
-            {
-            // isLoaded ?
-                <View style={LeaveListStyle.container}>
-                    <View
-                        style={CommonStyles.HeaderContent}>
-                        <View
-                            style={CommonStyles.HeaderFirstView}>
-                            <TouchableOpacity
-                                style={CommonStyles.HeaderMenuicon}
-                                onPress={() => { navigation.openDrawer(); }}>
-                                <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                                    source={require('../../../../assets/images/menu_b.png')}>
-                                </Image>
-                            </TouchableOpacity>
-                            <View
-                                style={CommonStyles.HeaderTextView}>
-                                <Text
-                                    style={CommonStyles.HeaderTextstyle}>
-                                    LEAVE REQUESTS
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={LeaveListStyle.ApplyButtonContainer}>
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('LeaveApply')}
-                                style={LeaveListStyle.ApplyButtonTouch}>
-                                <View style={LeaveListStyle.plusButton}>
-                                    <FontAwesome
-                                        name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
-                                    </FontAwesome>
-                                </View>
-                                <View style={LeaveListStyle.ApplyTextButton}>
-                                    <Text style={LeaveListStyle.ApplyButtonText}>
-                                        LEAVE
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={{ flex: 1, }}>
 
-                        {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />) :
-                            <View style={{ flex: 1, }}>
-
-                                <FlatList
-                                    refreshControl={
-                                        <RefreshControl
-                                            refreshing={refreshing}
-                                            onRefresh={_onRefresh}
-                                        />
-                                    }
-                                    data={leaveList}
-                                    keyExtractor={(x, i) => i.toString()}
-                                    renderItem={({ item }) =>
-                                        <LeaveBox
-                                            item={item}
-                                            onApprove={() => leaveApprove(item)}
-                                            onReject={() => leaveReject(item)}
-                                        />
-                                    }
-                                    ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction} />}
-                                />
-                            </View>
-                        }
-                    </View>
-                </View> 
-                // :
-                // <Loader />
-            }
+            <View style={LeaveListStyle.container}>
+                <Header
+                    title={'Leave Requests'}
+                    onPress={() => { navigation.openDrawer() }}
+                    btnAction={user?.UserType === 'admin' ? null : () => navigation.navigate('LeaveApply')}
+                    btnTitle='LEAVE'
+                    btnContainerStyle={LeaveListStyle.ApplyTextButton}
+                    btnStyle={LeaveListStyle.plusButton}
+                />                
+                <View style={{ flex: 1, }}>
+                    {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />) :
+                        <View style={{ flex: 1, }}>
+                            <FlatList
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={refreshing}
+                                        onRefresh={_onRefresh}
+                                    />
+                                }
+                                data={leaveList}
+                                keyExtractor={(x, i) => i.toString()}
+                                renderItem={({ item }) =>
+                                    <LeaveBox
+                                        item={item}
+                                        onApprove={() => leaveApprove(item)}
+                                        onReject={() => leaveReject(item)}
+                                    />
+                                }
+                                ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction} />}
+                            />
+                        </View>
+                    }
+                </View>
+            </View>
         </>
     );
 }

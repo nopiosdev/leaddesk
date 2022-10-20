@@ -10,7 +10,7 @@ const App = () => {
           <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <PaperProvider>
               <Provider store={store}>
-                <StatusBar barStyle="default" />
+                <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
                 <AuthLoadingScreen/>
               </Provider>
             </PaperProvider>

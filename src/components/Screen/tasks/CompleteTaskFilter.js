@@ -15,6 +15,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Searchbar from '../../Searchbar';
+import Header from '../../Header';
 
 var screen = Dimensions.get('window');
 
@@ -76,7 +77,7 @@ const CompleteTaskFilter = ({ navigation, route }) => {
                     } else {
                         settaskList(res?.filter(x => x.CreatedById == user?.Id))
                         settempList(res?.filter(x => x.CreatedById == user?.Id))
-                    }                    
+                    }
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
                 })
@@ -102,47 +103,16 @@ const CompleteTaskFilter = ({ navigation, route }) => {
     return (
         <View
             style={TaskStyle.container}>
-
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/menu_b.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            TASKS
-                        </Text>
-                    </View>
-                </View>
-                <View
-                    style={CommonStyles.createTaskButtonContainer}>
-                    <TouchableOpacity
-                        onPress={() => goToCreateTask()}
-                        style={CommonStyles.createTaskButtonTouch}>
-                        <View style={CommonStyles.plusButton}>
-                            <FontAwesome
-                                name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
-                            </FontAwesome>
-                        </View>
-                        <View style={CommonStyles.ApplyTextButton}>
-                            <Text style={CommonStyles.ApplyButtonText}>
-                                TASK
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <Header
+                title={'Tasks'}
+                navigation={navigation}
+                onPress={() => { navigation.goBack() }}
+                btnAction={() => goToCreateTask()}
+                btnTitle='TASK'
+            />
             <Searchbar searchFilterFunction={searchFilterFunction} />
             {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />) : null}
-                <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh} />
+            <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh} />
         </View >
     )
 }

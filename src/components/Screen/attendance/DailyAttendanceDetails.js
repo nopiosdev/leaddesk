@@ -81,8 +81,10 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
             await GetMovementDetails(paramsData?.aItem?.UserId)
                 .then(res => {
                     console.log("getEmpTrackInfo", res);
+                    setdata([]);
                     if (!res?.success && res?.success !== false) {
                         setEmpTrackList(res);
+                        let tempData = [];
                         res?.map((userData, index) => {
                             var title = '';
                             var color = '';
@@ -102,8 +104,9 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
                                 "description": userData.LogLocation,
                                 "circleColor": color
                             };
-                            setdata([myObj]);
+                            tempData.push(myObj);
                         });
+                        setdata(tempData);
                         setLongitude(res[res?.length - 1]?.Longitude);
                         setLatitude(res[res?.length - 1]?.Latitude);
                         setLogLocation(res[res?.length - 1]?.LogLocation);
@@ -155,36 +158,13 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
 
     return (
         <View style={DailyAttendanceStyle.container}>
-
-                     <Header
-                        title={EmployeeName}
-                        navigation={navigation}
-                        goBack={true}
-                        onPress={() => { goBack() }}
-                        makeCall={makeCall}
-                    />
-                {/* <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            {EmployeeName}
-
-                        </Text>
-                    </View>
-                </View>
-                 */}
-
-
-            <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
+            <Header
+                title={EmployeeName}
+                navigation={navigation}
+                goBack={true}
+                onPress={() => { goBack() }}
+                makeCall={makeCall}
+            />
             <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} >
                 <View
                     style={{

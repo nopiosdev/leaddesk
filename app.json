@@ -7,6 +7,15 @@
       "ios",
       "android"
     ],
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/notification-icon.png",
+          "color": "#ffffff"
+        }
+      ]
+    ],
     "version": "1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -23,13 +32,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.abs.savvy",
+      "bundleIdentifier": "com.theleaddesk.app",
       "config": {
         "googleMapsApiKey": "put your google map api key here"
       }
     },
     "android": {
-      "package": "com.abs.savvy",
+      "package": "com.theleaddesk.app",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "put your google map api key here"

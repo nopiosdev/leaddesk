@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 export const DepartmentSetupStyle = StyleSheet.create({
     FlatListContainer: {
         flex: 1, marginTop: 10
@@ -78,7 +78,7 @@ export const DepartmentSetupStyle = StyleSheet.create({
         alignItems: 'center',
     },
     ModalUpContainer: {
-        height: "40%",
+        height: Dimensions.get('window').height/3,
         width: "75%",
         borderRadius: 20,
         backgroundColor: '#EBEBEB',
@@ -200,7 +200,7 @@ export const DepartmentSetupStyle = StyleSheet.create({
         marginVertical: 8,
     },
     modalforDept: {
-        height: "40%",
+        height: Dimensions.get('window').height/3,
         width: "83%",
         borderRadius: 20,
     },

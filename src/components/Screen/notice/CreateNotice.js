@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { Checkbox } from 'react-native-paper';
 import CustomImagePicker from '../../CustomImagePicker';
+import Header from '../../Header';
 
 var tempCheckValues = [];
 var cListforcheckbox = [];
@@ -51,7 +52,7 @@ const CreateNotice = ({ navigation, route }) => {
         (async () => {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
-            getDepartment("1")
+            // getDepartment("1")
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
 
@@ -81,11 +82,11 @@ const CreateNotice = ({ navigation, route }) => {
                 .then(res => {
                     console.log('SaveNotice', res)
                     // if (res?.success) {
-                        setprogressVisible(false);
-                        ToastAndroid.show('Notice saved successfully', ToastAndroid.TOP);
-                        setdetails('');
-                        setImageFileName('');
-                        navigation.navigate('Notice');
+                    setprogressVisible(false);
+                    ToastAndroid.show('Notice saved successfully', ToastAndroid.TOP);
+                    setdetails('');
+                    setImageFileName('');
+                    navigation.navigate('Notice');
                     // }
                 })
                 .catch(() => {
@@ -99,45 +100,45 @@ const CreateNotice = ({ navigation, route }) => {
         }
 
     }
-    const checkBoxChanged = (Value, value, isChecked) => {
-        setcheckBoxChecked(tempCheckValues);
-        var tempCheckBoxChecked = checkBoxChecked;
-        tempCheckBoxChecked[Value] = !value;
-        setcheckBoxChecked(tempCheckBoxChecked);
+    // const checkBoxChanged = (Value, value, isChecked) => {
+    //     setcheckBoxChecked(tempCheckValues);
+    //     var tempCheckBoxChecked = checkBoxChecked;
+    //     tempCheckBoxChecked[Value] = !value;
+    //     setcheckBoxChecked(tempCheckBoxChecked);
 
-        if (isChecked) {
-            cListforcheckbox.push(Value);
-        } else {
+    //     if (isChecked) {
+    //         cListforcheckbox.push(Value);
+    //     } else {
 
-            for (let index = 0; index < cListforcheckbox.length; index++) {
-                const element = cListforcheckbox[index];
+    //         for (let index = 0; index < cListforcheckbox.length; index++) {
+    //             const element = cListforcheckbox[index];
 
-                if (element == Value) {
-                    cListforcheckbox.splice(index, 1);
-                }
+    //             if (element == Value) {
+    //                 cListforcheckbox.splice(index, 1);
+    //             }
 
-            }
-        }
-        // { this.setState(Object.assign(test, { CheckBoxList: cListforcheckbox })) }
-        settest({ CheckBoxList: cListforcheckbox })
-        // this.setState({ CheckBoxList: cList })
-        console.log(tempCheckValues, '......test1')
-        console.log(test.CheckBoxList, '......test')
-    }
+    //         }
+    //     }
+    //     // { this.setState(Object.assign(test, { CheckBoxList: cListforcheckbox })) }
+    //     settest({ CheckBoxList: cListforcheckbox })
+    //     // this.setState({ CheckBoxList: cList })
+    //     console.log(tempCheckValues, '......test1')
+    //     console.log(test.CheckBoxList, '......test')
+    // }
     const handleBackButton = () => {
         navigation.navigate('Notice');
         return true;
     }
 
-    const openModaldept = () => {
-        setmodalfordept(true);
-    }
-    const closeModaldept = () => {
-        setmodalfordept(false);
-    }
-    const closeModaledpt = () => {
-        setmodalfordept(false);
-    }
+    // const openModaldept = () => {
+    //     setmodalfordept(true);
+    // }
+    // const closeModaldept = () => {
+    //     setmodalfordept(false);
+    // }
+    // const closeModaledpt = () => {
+    //     setmodalfordept(false);
+    // }
     const openmodalForImage = () => {
         setmodalForImage(true);
     }
@@ -153,67 +154,67 @@ const CreateNotice = ({ navigation, route }) => {
     const ShowModalFunction = (visible) => {
         setisModelVisible(false);
     }
-    const getDepartment = async (cid) => {
-        try {
+    // const getDepartment = async (cid) => {
+    //     try {
 
-            await GetDepartmentByCompanyId(cid)
-                .then(res => {
-                    console.log('comlen', res);
-                    if (res !== null) {
-                        console.log('comlen2', res);
-                        if (res?.length > 0) {
-                            const depList = [];
-                            res?.forEach(function (item) {
-                                const ob = {
-                                    'Text': item.DepartmentName,
-                                    'Value': item.Id
-                                }
-                                depList.push(ob);
-                            });
-                            setdepartmentList(depList);
-                            console.log(departmentList, 'testcall')
-                        }
-                    } else {
-                        setdepartmentList([]);
-                    }
-                })
-                .catch(() => {
-                    console.log("error occured");
-                });
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //         await GetDepartmentByCompanyId(cid)
+    //             .then(res => {
+    //                 console.log('comlen', res);
+    //                 if (res !== null) {
+    //                     console.log('comlen2', res);
+    //                     if (res?.length > 0) {
+    //                         const depList = [];
+    //                         res?.forEach(function (item) {
+    //                             const ob = {
+    //                                 'Text': item.DepartmentName,
+    //                                 'Value': item.Id
+    //                             }
+    //                             depList.push(ob);
+    //                         });
+    //                         setdepartmentList(depList);
+    //                         console.log(departmentList, 'testcall')
+    //                     }
+    //                 } else {
+    //                     setdepartmentList([]);
+    //                 }
+    //             })
+    //             .catch(() => {
+    //                 console.log("error occured");
+    //             });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
-    const rendercheckbox = () => {
+    // const rendercheckbox = () => {
 
-        return (
-            departmentList?.map((val) => {
-                { tempCheckValues[val.Value] = false }
+    //     return (
+    //         departmentList?.map((val) => {
+    //             { tempCheckValues[val.Value] = false }
 
-                return (
-                    <View
-                        key={val.Value}
-                        style={{
-                            // flex: 1,
-                            flexDirection: 'row',
-                            padding: 5,
-                            alignSelf: 'center',
-                        }}>
-                        <Checkbox
-                            // value={checkBoxChecked[val.Value]}
-                            status={'checked'}
-                            onPress={(value) =>
-                                checkBoxChanged(val.Value,
-                                    checkBoxChecked[val.Value], value)}
-                        />
-                        <Text style={{ marginTop: 6, color: '#636363', }}>{val.Text}</Text>
-                    </View >
-                )
-            }
-            )
-        );
-    }
+    //             return (
+    //                 <View
+    //                     key={val.Value}
+    //                     style={{
+    //                         // flex: 1,
+    //                         flexDirection: 'row',
+    //                         padding: 5,
+    //                         alignSelf: 'center',
+    //                     }}>
+    //                     <Checkbox
+    //                         // value={checkBoxChecked[val.Value]}
+    //                         status={'checked'}
+    //                         onPress={(value) =>
+    //                             checkBoxChanged(val.Value,
+    //                                 checkBoxChecked[val.Value], value)}
+    //                     />
+    //                     <Text style={{ marginTop: 6, color: '#636363', }}>{val.Text}</Text>
+    //                 </View >
+    //             )
+    //         }
+    //         )
+    //     );
+    // }
 
     return (
         <View
@@ -221,47 +222,16 @@ const CreateNotice = ({ navigation, route }) => {
                 flex: 1, backgroundColor: '#ffffff', flexDirection: 'column',
             }}>
 
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            CREATE NOTICE
-                        </Text>
-                    </View>
-                </View>
-
-                <View
-                    style={NoticeStyle.createNoticeButtonContainer}>
-                    <View
-                        style={NoticeStyle.ApplyButtonContainer}>
-                        <TouchableOpacity
-                            onPress={() => saveNotice()}
-                            style={NoticeStyle.ApplyButtonTouch}>
-                            <View style={NoticeStyle.plusButton}>
-                                <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" />
-                            </View>
-                            <View style={NoticeStyle.ApplyTextButton}>
-                                <Text style={NoticeStyle.ApplyButtonText}>
-                                    PUBLISH
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-
-            </View>
+            <Header
+                title={'Create Notice'}
+                goBack={true}
+                onPress={() => { navigation.goBack() }}
+                btnAction={() => saveNotice()}
+                btnTitle='PUBLISH'
+                saveImg={true}
+                btnContainerStyle={NoticeStyle.ApplyTextButton}
+                btnStyle={NoticeStyle.plusButton}
+            />           
 
 
             {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={NoticeStyle.loaderIndicator} />) : null}
@@ -355,7 +325,7 @@ const CreateNotice = ({ navigation, route }) => {
                 />
             </Modal>
 
-            <Modal
+            {/* <Modal
                 style={[NoticeStyle.modalfordept]}
                 position={"center"}
                 isOpen={modalfordept}
@@ -402,7 +372,7 @@ const CreateNotice = ({ navigation, route }) => {
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Done</Text>
                     </TouchableOpacity>
                 </View>
-            </Modal>
+            </Modal> */}
             <Modal1
                 visible={isModelVisible}
                 transparent={false}

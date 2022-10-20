@@ -71,8 +71,6 @@ const RegisterForm = ({ navigation }) => {
     const onFetchLoginRecords = async () => {
 
         try {
-
-
             if (passwordmatch == true) {
                 setalertHeading("Password does not match!");
                 throw "Please provide same password";
@@ -81,9 +79,6 @@ const RegisterForm = ({ navigation }) => {
                 setalertHeading("Password length minimum 6 characters!");
                 throw "Please provide 6 characters password";
             }
-
-
-
             setloading(true);
             let response = await CreateAccount(UserFullName, PhoneNumber, CompanyName, Password, Password_confirmation, Email, gender);
             console.log('regge', response);
@@ -92,7 +87,7 @@ const RegisterForm = ({ navigation }) => {
                 setShowConfirm(true);
             } else {
                 if (response) {
-            console.log('error', response);
+                    console.log('error', response);
 
                     Alert.alert(
                         "Registration failed!",
@@ -117,61 +112,6 @@ const RegisterForm = ({ navigation }) => {
 
         }
     }
-
-    const changeEmailHandler = () => {
-        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        setemailerror(false);
-        if (reg.test(Email) === false) {
-            console.log("Email is Not Correct");
-            setemailerror(true);
-            Alert.alert(
-                "Invalid Email!",
-                "Please Provide Valid Email",
-                [
-                    { text: 'OK', },
-                ],
-                { cancelable: false }
-            )
-        }
-        else {
-            return true;
-        }
-    };
-    const changePasswordHandler = () => {
-        setpasswordmatch(false);
-        if (Password != Password_confirmation) {
-            setpasswordmatch(true);
-            Alert.alert(
-                "",
-                "Password does not Match",
-                [
-                    { text: 'OK', },
-                ],
-                { cancelable: false }
-            )
-        }
-        else {
-            return true;
-        }
-    };
-
-    const changePasswordSixCharacterHandler = () => {
-        setpasswordSixCharacter(false);
-        if (Password?.length < 6) {
-            setpasswordSixCharacter(true);
-            Alert.alert(
-                "",
-                "Password Minimum length 6 Character",
-                [
-                    { text: 'OK', },
-                ],
-                { cancelable: false }
-            )
-        }
-        else {
-
-        }
-    };
 
     const optionYes = () => {
         setShowConfirm(false);

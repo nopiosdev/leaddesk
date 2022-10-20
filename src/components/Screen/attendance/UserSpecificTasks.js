@@ -12,6 +12,7 @@ import { CommonStyles } from '../../../common/CommonStyles';
 import { useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import Searchbar from '../../Searchbar';
+import Header from '../../Header';
 
 
 const UserSpecificTasks = ({ navigation }) => {
@@ -20,7 +21,6 @@ const UserSpecificTasks = ({ navigation }) => {
     const [refreshing, setrefreshing] = useState(false);
     const [taskList, settaskList] = useState([]);
     const [tempList, setTempList] = useState([]);
-    let arrayholder = [];
     const [search, setSearch] = useState(null);
     const user = useSelector((state) => state.user.currentUser);
     const clientId = useSelector((state) => state.user.clientId);
@@ -61,8 +61,8 @@ const UserSpecificTasks = ({ navigation }) => {
 
     const searchFilterFunction = text => {
         if (text != '') {
-            const newData = arrayholder.filter(item => {
-                const itemData = `${item.Title.toUpperCase()} ${item.Title.toUpperCase()} ${item.Title.toUpperCase()}`;
+            const newData = tempList.filter(item => {
+                const itemData = `${item.Title.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
                 return itemData.indexOf(textData) > -1;
@@ -82,7 +82,6 @@ const UserSpecificTasks = ({ navigation }) => {
                     settaskList(res);
                     setTempList(res);
                     setprogressVisible(false);
-                    console.log(arrayholder, 'taskresutl...');
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -107,41 +106,13 @@ const UserSpecificTasks = ({ navigation }) => {
     return (
         <View
             style={TaskStyle.container}>
-
-            <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { handleBackButton() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            {user.aItemEmployeeName}
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                    <TouchableOpacity
-                        onPress={Call}
-                        style={{
-                            padding: 8, paddingVertical: 2,
-
-                        }}>
-                        <Image style={{ width: 20, height: 20, alignItems: 'center', marginTop: 5, }}
-                            resizeMode='contain'
-                            source={require('../../../../assets/images/call.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
+            <Header
+                title={user.aItemEmployeeName}
+                navigation={navigation}
+                goBack={true}
+                onPress={() => { handleBackButton() }}
+                makeCall={Call}
+            />
             {progressVisible == true ?
                 <ActivityIndicator size="large" color="#1B7F67"
                     style={TaskStyle.loaderIndicator} />
@@ -153,7 +124,7 @@ const UserSpecificTasks = ({ navigation }) => {
                             onRefresh={_onRefresh}
                         />
                     }
-                    itemList={taskList} headerRenderer={<Searchbar searchFilterFunction={searchFilterFunction}/>} pointerEvents="none" />
+                    itemList={taskList} headerRenderer={<Searchbar searchFilterFunction={searchFilterFunction} />} pointerEvents="none" />
             }
         </View >
     )

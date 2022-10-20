@@ -10,18 +10,19 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { DailyAttendanceStyle } from './DailyAttendanceStyle';
 
-import { GetAttendanceFeed } from '../../../../services/UserService/EmployeeTrackService'
+import { GetAttendanceFeed } from '../../../../services//EmployeeTrackService'
 
 import { MyPanelCombo } from '../../../MenuDrawer/DrawerContent';
 import { urlDev, urlResource } from '../../../../services/api/config';
 import LocalStorage from '../../../../common/LocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleActive } from '../../../../Redux/Slices/UserSlice';
+import Header from '../../../Header';
 
 
 const DailyAttendances = ({ navigation }) => {
     const [employeeList, setemployeeList] = useState([]);
-    const [statusCount, setstatusCount] = useState({ TotalEmployee: 0, TotalCheckIn: 0, TotalCheckOut: 0 });
+    const [statusCount, setstatusCount] = useState({ TotalEmployee: 0, TotalCheckIn: 0, TotalNotAttend: 0 });
     const [refreshing, setrefreshing] = useState(false);
     const [selectedId, setselectedId] = useState(1);
     const [displayAbleEmployeeList, setdisplayAbleEmployeeList] = useState([]);
@@ -44,12 +45,13 @@ const DailyAttendances = ({ navigation }) => {
 
     const setSelectedOption = (id) => {
         setselectedId(id);
+        console.log(id)
         switch (id) {
             case 1: //All
                 setdisplayAbleEmployeeList(employeeList);
                 break;
             case 2: //checked in
-                setdisplayAbleEmployeeList(employeeList?.filter(x => x.IsCheckedIn));
+
                 break;
             case 3: //not attend
                 setdisplayAbleEmployeeList(employeeList?.filter(x => x.NotAttend));
@@ -61,6 +63,7 @@ const DailyAttendances = ({ navigation }) => {
         (async () => {
             const cId = await LocalStorage.GetData("companyId");
             setCompanyId(cId);
+            console.log(cId)
             getAttendanceFeed(cId);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
@@ -75,22 +78,15 @@ const DailyAttendances = ({ navigation }) => {
     const getAttendanceFeed = async (cId) => {
         await GetAttendanceFeed(cId)
             .then(res => {
-                if (res?.success) {
-                    var cEmployee = res?.EmployeeList.filter(x => x.UserId === user.Id);
-                    console.log('cEmployee' + cEmployee);
-                    if (cEmployee == null) {
-                        navigation.navigate('login');
-                    }
+                if (res?.success) {                   
                     setemployeeList(res?.EmployeeList.filter(x => x.UserId != user.Id));
                     setdisplayAbleEmployeeList(res?.EmployeeList);
                     setstatusCount(res?.StatusCount);
-                    setemployeeDetail(res?.EmployeeList.filter(x => x.UserId === user.Id)[0])
-
-                }
-                console.log(res?.EmployeeList, "employeeDetail....");
-
+                    setemployeeDetail(res?.EmployeeList.filter(x => x.UserId == user.Id)[0])
+                    console.log(employeeDetail, "employeeDetail....");
+                }                
             }).catch(() => { console.log("error occured"); });
-    }
+        }
 
     const renderStatusList = () => {
         return (
@@ -114,17 +110,10 @@ const DailyAttendances = ({ navigation }) => {
 
                 <TouchableOpacity onPress={() => setSelectedOption(2)}>
                     <View style={DailyAttendanceStyle.countBoxColumn2}>
-                        <Text style={
-                            selectedId == 2 ?
-                                DailyAttendanceStyle.countBoxColumn2NumberActive :
-                                DailyAttendanceStyle.countBoxColumn2NumberInactive}>
+                        <Text style={selectedId == 2 ? DailyAttendanceStyle.countBoxColumn2NumberActive : DailyAttendanceStyle.countBoxColumn2NumberInactive}>
                             {statusCount.TotalCheckIn}
                         </Text>
-                        <Text style={
-                            selectedId == 2 ?
-                                DailyAttendanceStyle.countBoxColumn2LabelActive
-                                :
-                                DailyAttendanceStyle.countBoxColumn2LabelInactive}>
+                        <Text style={selectedId == 2 ? DailyAttendanceStyle.countBoxColumn2LabelActive : DailyAttendanceStyle.countBoxColumn2LabelInactive}>
                             CHECKED IN
                         </Text>
                     </View>
@@ -156,46 +145,22 @@ const DailyAttendances = ({ navigation }) => {
 
     return (
         <View style={DailyAttendanceStyle.container}>
-
-            <View
-                style={DailyAttendanceStyle.HeaderContent}>
-                <View
-                    style={DailyAttendanceStyle.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={DailyAttendanceStyle.HeaderMenuicon}
-                        onPress={() => { navigation.openDrawer(); }}>
-                        <Image resizeMode="contain" style={DailyAttendanceStyle.HeaderMenuiconstyle}
-                            // source={require('../../../../../assets/images/menu_b.png')}
-                            source={require('../../../../../assets/images/menu_b.png')}
-
-                        >
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={DailyAttendanceStyle.HeaderTextView}>
-                        <Text
-                            style={DailyAttendanceStyle.HeaderTextstyle}>
-                            TODAY'S FEED
-                        </Text>
-                    </View>
-                </View>
-            </View>
+            <Header
+                title={"Today's Feed"}
+                onPress={() => navigation.openDrawer()}
+            />           
             <View
                 style={[
                     DailyAttendanceStyle.FlatListTouchableOpacity,
                     style = {
                         padding: 10,
                         height: 100,
-                        // paddingVertical: 20,
                         backgroundColor: "#f8f9fb"
                     }
                 ]}>
-                <View
-                    style={
-                        DailyAttendanceStyle.FlatListLeft
-                    }>
+                <View style={DailyAttendanceStyle.FlatListLeft}>
                     <View style={{ paddingRight: 10, }}>
-                        {employeeDetail != null && employeeDetail?.ImageFileName !== "" ? (
+                        {employeeDetail != null && employeeDetail?.ImageFileName ? (
                             <Image resizeMode='cover' style={
                                 DailyAttendanceStyle.ImageLocal
                             } source={{ uri: urlResource + employeeDetail?.ImageFileName }} />) :
