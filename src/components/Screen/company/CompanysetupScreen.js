@@ -209,7 +209,7 @@ const CompanysetupScreen = ({ navigation, route }) => {
                         setcompanyList(cList);
                         setselctedCompanyValue(companyList[0]?.Text);
                         setselctedCompanyIndex(companyList[0]?.Value);
-                        if (companyid == null) {
+                        if (companyid == null || companyid == 0) {
                             LocalStorage.SetData("companyId", companyList[0].Value.toString());
                         }
                         setprogressVisible(false);
@@ -266,6 +266,7 @@ const CompanysetupScreen = ({ navigation, route }) => {
             ToastAndroid.show("error" + errors, ToastAndroid.TOP);
         }
     }
+    
     const openModal4 = () => {
         setmodal4(true);
     }

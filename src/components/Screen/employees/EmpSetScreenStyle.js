@@ -174,7 +174,7 @@ export const EmpSetScreenStyle = StyleSheet.create({
 
     },
     modal2: {
-        height: "70%",
+        height:Dimensions.get('window').height/1.3,
         width: "85%",
         borderRadius: 20,
         // elevation:2,

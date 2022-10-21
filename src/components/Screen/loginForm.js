@@ -2,7 +2,7 @@ import React, { createRef, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Dimensions, TextInput, TouchableOpacity, AppState, BackHandler, Alert, Image, } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Login, GetUserClaim } from '../../services/AccountService';
+import { Login, GetUserClaim, AddDeviceToken } from '../../services/AccountService';
 import {
     saveToStorage,
     storage,
@@ -14,6 +14,7 @@ import { ConfirmDialog } from 'react-native-simple-dialogs';
 import { useDispatch } from 'react-redux';
 import { addUser, toggleUser } from '../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
+import { registerForPushNotificationsAsync } from '../../services/api/RegisterForPushNotificationsAsync';
 
 var { width } = Dimensions.get('window');
 
@@ -76,17 +77,35 @@ const LoginForm = ({ navigation, phoneno }) => {
         await Login(data).then(async (response) => {
             console.log('respo', response)
             if (response && response.success) {
-                    LocalStorage.SetData("Login", "Login");
-                    LocalStorage.SetData("userToken", '123123');
-                    LocalStorage.SetData("companyId", response?.CompanyId.toString());
-                    // await getUserClaim(response?.Id);
-                    dispatch(addUser(response))
-                    LocalStorage.SetData("CurrentUser", JSON.stringify(response));
-                    dispatch(toggleUser('Login'))                    
-
-                    setUserName('');
-                    setpassword('');
-                    setloading(false);
+                LocalStorage.SetData("Login", "Login");
+                await registerForPushNotificationsAsync().then(token => {
+                    var data = new FormData();
+                    data.append('userId', response?.Id);
+                    data.append('token', token);
+                    AddDeviceToken(data).then(res=>{
+                        if(res?.success){
+                            LocalStorage.SetData("userToken", response?.token);
+                            LocalStorage.SetData("companyId", response?.CompanyId.toString());
+                            // await getUserClaim(response?.Id);
+                            dispatch(addUser(response))
+                            LocalStorage.SetData("CurrentUser", JSON.stringify(response));
+                            dispatch(toggleUser('Login'))            
+                            setUserName('');
+                            setpassword('');
+                        }else{
+                            Alert.alert(
+                                "Error",
+                                "Please Try Again",
+                                [
+                                    { text: 'OK', },
+                                ],
+                                { cancelable: false }
+                            )
+                        }
+                    })
+                })
+               
+                setloading(false);
             } else {
                 setloading(false);
                 setalertMessage('Phonenumber or password is wrong')

@@ -68,7 +68,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                 setdisplayAbleEmployeeList(employeeList);
                 break;
             case 2: //checked in
-                setdisplayAbleEmployeeList(employeeList?.filter(x => x.CheckInTime || x.CheckOutTime));
+                setdisplayAbleEmployeeList(employeeList?.filter(x => x.CheckInTime));
                 break;
             case 3: //not attend
                 setdisplayAbleEmployeeList(employeeList?.filter(x => !x.CheckInTime || !x.CheckOutTime));
@@ -100,7 +100,7 @@ const AdminTodayAttendance = ({ navigation }) => {
 
     const closeCompanyModal = async (index, value) => {
         setCompanyModal(false);
-        // await LocalStorage.SetData("companyId", index.toString());
+        await LocalStorage.SetData("companyId", index.toString());
         await LocalStorage.SetData("companyName", value);
         setslectedCompanyIndex(index);
         setselctedCompanyValue(value);
@@ -149,8 +149,8 @@ const AdminTodayAttendance = ({ navigation }) => {
                         setcompanyList(cList);
                     }
                 })
-                .catch(() => {
-                    console.log("error occured");
+                .catch((e) => {
+                    console.log("error occured",e);
                 });
         } catch (error) {
             console.log(error);
@@ -176,7 +176,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                             cList.push(ob);
                         });
                         setcompanyList(cList);
-                        // LocalStorage.SetData("companyId", companyList[0].Value.toString());
+                        LocalStorage.SetData("companyId", companyList[0].Value.toString());
                         LocalStorage.SetData("companyName", companyList[0].Text);
                     }
                 })

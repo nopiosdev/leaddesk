@@ -51,10 +51,10 @@ const DailyAttendances = ({ navigation }) => {
                 setdisplayAbleEmployeeList(employeeList);
                 break;
             case 2: //checked in
-
+                setdisplayAbleEmployeeList(employeeList?.filter(x => x.CheckInTime));
                 break;
             case 3: //not attend
-                setdisplayAbleEmployeeList(employeeList?.filter(x => x.NotAttend));
+                setdisplayAbleEmployeeList(employeeList?.filter(x => !x.CheckInTime || !x.CheckOutTime));
                 break;
         }
     };
@@ -78,15 +78,13 @@ const DailyAttendances = ({ navigation }) => {
     const getAttendanceFeed = async (cId) => {
         await GetAttendanceFeed(cId)
             .then(res => {
-                if (res?.success) {                   
-                    setemployeeList(res?.EmployeeList.filter(x => x.UserId != user.Id));
-                    setdisplayAbleEmployeeList(res?.EmployeeList);
-                    setstatusCount(res?.StatusCount);
-                    setemployeeDetail(res?.EmployeeList.filter(x => x.UserId == user.Id)[0])
-                    console.log(employeeDetail, "employeeDetail....");
-                }                
+                console.log(res, "employeeDetail....");
+                setemployeeList(res?.EmployeeList.filter(x => x.UserId != user.Id));
+                setdisplayAbleEmployeeList(res?.EmployeeList);
+                setstatusCount(res?.StatusCount);
+                setemployeeDetail(res?.EmployeeList.filter(x => x.UserId == user.Id)[0])
             }).catch(() => { console.log("error occured"); });
-        }
+    }
 
     const renderStatusList = () => {
         return (
@@ -148,7 +146,7 @@ const DailyAttendances = ({ navigation }) => {
             <Header
                 title={"Today's Feed"}
                 onPress={() => navigation.openDrawer()}
-            />           
+            />
             <View
                 style={[
                     DailyAttendanceStyle.FlatListTouchableOpacity,

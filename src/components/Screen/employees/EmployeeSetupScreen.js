@@ -475,12 +475,12 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
         try {
             await GetDepartmentByCompanyId(companyId)
                 .then(res => {
-                    console.log('comlen', res.result);
-                    if (res.result !== null) {
-                        console.log('comlen2', res.result);
-                        if (res.result.length > 0) {
+                    console.log('comlen', res);
+                    if (res !== null) {
+                        console.log('comlen2', res);
+                        if (res?.length > 0) {
                             const depList = [];
-                            res.result?.forEach(function (item) {
+                            res?.forEach(function (item) {
                                 const ob = {
                                     // 'Text': item.DepartmentName,
                                     // 'Value': item.Id

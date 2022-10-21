@@ -17,6 +17,7 @@ import LocalStorage from '../../../common/LocalStorage';
 import * as Clipboard from 'expo-clipboard';
 import { useIsFocused } from '@react-navigation/native';
 import Header from '../../Header';
+import { useSelector } from 'react-redux';
 
 const withPreventDoubleClick = (WrappedComponent) => {
     const PreventDoubleClick = (props) => {
@@ -65,6 +66,7 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
     const txtMobileRef = createRef();
     const txtEmailRef = createRef();
     const isFocused = useIsFocused();
+    const user = useSelector((state) => state.user.currentUser);
 
 
 
@@ -176,11 +178,9 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
     };
 
     const copyToClicpBord = async (username, password) => {
-
         setCopyUsername(username);
         setCopyPassword(password);
         await Clipboard.setStringAsync("UserName: " + username + " Password: " + password);
-        ToastAndroid.show('Text copied to clipboard', ToastAndroid.SHORT);
         setTimeout(() => setmodalforusername(true), 100);
         await onShare(username, password);
     }
@@ -201,6 +201,9 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
         data.append('AutoCheckPointTime',AutoCheckPointTime);
         data.append('MaximumOfficeHours',MaximumOfficeHours);
         data.append('OfficeOutTime',OfficeOutTime);
+        data.append('AdminEmail',user?.Email);
+        data.append('AdminName',user?.UserFullName);
+console.log(data)
 
         try {
             let response = await CreateEmployee(data)
@@ -208,7 +211,7 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
             console.log('response', response)
             if (response?.success) {
                 setmodalforusername(true);
-                resetForm();
+                // resetForm();
             } else {
                 ToastAndroid.show(response?.message, ToastAndroid.TOP);
             }
@@ -222,7 +225,6 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
                 .then(res => {
                     console.log(companyId, 'comlen', res);
                     if (res !== null) {
-                        console.log('comlen2', res);
                         if (res?.length > 0) {
                             const depList = [];
                             res?.forEach(function (item) {
@@ -398,8 +400,7 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
                                     data={departmentList}
                                     initValue="Select Department"
                                     onChange={(option) => {
-                                        const newUser = option.key
-                                        setEmployee({ DepartmentId: newUser });
+                                        setEmployee({ DepartmentId:  option.key });
                                     }}
                                 />
                             </View>

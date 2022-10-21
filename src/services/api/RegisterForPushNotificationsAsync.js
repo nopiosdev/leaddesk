@@ -1,36 +1,28 @@
-import { Permissions, Notifications } from "expo";
-import { AddDeviceToken } from "../AccountService";
+import * as Notifications from 'expo-notifications';
 
-export async function getPushNotificationExpoTokenAsync() {
-  const { status: existingStatus } = await Permissions.getAsync(
-    Permissions.NOTIFICATIONS
-  );
-  let finalStatus = existingStatus;
-  // only ask if permissions have not already been determined, because
-  // iOS won't necessarily prompt the user a second time.
-  if (existingStatus !== "granted") {
-    // Android remote notification permissions are granted during the app
-    // install, so this will only ask on iOS
-    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    finalStatus = status;
+export const registerForPushNotificationsAsync = async() => {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
   }
 
-  // Stop here if the user did not grant permissions
-  if (finalStatus !== "granted") {
-    console.log(`Notification: ${finalStatus}`);
-    return null;
-  }
-
-  // Get the token that uniquely identifies this device
-  let token = await Notifications.getExpoPushTokenAsync();
-
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync())?.data;
+    console.log('getExpoPushTokenAsync',token);
   return token;
-}
-
-export async function registerForPushNotificationsAsync() {
-  
-  var token = await getPushNotificationExpoTokenAsync();
-
-  // POST the token to your backend server from where you can retrieve it to send push notifications.
-  AddDeviceToken(token);
 }

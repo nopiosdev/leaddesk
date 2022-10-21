@@ -66,16 +66,9 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
             if (response?.success) {
                 getDepartment();
                 ToastAndroid.show('Department created successully', ToastAndroid.TOP);
-                departmentList.push({ Value: response?.Id, Text: response?.DepartmentName })
-                const depList = [];
-                Object.assign(depList, departmentList);
-                console.log('tttt', depList);
-                setdepartmentList(depList);
-                console.log('dept', departmentList);
                 setEmployee({ DepartmentId: departmentList[0].Value })
                 setDeptId(departmentList[0].Value);
                 setDeptName('');
-                // this.setState({ PickerSelectedVal: departmentList[0].Value });
                 console.log('deptlist', departmentList);
             } else {
                 ToastAndroid.show('error', ToastAndroid.TOP);
@@ -100,10 +93,10 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
         }
     }, [IsFocused])
 
-    const openModal3 = () => {
-        // getCompany();
-        setmodal3(true);
-    }
+    // const openModal3 = () => {
+    //     // getCompany();
+    //     setmodal3(true);
+    // }
 
     const _EditDept = async (item) => {
         testmethos(item);
@@ -166,8 +159,8 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
                                 depList.push(ob);
                             });
                             setdepartmentList(depList);
-                            setprogressVisible(false);
                         }
+                        setprogressVisible(false);
                     } else {
                         setdepartmentList([]);
                         setprogressVisible(false);

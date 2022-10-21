@@ -9,37 +9,37 @@ const DailyAttendance = ({ navigation }) => {
     const userDetails = useSelector((state) => state.user.currentUser);
     const [expoPushToken, setExpoPushToken] = useState('');
 
-    const registerForPushNotificationsAsync = async() => {
-        let token;
+    // const registerForPushNotificationsAsync = async() => {
+    //     let token;
       
-        if (Platform.OS === 'android') {
-          await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-          });
-        }
+    //     if (Platform.OS === 'android') {
+    //       await Notifications.setNotificationChannelAsync('default', {
+    //         name: 'default',
+    //         importance: Notifications.AndroidImportance.MAX,
+    //         vibrationPattern: [0, 250, 250, 250],
+    //         lightColor: '#FF231F7C',
+    //       });
+    //     }
       
-          const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          let finalStatus = existingStatus;
-          if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          }
-          if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
-            return;
-          }
-          token = (await Notifications.getExpoPushTokenAsync())?.data;
-          console.log(token);
+    //       const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    //       let finalStatus = existingStatus;
+    //       if (existingStatus !== 'granted') {
+    //         const { status } = await Notifications.requestPermissionsAsync();
+    //         finalStatus = status;
+    //       }
+    //       if (finalStatus !== 'granted') {
+    //         alert('Failed to get push token for push notification!');
+    //         return;
+    //       }
+    //       token = (await Notifications.getExpoPushTokenAsync())?.data;
+    //       console.log(token);
         
       
-        return token;
-      }
+    //     return token;
+    //   }
 
     useEffect(() => {
-        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));   
+        // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));   
       }, []);
 
     if (userDetails?.UserType == 'admin') {

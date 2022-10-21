@@ -5,10 +5,12 @@ import _ from "lodash";
 import apiConfig from "./config";
 import { CheckConnection } from '../../common/checkNetConnection'
 import axios from 'axios';
+import LocalStorage from "../../common/LocalStorage";
 
 export const getApi = async (action, headers = {}) => {
-  return await axios.get(`${apiConfig.url}${action}`, { headers: { "Content-Type": "multipart/form-data" } })
-    .then(async ({ data }) => {
+  const Token = await LocalStorage.GetData("userToken")
+  return await axios.get(`${apiConfig.url}${action}`, { headers: { 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
+    .then(({ data }) => {
       return data;
     })
     .catch((error) => {
@@ -19,7 +21,8 @@ export const getApi = async (action, headers = {}) => {
 
 
 export const postApi = async (action, data) => {
-  return await axios.post(`${apiConfig.url}${action}`, data, { headers: { "Content-Type": "multipart/form-data" } })
+  const Token = await LocalStorage.GetData("userToken")
+  return await axios.post(`${apiConfig.url}${action}`, data, { headers: { "Content-Type": "multipart/form-data", 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
       return data;
     })
