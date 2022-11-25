@@ -48,30 +48,31 @@
         "googleMaps": {
           "apiKey": "AIzaSyBneTg3c_jrr3lB3XHeeg8EV_B6ntUUXzs"
         }
-      }
+      },
+      "permissions": [
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE",
+        "CAMERA",
+        "FOREGROUND_SERVICE",
+        "INTERNET",
+        "MANAGE_DOCUMENTS",
+        "HIGH_SAMPLING_RATE_SENSORS",
+        "MODIFY_AUDIO_SETTINGS",
+        "READ_APP_BADGE",
+        "READ_INTERNAL_STORAGE",
+        "READ_PHONE_STATE",
+        "SCHEDULE_EXACT_ALARM",
+        "SYSTEM_ALERT_WINDOW",
+        "VIBRATE",
+        "WRITE_EXTERNAL_STORAGE",
+        "WRITE_SETTINGS"
+      ]
+      
     },
     "description": "",
     "androidStatusBar": {
       "backgroundColor": "#ffffff",
       "translucent": false
-    },
-    "permissions": [
-      "ACCESS_NETWORK_STATE",
-      "ACCESS_WIFI_STATE",
-      "CAMERA",
-      "FOREGROUND_SERVICE",
-      "INTERNET",
-      "MANAGE_DOCUMENTS",
-      "HIGH_SAMPLING_RATE_SENSORS",
-      "MODIFY_AUDIO_SETTINGS",
-      "READ_APP_BADGE",
-      "READ_INTERNAL_STORAGE",
-      "READ_PHONE_STATE",
-      "SCHEDULE_EXACT_ALARM",
-      "SYSTEM_ALERT_WINDOW",
-      "VIBRATE",
-      "WRITE_EXTERNAL_STORAGE",
-      "WRITE_SETTINGS"
-    ]
+    }
   }
 }
