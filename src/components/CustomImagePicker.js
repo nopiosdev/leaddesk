@@ -14,8 +14,6 @@ const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileLis
     const [ImageFileName, setImageFileName] = useState('');
 
     const handleUploadPhoto = async (pickerResult) => {
-
-        console.log(pickerResult.uri, '...............send')
         let filename = pickerResult?.uri?.split('/')?.pop();
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `image/${match[1]}` : `image`;
@@ -29,7 +27,6 @@ const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileLis
         setprogressVisible(true);
         upLoadImage(data)
             .then(response => {
-                console.log('Image', response)
                 if(response?.success){
                 let attachmentModel = {
                     TaskId: TaskId,
@@ -52,7 +49,6 @@ const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileLis
             .catch(error => {
                 setmodalForImage(false);
                 setprogressVisible(false);
-                console.log("upload error", error);
                 ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
                 // this.errorToast();
             });

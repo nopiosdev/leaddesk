@@ -69,7 +69,6 @@ const LoginForm = ({ navigation, phoneno }) => {
         });
     }
     const onFetchLoginRecords = async () => {
-        console.log("trying login..");
         var data = new FormData();
         data.append('phoneNumber', userName);
         data.append('password', password);
@@ -132,7 +131,7 @@ const LoginForm = ({ navigation, phoneno }) => {
     useEffect(() => {
         setUserName(phoneno);
     }, [Isfocused])
-    console.log(phoneno)
+    
     return (
         <View style={styles.container}>
             {loading ? (<ActivityIndicator size="large" color="#1B7F67" style={{ left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}

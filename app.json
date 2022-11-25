@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "The Lead Desk",
-    "slug": "TheLeadDesk",
-    "version": "1.0",
+    "slug": "theleaddesk",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
