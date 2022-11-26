@@ -132,8 +132,8 @@ const AdminTodayAttendance = ({ navigation }) => {
         try {
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
+                    console.log('GetCompanyByUserId',res)
                     if (res?.length > 0) {
-
                         const cList = [];
                         res?.forEach(function (item) {
                             const ob = {
@@ -186,11 +186,6 @@ const AdminTodayAttendance = ({ navigation }) => {
         } catch (error) {
             console.log(error);
         }
-    }
-
-
-    const goBack = () => {
-        navigation.goBack();
     }
 
     const getAttendanceFeed = async (cId) => {

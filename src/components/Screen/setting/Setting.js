@@ -55,8 +55,7 @@ const SettingScreen = ({ navigation, route }) => {
 
             let response = await ChangePassword(data);
             if (response.success) {
-                LocalStorage.RemoveData("userToken");
-                LocalStorage.RemoveData('Login');
+                LocalStorage.ClearData();
                 dispatch(toggleUser('Logout'));
                 setprogressVisible(false);
             } else {

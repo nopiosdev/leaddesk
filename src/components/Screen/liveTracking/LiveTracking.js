@@ -5,7 +5,7 @@ import {
     Image, ScrollView,
     BackHandler,
     RefreshControl,
-    FlatList, StyleSheet
+    FlatList, StyleSheet, ToastAndroid
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from "react-native-maps-directions";

@@ -48,6 +48,7 @@ import CreateByMe from '../components/Screen/UserScreen/tasks/CreateByMe';
 import CreateUserTask from '../components/Screen/UserScreen/tasks/CreateTask';
 import ViewAssignToMe from '../components/Screen/UserScreen/tasks/ViewAssignToMe';
 import ViewUserTask from '../components/Screen/UserScreen/tasks/ViewTask';
+import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -113,17 +114,54 @@ const AdminBottomTab = () => {
     );
 }
 
+const AdminHomeTab = () => {
+
+    return (
+        <Tab.Navigator initialRouteName='DailyAttendance' screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+                if (route.name === 'DailyAttendance' && focused) {
+                    return <AntDesign name="home" size={24} style={{ marginBottom: -5 }} color="#6f9fc9" />
+                } else if (route.name === 'DailyAttendance' && !focused) {
+                    return <AntDesign name="home" size={24} style={{ marginBottom: -5 }} color="#bbc3c7" />
+                }
+                if (route.name === 'LiveTraking' && focused) {
+                    return <Feather name="map-pin" size={24} style={{ marginBottom: -5 }} color="#6f9fc9" />
+                } else if (route.name === 'LiveTraking' && !focused) {
+                    return <Feather name="map-pin" size={24} style={{ marginBottom: -5 }} color="#bbc3c7" />
+                }
+                if (route.name === 'TaskListBottomTab' && focused) {
+                    return <FontAwesome name="list-alt" size={24} style={{ marginBottom: -5 }} color="#6f9fc9" />
+                } else if (route.name === 'TaskListBottomTab' && !focused) {
+                    return <FontAwesome name="list-alt" size={24} style={{ marginBottom: -5 }} color="#bbc3c7" />
+                }
+                if (route.name === 'LeaveList' && focused) {
+                    return <Ionicons name="ios-briefcase-outline" style={{ marginBottom: -5 }} size={24} color="#6f9fc9" />
+                } else if (route.name === 'LeaveList' && !focused) {
+                    return <Ionicons name="ios-briefcase-outline" style={{ marginBottom: -5 }} size={24} color="#bbc3c7" />
+                }
+            },
+            tabBarActiveTintColor: '#6f9fc9',
+            tabBarInactiveTintColor: 'gray',
+            tabBarHideOnKeyboard: true,
+        })} >
+            <Tab.Screen name="DailyAttendance" component={DailyAttendance} options={{ headerShown: false, title: 'Today Attendance' }} />
+            <Tab.Screen name="LiveTraking" component={LiveTracking} options={{ headerShown: false, title: "Live Tracking" }} />
+            <Tab.Screen name="TaskListBottomTab" component={TaskListBottomTab} options={{ headerShown: false, title: "All Tasks" }} />
+            <Tab.Screen name="LeaveList" component={LeaveList} options={{ headerShown: false, title: "Leaves" }} />
+        </Tab.Navigator>
+    );
+}
 const DashboardScreen = () => {
     const userDetails = useSelector((state) => state.user.currentUser);
     return (
         <Drawer.Navigator initialRouteName="DailyAttendance" drawerContent={DrawerContent} screenOptions={{ drawerStyle: { width: "65%", } }} >
-            <Drawer.Screen name="DailyAttendance" component={DailyAttendance} options={{ headerShown: false }} />
             <Drawer.Screen name="TaskListBottomTab" component={TaskListBottomTab} options={{ headerShown: false }} />
             <Drawer.Screen name="LeaderBoard" component={LeaderBoardScreen} options={{ headerShown: false }} />
             <Drawer.Screen name="LeaveList" component={LeaveList} options={{ headerShown: false }} />
             <Drawer.Screen name="Notice" component={Notice} options={{ headerShown: false }} />
             {userDetails?.UserType == 'admin' ?
                 <>
+                    <Drawer.Screen name="AdminHomeTab" component={AdminHomeTab} options={{ headerShown: false }} />
                     <Drawer.Screen name="Tab" component={AdminBottomTab} options={{ headerShown: false }} />
                     <Drawer.Screen name="LiveTraking" component={LiveTracking} options={{ headerShown: false }} />
                     <Drawer.Screen name="ReportScreen" component={ReportScreen} options={{ headerShown: false }} />
@@ -158,6 +196,7 @@ const MainStackNavigator = () => {
 
                         {userDetails?.UserType == 'admin' ?
                             <>
+                                <Drawer.Screen name="DailyAttendance" component={AdminHomeTab} options={{ headerShown: false }} />
                                 <Stack.Screen name="AdminTodayAttendance" component={AdminTodayAttendance} options={{ headerShown: false }} />
                                 <Stack.Screen name="DetailScreen" component={DetailScreen} options={{ headerShown: false }} />
                                 <Stack.Screen name="CompanysetupScreen" component={CompanysetupScreen} options={{ headerShown: false }} />

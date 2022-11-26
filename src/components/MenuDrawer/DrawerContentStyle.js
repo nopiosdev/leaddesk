@@ -6,7 +6,7 @@ export const DrawerContentStyle = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f4f6f9',
         flexDirection: 'column',
-        marginTop: StatusBar.currentHeight,
+        // marginTop: StatusBar.currentHeight,
     },
     itemContainer: {
         flexDirection: 'row',

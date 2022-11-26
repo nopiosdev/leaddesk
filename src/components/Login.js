@@ -5,25 +5,13 @@ import {
     Dimensions, View, Image, StatusBar,
 } from 'react-native';
 
-const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
-function StatusBarPlaceHolder() {
-    return (
-        <View style={{
-            width: "100%",
-            height: STATUS_BAR_HEIGHT,
-            backgroundColor: '#F3F3F3',
-        }}>
-            <StatusBar />
-        </View>
-    );
-}
+
 var { height } = Dimensions.get('window');
 
 const Login = ({ navigation, route }) => {
 
     return (
         <KeyboardAvoidingView enabled style={styles.container}>
-            <StatusBarPlaceHolder />
             <View style={[styles.logoContainer,]}>
                 <Image
                     style={{

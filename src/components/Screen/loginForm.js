@@ -81,17 +81,17 @@ const LoginForm = ({ navigation, phoneno }) => {
                     var data = new FormData();
                     data.append('userId', response?.Id);
                     data.append('token', token);
-                    AddDeviceToken(data).then(res=>{
-                        if(res?.success){
+                    AddDeviceToken(data).then(res => {
+                        if (res?.success) {
                             LocalStorage.SetData("userToken", response?.token);
                             LocalStorage.SetData("companyId", response?.CompanyId.toString());
                             // await getUserClaim(response?.Id);
                             dispatch(addUser(response))
                             LocalStorage.SetData("CurrentUser", JSON.stringify(response));
-                            dispatch(toggleUser('Login'))            
+                            dispatch(toggleUser('Login'))
                             setUserName('');
                             setpassword('');
-                        }else{
+                        } else {
                             Alert.alert(
                                 "Error",
                                 "Please Try Again",
@@ -103,7 +103,7 @@ const LoginForm = ({ navigation, phoneno }) => {
                         }
                     })
                 })
-               
+
                 setloading(false);
             } else {
                 setloading(false);
@@ -131,7 +131,7 @@ const LoginForm = ({ navigation, phoneno }) => {
     useEffect(() => {
         setUserName(phoneno);
     }, [Isfocused])
-    
+
     return (
         <View style={styles.container}>
             {loading ? (<ActivityIndicator size="large" color="#1B7F67" style={{ left: 0, right: 0, bottom: 0, top: 0, justifyContent: 'center', alignContent: 'center', }} />) : null}
@@ -183,7 +183,7 @@ const LoginForm = ({ navigation, phoneno }) => {
                 </View>
             </TouchableOpacity>
 
-            <View style={[styles.LoginButton, style = { backgroundColor: '#ffffff', }]}>
+            <View style={[styles.LoginButton, { backgroundColor: '#ffffff', }]}>
 
                 <TouchableOpacity
                     onPress={() => navigation.navigate('register')}

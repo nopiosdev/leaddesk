@@ -1,20 +1,10 @@
-import React, { Component, useEffect, useState } from 'react';
-
-import {
-    ScrollView, Text, View, TouchableOpacity, Image, Alert
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+import React, { useEffect } from 'react';
+import { ScrollView, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { DrawerContentStyle } from './DrawerContentStyle';
-import {
-    Feather,
-} from '@expo/vector-icons';
-import {
-    clearStorageValue
-} from "../../common/storage";
+import { Feather, } from '@expo/vector-icons';
 import { useDispatch, useSelector } from "react-redux";
 import LocalStorage from '../../common/LocalStorage';
-import { removeUser, toggleActive, toggleUser } from '../../Redux/Slices/UserSlice';
+import { toggleActive, toggleUser } from '../../Redux/Slices/UserSlice';
 
 const logOut = (dispatch) => {
 
@@ -30,8 +20,8 @@ const logOut = (dispatch) => {
             text: 'OK',
             style: 'ok',
             onPress: () => {
-                LocalStorage.RemoveData('Login');
-                dispatch(toggleUser('Logout'));                
+                LocalStorage.ClearData();
+                dispatch(toggleUser('Logout'));
             }
         },], {
         cancelable: false
@@ -40,54 +30,53 @@ const logOut = (dispatch) => {
     return true;
 };
 
-const drawerContent = 2;
-const drawerSelectedOption = (id,dispatch) => {
+const drawerSelectedOption = (id, dispatch) => {
     dispatch(toggleActive(id));
 
 };
-const LiveTrackingCombo = (navigation,dispatch) => {
+const LiveTrackingCombo = (navigation, dispatch) => {
     navigation.navigate('LiveTraking');
-    drawerSelectedOption(1,dispatch);
+    drawerSelectedOption(1, dispatch);
 }
-const DailyAttendanceCombo = (navigation,dispatch) => {
+const DailyAttendanceCombo = (navigation, dispatch) => {
     navigation.navigate('DailyAttendance');
-    drawerSelectedOption(2,dispatch);
+    drawerSelectedOption(2, dispatch);
 }
-const TasksCombo = (navigation,dispatch) => {
+const TasksCombo = (navigation, dispatch) => {
     navigation.navigate('TaskListBottomTab');
-    drawerSelectedOption(3,dispatch);
+    drawerSelectedOption(3, dispatch);
 }
-const TasksboardCombo = (navigation,dispatch) => {
+const TasksboardCombo = (navigation, dispatch) => {
     navigation.navigate('TaskBoardScreen');
-    drawerSelectedOption(4,dispatch);
+    drawerSelectedOption(4, dispatch);
 }
 
-const LeavesCombo = (navigation,dispatch) => {
+const LeavesCombo = (navigation, dispatch) => {
     navigation.navigate('LeaveList');
-    drawerSelectedOption(5,dispatch);
+    drawerSelectedOption(5, dispatch);
 }
 
 
 
-const ReportsCombo = (navigation,dispatch) => {
+const ReportsCombo = (navigation, dispatch) => {
     navigation.navigate('ReportScreen');
-    drawerSelectedOption(6,dispatch);
+    drawerSelectedOption(6, dispatch);
 }
 
-const NoticeCombo = (navigation,dispatch) => {
+const NoticeCombo = (navigation, dispatch) => {
     navigation.navigate('Notice');
-    drawerSelectedOption(7,dispatch);
+    drawerSelectedOption(7, dispatch);
 }
-const LeaderBoardCombo = (navigation,dispatch) => {
+const LeaderBoardCombo = (navigation, dispatch) => {
     navigation.navigate('LeaderBoard');
-    drawerSelectedOption(8,dispatch);
+    drawerSelectedOption(8, dispatch);
 }
-const SettingsCombo = (navigation,dispatch) => {
+const SettingsCombo = (navigation, dispatch) => {
     navigation.navigate('SettingScreen');
-    drawerSelectedOption(9,dispatch);
+    drawerSelectedOption(9, dispatch);
 }
 
-const LogoutCombo = (dispatch) => {   
+const LogoutCombo = (dispatch) => {
     logOut(dispatch);
 }
 
@@ -138,7 +127,7 @@ const DrawerContentAdmin = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
 
                 <TouchableOpacity
-                    onPress={() => DailyAttendanceCombo(navigation,dispatch)}
+                    onPress={() => DailyAttendanceCombo(navigation, dispatch)}
                     style={
                         active == 2 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -155,7 +144,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => LiveTrackingCombo(navigation,dispatch)}
+                    onPress={() => LiveTrackingCombo(navigation, dispatch)}
                     style={
                         active == 1 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -171,102 +160,102 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                        onPress={() => TasksCombo(navigation,dispatch)}
-                        style={
-                            active == 3 ?
-                                DrawerContentStyle.itemContainerSelected :
-                                DrawerContentStyle.itemContainer}>
+                    onPress={() => TasksCombo(navigation, dispatch)}
+                    style={
+                        active == 3 ?
+                            DrawerContentStyle.itemContainerSelected :
+                            DrawerContentStyle.itemContainer}>
 
-                        <Image
-                            resizeMode='contain'
-                            style={{ width: 23, height: 23, }}
-                            source={require('../../../assets/images/task.png')} >
+                    <Image
+                        resizeMode='contain'
+                        style={{ width: 23, height: 23, }}
+                        source={require('../../../assets/images/task.png')} >
 
-                        </Image>
-                        <Text style={DrawerContentStyle.itemTextStyle}>
-                            All Tasks
-                        </Text>
-                    </TouchableOpacity>
-                     <TouchableOpacity
-                        onPress={() => LeavesCombo(navigation,dispatch)}
-                        style={
-                            active == 5 ?
-                                DrawerContentStyle.itemContainerSelected :
-                                DrawerContentStyle.itemContainer}>
-                        <Image
-                            resizeMode='contain'
-                            style={{ width: 23, height: 23, }}
-                            source={require('../../../assets/images/leaves.png')} >
+                    </Image>
+                    <Text style={DrawerContentStyle.itemTextStyle}>
+                        All Tasks
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => LeavesCombo(navigation, dispatch)}
+                    style={
+                        active == 5 ?
+                            DrawerContentStyle.itemContainerSelected :
+                            DrawerContentStyle.itemContainer}>
+                    <Image
+                        resizeMode='contain'
+                        style={{ width: 23, height: 23, }}
+                        source={require('../../../assets/images/leaves.png')} >
 
-                        </Image>
-                        <Text style={DrawerContentStyle.itemTextStyle}>
-                            Leaves
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => ReportsCombo(navigation,dispatch)}
-                        style={
-                            active == 6 ?
-                                DrawerContentStyle.itemContainerSelected :
-                                DrawerContentStyle.itemContainer}>
+                    </Image>
+                    <Text style={DrawerContentStyle.itemTextStyle}>
+                        Leaves
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => ReportsCombo(navigation, dispatch)}
+                    style={
+                        active == 6 ?
+                            DrawerContentStyle.itemContainerSelected :
+                            DrawerContentStyle.itemContainer}>
 
-                        <Image
-                            resizeMode='contain'
-                            style={{ width: 23, height: 23, }}
-                            source={require('../../../assets/images/report.png')} >
+                    <Image
+                        resizeMode='contain'
+                        style={{ width: 23, height: 23, }}
+                        source={require('../../../assets/images/report.png')} >
 
-                        </Image>
-                        <Text style={DrawerContentStyle.itemTextStyle}>
-                            Attendance Report
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => NoticeCombo(navigation,dispatch)}
-                        style={
-                            active == 7 ?
-                                DrawerContentStyle.itemContainerSelected :
-                                DrawerContentStyle.itemContainer}>
+                    </Image>
+                    <Text style={DrawerContentStyle.itemTextStyle}>
+                        Attendance Report
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => NoticeCombo(navigation, dispatch)}
+                    style={
+                        active == 7 ?
+                            DrawerContentStyle.itemContainerSelected :
+                            DrawerContentStyle.itemContainer}>
 
-                        <Image
-                            resizeMode='contain'
-                            style={{ width: 23, height: 23, }}
-                            source={require('../../../assets/images/notice.png')} >
+                    <Image
+                        resizeMode='contain'
+                        style={{ width: 23, height: 23, }}
+                        source={require('../../../assets/images/notice.png')} >
 
-                        </Image>
-                        <Text style={DrawerContentStyle.itemTextStyle}>
-                            Notice Board
-                        </Text>
-                    </TouchableOpacity>
-                   <TouchableOpacity
-                        onPress={() => LeaderBoardCombo(navigation,dispatch)}
-                        style={
-                            active == 8 ?
-                                DrawerContentStyle.itemContainerSelected :
-                                DrawerContentStyle.itemContainer}>
+                    </Image>
+                    <Text style={DrawerContentStyle.itemTextStyle}>
+                        Notice Board
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => LeaderBoardCombo(navigation, dispatch)}
+                    style={
+                        active == 8 ?
+                            DrawerContentStyle.itemContainerSelected :
+                            DrawerContentStyle.itemContainer}>
 
-                        <Feather name="activity" size={24} color="#218f6f"
-                            style={{ transform: [{ scaleX: -1 }] }}
-                        />
-                        <Text style={DrawerContentStyle.itemTextStyle}>
-                            Leader Board
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => SettingsCombo(navigation,dispatch)}
-                        style={
-                            active == 9 ?
-                                DrawerContentStyle.itemContainerSelected :
-                                DrawerContentStyle.itemContainer}>
-                        <Image
-                            resizeMode='contain'
-                            style={{ width: 23, height: 23, }}
-                            source={require('../../../assets/images/setting.png')} >
+                    <Feather name="activity" size={24} color="#218f6f"
+                        style={{ transform: [{ scaleX: -1 }] }}
+                    />
+                    <Text style={DrawerContentStyle.itemTextStyle}>
+                        Leader Board
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => SettingsCombo(navigation, dispatch)}
+                    style={
+                        active == 9 ?
+                            DrawerContentStyle.itemContainerSelected :
+                            DrawerContentStyle.itemContainer}>
+                    <Image
+                        resizeMode='contain'
+                        style={{ width: 23, height: 23, }}
+                        source={require('../../../assets/images/setting.png')} >
 
-                        </Image>
-                        <Text style={DrawerContentStyle.itemTextStyle}>
-                            Settings
-                        </Text>
-                    </TouchableOpacity>  
+                    </Image>
+                    <Text style={DrawerContentStyle.itemTextStyle}>
+                        Settings
+                    </Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => LogoutCombo(dispatch)}
                     style={
