@@ -1,29 +1,25 @@
 {
   "expo": {
-    "name": "LeadDesk",
-    "slug": "LeadDesk",
-    "privacy": "public",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "name": "The Lead Desk",
+    "slug": "theleaddesk",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "platforms": [ "ios", "android" ],
     "plugins": [
       [
         "expo-notifications",
         {
-          "icon": "./local/assets/notification-icon.png",
+          "icon": "./assets/icon.png",
           "color": "#ffffff"
         }
       ]
     ],
-    "version": "1.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -33,19 +29,45 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.theleaddesk.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "If you want to take a picture when adding a new product we need permission to use your camera."
+      },
       "config": {
-        "googleMapsApiKey": "put your google map api key here"
+        "googleMapsApiKey": "AIzaSyBneTg3c_jrr3lB3XHeeg8EV_B6ntUUXzs"
       }
     },
     "android": {
-      "package": "com.theleaddesk.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
       "googleServicesFile": "./google-services.json",
+      "package": "com.theleaddesk.app",
       "config": {
         "googleMaps": {
-          "apiKey": "put your google map api key here"
+          "apiKey": "AIzaSyBneTg3c_jrr3lB3XHeeg8EV_B6ntUUXzs"
         }
       },
-      "versionCode": 1
+      "permissions": [
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE",
+        "CAMERA",
+        "FOREGROUND_SERVICE",
+        "INTERNET",
+        "MANAGE_DOCUMENTS",
+        "HIGH_SAMPLING_RATE_SENSORS",
+        "MODIFY_AUDIO_SETTINGS",
+        "READ_APP_BADGE",
+        "READ_INTERNAL_STORAGE",
+        "READ_PHONE_STATE",
+        "SCHEDULE_EXACT_ALARM",
+        "SYSTEM_ALERT_WINDOW",
+        "VIBRATE",
+        "WRITE_EXTERNAL_STORAGE",
+        "WRITE_SETTINGS"
+      ]
+      
     },
     "description": "",
     "androidStatusBar": {

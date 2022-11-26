@@ -53,7 +53,6 @@ export const loadFromStorage = async (storage, key) => {
             })
         })
         .catch(err => {
-            console.log(err.message);
             return ({
                 isSuccess: false,
                 message: err
