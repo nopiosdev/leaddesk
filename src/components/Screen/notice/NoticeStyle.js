@@ -219,7 +219,12 @@ export const NoticeStyle = StyleSheet.create({
         padding: 15, justifyContent: 'space-between',
         paddingTop: 20,
     },
-    takePhotoText: { textAlign: 'center', marginTop: 4, color: '#7a7a7a', fontSize: 10 },
+    takePhotoText: { 
+        textAlign: 'center',
+         marginTop: 4, 
+         color: '#7a7a7a', 
+         fontSize: 10 
+    },
     departListText: {
         color: '#141414',
         fontSize: 16,

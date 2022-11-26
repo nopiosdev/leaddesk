@@ -9,7 +9,7 @@ import { upLoadImage } from '../services/TaskService';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileList, fileList,setmodalForImage }) => {
+const CustomImagePicker = ({ TaskId, setprogressVisible, single = false, setfileList, fileList, setmodalForImage }) => {
 
     const [ImageFileName, setImageFileName] = useState('');
 
@@ -30,24 +30,24 @@ const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileLis
         upLoadImage(data)
             .then(response => {
                 console.log('Image', response)
-                if(response?.success){
-                let attachmentModel = {
-                    TaskId: TaskId,
-                    FileName: response?.image,
-                    BlobName: response?.image,
+                if (response?.success) {
+                    let attachmentModel = {
+                        TaskId: TaskId,
+                        FileName: response?.image,
+                        BlobName: response?.image,
+                    }
+                    if (single) {
+                        setfileList(response?.image);
+                    } else {
+                        setfileList(fileList.concat(attachmentModel));
+                    }
+                    setImageFileName(response?.image)
+                    ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
+                } else {
+                    ToastAndroid.show('Upload failed!', ToastAndroid.TOP);
                 }
-                if(single){
-                    setfileList(response?.image);
-                }else{
-                    setfileList(fileList.concat(attachmentModel));
-                }
-                setImageFileName(response?.image)
-                ToastAndroid.show('Uploaded successfully', ToastAndroid.TOP);
-            }else{
-                ToastAndroid.show('Upload failed!', ToastAndroid.TOP);
-            }
                 //this.updateEmployeeRecords();
-                setprogressVisible(false);               
+                setprogressVisible(false);
             })
             .catch(error => {
                 setmodalForImage(false);
@@ -107,11 +107,11 @@ const CustomImagePicker = ({ TaskId, setprogressVisible,single=false, setfileLis
             </View>
             <View style={NoticeStyle.cemaraImageContainer}>
                 <TouchableOpacity onPress={() => takePhoto()} style={{ alignItems: "center", paddingLeft: 35 }}>
-                    <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../assets/images/photo_camera_black.png')}></Image>
+                    <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../assets/images/photo_camera_black.png')} />
                     <Text style={NoticeStyle.takePhotoText}>Take Photo</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => choosePhoto()} style={{ alignItems: 'center', paddingRight: 35 }}>
-                    <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../assets/images/Gallary.png')}></Image>
+                    <Image resizeMode='contain' style={{ height: 36, width: 36, }} source={require('../../assets/images/Gallary.png')} />
                     <Text style={NoticeStyle.takePhotoText}>From Gallary</Text>
                 </TouchableOpacity>
             </View>
