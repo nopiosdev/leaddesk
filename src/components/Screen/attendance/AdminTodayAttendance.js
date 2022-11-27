@@ -85,7 +85,6 @@ const AdminTodayAttendance = ({ navigation }) => {
             } else {
                 await getCompany();
             }
-            setselctedCompanyValue(user?.CompanyName);
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
             console.log(cId)
@@ -176,8 +175,10 @@ const AdminTodayAttendance = ({ navigation }) => {
                             cList.push(ob);
                         });
                         setcompanyList(cList);
-                        LocalStorage.SetData("companyId", companyList[0].Value.toString());
-                        LocalStorage.SetData("companyName", companyList[0].Text);
+                        setslectedCompanyIndex(cList[0].Value.toString());
+                        setselctedCompanyValue(cList[0].Text);
+                        LocalStorage.SetData("companyId", cList[0].Value.toString());
+                        LocalStorage.SetData("companyName", cList[0].Text);
                     }
                 })
                 .catch(() => {

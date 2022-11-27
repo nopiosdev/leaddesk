@@ -155,13 +155,14 @@ const DashboardScreen = () => {
     const userDetails = useSelector((state) => state.user.currentUser);
     return (
         <Drawer.Navigator initialRouteName="DailyAttendance" drawerContent={DrawerContent} screenOptions={{ drawerStyle: { width: "65%", } }} >
+            <Drawer.Screen name="DailyAttendance" component={DailyAttendance} options={{ headerShown: false }} />
             <Drawer.Screen name="TaskListBottomTab" component={TaskListBottomTab} options={{ headerShown: false }} />
             <Drawer.Screen name="LeaderBoard" component={LeaderBoardScreen} options={{ headerShown: false }} />
             <Drawer.Screen name="LeaveList" component={LeaveList} options={{ headerShown: false }} />
             <Drawer.Screen name="Notice" component={Notice} options={{ headerShown: false }} />
             {userDetails?.UserType == 'admin' ?
                 <>
-                    <Drawer.Screen name="AdminHomeTab" component={AdminHomeTab} options={{ headerShown: false }} />
+                    {/* <Drawer.Screen name="AdminHomeTab" component={AdminHomeTab} options={{ headerShown: false }} /> */}
                     <Drawer.Screen name="Tab" component={AdminBottomTab} options={{ headerShown: false }} />
                     <Drawer.Screen name="LiveTraking" component={LiveTracking} options={{ headerShown: false }} />
                     <Drawer.Screen name="ReportScreen" component={ReportScreen} options={{ headerShown: false }} />
@@ -196,7 +197,7 @@ const MainStackNavigator = () => {
 
                         {userDetails?.UserType == 'admin' ?
                             <>
-                                <Drawer.Screen name="DailyAttendance" component={AdminHomeTab} options={{ headerShown: false }} />
+                                {/* <Drawer.Screen name="DailyAttendance" component={AdminHomeTab} options={{ headerShown: false }} /> */}
                                 <Stack.Screen name="AdminTodayAttendance" component={AdminTodayAttendance} options={{ headerShown: false }} />
                                 <Stack.Screen name="DetailScreen" component={DetailScreen} options={{ headerShown: false }} />
                                 <Stack.Screen name="CompanysetupScreen" component={CompanysetupScreen} options={{ headerShown: false }} />

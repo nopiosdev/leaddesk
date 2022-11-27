@@ -162,8 +162,6 @@ const MyPanel = ({ navigation }) => {
     const [Reason, setReason] = useState('');
     const [ImageFileName, setImageFileName] = useState('');
     const [mobile, setmobile] = useState('');
-    const [name, setname] = useState('');
-    const [gmail, setgmail] = useState('');
     const [Imageparam, setImageparam] = useState("resourcetracker");
     const [ImageFileId, setImageFileId] = useState(null);
     const [EmployeeId, setEmployeeId] = useState(null);
@@ -310,9 +308,10 @@ const MyPanel = ({ navigation }) => {
 
         (async () => {
             const comId = await LocalStorage.GetData("companyId");
-            await setname(user?.UserFullName);
-            await setmobile(user?.PhoneNumber);
-            await setgmail(user?.Email);
+            console.log(user);
+            setEmployeeName(user?.UserFullName);
+            setmobile(user?.PhoneNumber);
+            //setgmail(user?.Email);
             setCompanyId(comId);
             getMyTodayAttendance();
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
@@ -425,6 +424,7 @@ const MyPanel = ({ navigation }) => {
             setprogressVisible(false)
         } else {
             await _getLocationAsync();
+            setprogressVisible(false);
         }
     }
 
@@ -615,17 +615,15 @@ const MyPanel = ({ navigation }) => {
             if (IsCheckedIn !== 1) {
                 setprogressVisible(true);
                 await getLocationInfo();
-                settouchabledisablepointcheckin(false);
             } else {
                 setprogressVisible(false);
-                settouchabledisablepointcheckin(false);
                 ToastAndroid.show('You have already checked in today', ToastAndroid.TOP);
             }
         } else {
             setprogressVisible(false);
-            settouchabledisablepointcheckin(false);
             ToastAndroid.show('You have already checked out today', ToastAndroid.TOP);
         }
+        settouchabledisablepointcheckin(false);
 
         // } else {
         //     ToastAndroid.show("No Internet Detected", ToastAndroid.TOP);
