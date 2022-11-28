@@ -537,7 +537,7 @@ const MyPanel = ({ navigation }) => {
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
-            data.append('CheckInTimeFile', fileId);
+            data.append('CheckOutTimeFile', fileId);
             data.append('LessTimeReason', '');
 
 
