@@ -6,7 +6,7 @@ export const userSlice = createSlice({
         currentUser: {},
         login: 'Logout',
         active: 1,
-        clientId: null
+        selectedEmp: null
     },
     reducers: {
         toggleUser(state, action) {
@@ -27,11 +27,11 @@ export const userSlice = createSlice({
         removeUser(state, action) {
             state.currentUser = {}
         },
-        setClientId(state, action) {
-            state.clientId = action.payload
+        setSelectedEmployee(state, action) {
+            state.selectedEmp = action.payload
         },
     }
 })
 
-export const { addUser, removeUser, toggleUser, updateUserPhone, setClientId, updateUserEmployee, toggleActive } = userSlice.actions
+export const { addUser, removeUser, toggleUser, updateUserPhone, setSelectedEmployee, updateUserEmployee, toggleActive } = userSlice.actions
 export default userSlice.reducer

@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { LeaveListStyle } from './Screen/leaves/LeaveListStyle'
+import { LeaveListStyle } from '../Screen/AdminScreens/leaves/LeaveListStyle'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 

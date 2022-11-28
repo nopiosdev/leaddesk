@@ -15,6 +15,7 @@ const AuthLoadingScreen = ({ navigation }) => {
   const [loaded, setLoaded] = useState(false);
 
   const CheckStatus = async () => {
+    setLoaded(false);
     await Font.loadAsync({
       'PRODUCT_SANS_REGULAR': require('../../assets/fonts/PRODUCT_SANS_REGULAR.ttf'),
       'Montserrat_Bold': require('../../assets/fonts/Montserrat_Bold.ttf'),
@@ -33,9 +34,9 @@ const AuthLoadingScreen = ({ navigation }) => {
       dispatch(toggleActive(1));
       setLoaded(true);
     } else {
-      dispatch(user)
       dispatch(toggleUser('Logout'));
       LocalStorage.ClearData();
+      setLoaded(true);
     }
   }
 

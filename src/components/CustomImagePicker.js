@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { Dimensions, Image, Pressable, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { NoticeStyle } from './Screen/notice/NoticeStyle';
-import LocalStorage from '../common/LocalStorage';
-import axios from 'axios';
-import { urlResource } from '../Utils/config';
+import { NoticeStyle } from '../Screen/AdminScreens/notice/NoticeStyle';
 import { upLoadImage } from '../services/TaskService';
 
 const width = Dimensions.get('window').width;

@@ -6,55 +6,48 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { navigationRef } from './NavigationRef';
-import LoginScreen from '../components/Screen/Login';
-import Register from '../components/Screen/Register';
-import DailyAttendance from '../components/Screen/attendance/DailyAttendance';
-import DailyAttendanceDetails from '../components/Screen/attendance/DailyAttendanceDetails';
-import DailyAttendanceLocation from '../components/Screen/attendance/DailyAttendanceLocation';
-import UserSpecificTasks from '../components/Screen/attendance/UserSpecificTasks';
-import UserSpecificLeave from '../components/Screen/attendance/UserSpecificLeave';
+import LoginScreen from '../Screen/AdminScreens/Login';
+import Register from '../Screen/AdminScreens/Register';
+import DailyAttendance from '../Screen/AdminScreens/attendance/DailyAttendance';
+import DailyAttendanceDetails from '../Screen/AdminScreens/attendance/DailyAttendanceDetails';
+import DailyAttendanceLocation from '../Screen/AdminScreens/attendance/DailyAttendanceLocation';
+import UserSpecificTasks from '../Screen/AdminScreens/attendance/UserSpecificTasks';
+import UserSpecificLeave from '../Screen/AdminScreens/attendance/UserSpecificLeave';
 import DrawerContent from '../components/MenuDrawer/DrawerContent';
-import SettingScreen from '../components/Screen/setting/Setting';
-import DepartmentSetupScreen from '../components/Screen/department/DepartmentSetupScreen';
-import EmployeeSetupScreen from '../components/Screen/employees/EmployeeSetupScreen';
-import CreateEmployeeScreen from '../components/Screen/employees/CreateEmployeeScreen';
-import CompanysetupScreen from '../components/Screen/company/CompanysetupScreen';
-import ReportScreen from '../components/Screen/reports/ReportScreen';
-import TaskListScreen from '../components/Screen/tasks/TaskList';
-import CompleteTaskFilter from '../components/Screen/tasks/CompleteTaskFilter';
-import ViewTask from '../components/Screen/tasks/ViewTask';
-import CreateTask from '../components/Screen/tasks/CreateTask';
-// import TaskBoardScreen from '../components/Screen/Board/TaskBoard';
-// import CreateTaskForBoard from '../components/Screen/Board/CreateTaskForBoard';
-// import TaskBordDetail from '../components/Screen/Board/TaskBordDetail';
-// import ViewBoardTask from '../components/Screen/Board/ViewBoardTask';
-import LeaveList from '../components/Screen/leaves/LeaveList';
-import CreateNotice from '../components/Screen/notice/CreateNotice'
-import NoticeDetail from '../components/Screen/notice/NoticeDetail'
-import Notice from '../components/Screen/notice/Notice';
-import DetailScreen from '../components/Screen/reports/DetailScreen';
-import LeaderBoardScreen from '../components/Screen/leaderboard/LeaderBoardScreen';
-import LiveTracking from '../components/Screen/liveTracking/LiveTracking';
-import AdminTodayAttendance from '../components/Screen/attendance/AdminTodayAttendance';
+import SettingScreen from '../Screen/AdminScreens/setting/Setting';
+import DepartmentSetupScreen from '../Screen/AdminScreens/department/DepartmentSetupScreen';
+import EmployeeSetupScreen from '../Screen/AdminScreens/employees/EmployeeSetupScreen';
+import CreateEmployeeScreen from '../Screen/AdminScreens/employees/CreateEmployeeScreen';
+import CompanysetupScreen from '../Screen/AdminScreens/company/CompanysetupScreen';
+import ReportScreen from '../Screen/AdminScreens/reports/ReportScreen';
+import TaskListScreen from '../Screen/AdminScreens/tasks/TaskList';
+import CompleteTaskFilter from '../Screen/AdminScreens/tasks/CompleteTaskFilter';
+import ViewTask from '../Screen/AdminScreens/tasks/ViewTask';
+import CreateTask from '../Screen/AdminScreens/tasks/CreateTask';
+// import TaskBoardScreen from '../Screen/Board/TaskBoard';
+// import CreateTaskForBoard from '../Screen/Board/CreateTaskForBoard';
+// import TaskBordDetail from '../Screen/Board/TaskBordDetail';
+// import ViewBoardTask from '../Screen/Board/ViewBoardTask';
+import LeaveList from '../Screen/AdminScreens/leaves/LeaveList';
+import CreateNotice from '../Screen/AdminScreens/notice/CreateNotice'
+import NoticeDetail from '../Screen/AdminScreens/notice/NoticeDetail'
+import Notice from '../Screen/AdminScreens/notice/Notice';
+import DetailScreen from '../Screen/AdminScreens/reports/DetailScreen';
+import LeaderBoardScreen from '../Screen/AdminScreens/leaderboard/LeaderBoardScreen';
+import LiveTracking from '../Screen/AdminScreens/liveTracking/LiveTracking';
+import AdminTodayAttendance from '../Screen/AdminScreens/attendance/AdminTodayAttendance';
 import { Image, View } from 'react-native';
 import TaskBottomTabs from '../helperComponents/TaskBottomTabs';
-import NoticeUser from '../components/Screen/UserScreen/notice/Notice';
-import NoticeDetailUser from '../components/Screen/UserScreen/notice/NoticeDetail';
-import MyPanel from '../components/Screen/UserScreen/myPanel/MyPanel';
-import LeaveListUser from '../components/Screen/UserScreen/leaves/LeaveList';
-import LeaveApply from '../components/Screen/UserScreen/leaves/LeaveApply';
-import MyTask from '../components/Screen/UserScreen/tasks/MyTask';
-import CreateByMe from '../components/Screen/UserScreen/tasks/CreateByMe';
-import CreateUserTask from '../components/Screen/UserScreen/tasks/CreateTask';
-import ViewAssignToMe from '../components/Screen/UserScreen/tasks/ViewAssignToMe';
-import ViewUserTask from '../components/Screen/UserScreen/tasks/ViewTask';
+import MyPanel from '../Screen/EmployeeScreens/myPanel/MyPanel';
+import LeaveApply from '../Screen/EmployeeScreens/leaves/LeaveApply';
+import MyTask from '../Screen/EmployeeScreens/tasks/MyTask';
+import CreateByMe from '../Screen/EmployeeScreens/tasks/CreateByMe';
 import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
-// employee  UserName: 8520 Password: 667396
 
 const TaskListBottomTab = () => {
     const userDetails = useSelector((state) => state.user.currentUser);
