@@ -1,20 +1,14 @@
 import React, { createRef, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Dimensions, TextInput, TouchableOpacity, AppState, BackHandler, Alert, Image, } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Login, GetUserClaim, AddDeviceToken } from '../../services/AccountService';
-import {
-    saveToStorage,
-    storage,
-    CurrentUserProfile
-} from '../../common/storage';
-import LocalStorage from '../../common/LocalStorage'
+import { Login, AddDeviceToken } from '../../../services/AccountService';
+import LocalStorage from '../../../common/LocalStorage'
 import { Feather, Entypo } from '@expo/vector-icons';
 import { ConfirmDialog } from 'react-native-simple-dialogs';
 import { useDispatch } from 'react-redux';
-import { addUser, toggleUser } from '../../Redux/Slices/UserSlice';
+import { addUser, toggleUser } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
-import { registerForPushNotificationsAsync } from '../../services/api/RegisterForPushNotificationsAsync';
+import { registerForPushNotificationsAsync } from '../../../Utils/RegisterForPushNotificationsAsync';
 
 var { width } = Dimensions.get('window');
 
@@ -85,7 +79,6 @@ const LoginForm = ({ navigation, phoneno }) => {
                         if (res?.success) {
                             LocalStorage.SetData("userToken", response?.token);
                             LocalStorage.SetData("companyId", response?.CompanyId.toString());
-                            // await getUserClaim(response?.Id);
                             dispatch(addUser(response))
                             LocalStorage.SetData("CurrentUser", JSON.stringify(response));
                             dispatch(toggleUser('Login'))
@@ -113,21 +106,6 @@ const LoginForm = ({ navigation, phoneno }) => {
         });
     }
 
-    // const getUserClaim = async (userKey) => {
-    //     try {
-    //         await GetUserClaim(userKey)
-    //             .then(res => {
-    //                 console.log('empInfo', res);
-    //                 if (!res?.success && res?.success !== false) {
-    //                     // dispatch(addUser(ob))
-    //                     // LocalStorage.SetData("CurrentUser", JSON.stringify(ob));
-    //                     // dispatch(toggleUser('Login'))
-    //                 }
-    //             })
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
     useEffect(() => {
         setUserName(phoneno);
     }, [Isfocused])
@@ -202,14 +180,10 @@ const LoginForm = ({ navigation, phoneno }) => {
                 </TouchableOpacity>
                 <Image
                     style={{ width: 40, height: 40 }}
-                    source={require('../../../assets/images/RegCall.png')}>
+                    source={require('../../../../assets/images/RegCall.png')}>
                 </Image>
 
             </View>
-
-
-
-
 
             <ConfirmDialog
                 title="Message"

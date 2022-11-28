@@ -23,7 +23,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ImageViewer from 'react-native-image-zoom-viewer';
 //import ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import * as actions from '../../../common/actions';
 
 import _ from "lodash";

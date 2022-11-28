@@ -1,5 +1,5 @@
 import React from 'react';
-import LoginForm from './Screen/loginForm';
+import LoginForm from './loginForm';
 import {
     KeyboardAvoidingView, StyleSheet, Platform,
     Dimensions, View, Image, StatusBar,
@@ -21,7 +21,7 @@ const Login = ({ navigation, route }) => {
                         width: "90%",
                     }}
                     resizeMode="contain"
-                    source={require('../../assets/images/login.png')}>
+                    source={require('../../../../assets/images/login.png')}>
                 </Image>
             </View>
             <View style={{
@@ -30,7 +30,7 @@ const Login = ({ navigation, route }) => {
                 justifyContent: "flex-start",
                 width: "100%",
             }}>
-                <LoginForm navigation={navigation} phoneno={route?.params?.id} />
+                <LoginForm navigation={navigation} phoneno={route?.params?.phoneno} />
             </View>
         </KeyboardAvoidingView >
 

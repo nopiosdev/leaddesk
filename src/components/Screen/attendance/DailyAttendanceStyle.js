@@ -119,20 +119,20 @@ export const DailyAttendanceStyle = StyleSheet.create({
     FlatListLeft: {
         alignItems: 'flex-start',
         flexDirection: 'row',
-        width:"55%"
+        width: "55%"
 
     },
 
     FlatListAttendanceLeft: {
         alignItems: 'flex-start',
         flexDirection: 'row',
-        width:"55%"
+        width: "55%"
 
     },
     FlatListLeftLeave: {
         alignItems: 'flex-start',
         flexDirection: 'row',
-        width:"40%"
+        width: "40%"
 
     },
     FlatListLeftwork: {
@@ -194,13 +194,14 @@ export const DailyAttendanceStyle = StyleSheet.create({
         flexDirection: 'column', marginTop: 3, flexWrap: 'wrap'
     },
     AttendanceImageView1: {
-        flexDirection: 'column', marginTop: 3, flexWrap: 'wrap',marginRight:10
+        flexDirection: 'column', marginTop: 3, flexWrap: 'wrap', marginRight: 10
     },
     NameText: {
         fontFamily: "OPENSANS_BOLD",
         fontSize: 14,
         textAlign: "left",
         color: "#19260c",
+        marginBottom: -15
     },
     DesignationText: {
         fontSize: 12,
@@ -215,7 +216,7 @@ export const DailyAttendanceStyle = StyleSheet.create({
         color: "#b5b5b5"
     },
     TimeContainer: {
-        flexDirection:"row",alignItems: 'flex-end', marginRight: 10, marginTop: 4
+        flexDirection: "row", alignItems: 'flex-end', marginRight: 10, marginTop: 4
     },
     TimeContainerwork: {
         alignItems: 'flex-end', alignSelf: 'flex-start'
@@ -262,7 +263,7 @@ export const DailyAttendanceStyle = StyleSheet.create({
         fontFamily: "PRODUCT_SANS_BOLD",
         fontSize: 11, textAlign: "left", color: "#717171"
     },
-    CheckOutMissingTimeText:{
+    CheckOutMissingTimeText: {
         fontFamily: "PRODUCT_SANS_BOLD",
         fontSize: 11, textAlign: "left", color: "#FF0000"
     },
@@ -439,7 +440,7 @@ export const DailyAttendanceStyle = StyleSheet.create({
         alignItems: 'center',
         marginTop: 3,
         marginBottom: 3
-    } ,
+    },
     countBoxColumn3NumberActive: {
         fontFamily: "Montserrat_Bold",
         fontSize: 20,

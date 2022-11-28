@@ -1,4 +1,4 @@
-import { postApi,  getApi } from "./api";
+import { postApi,  getApi } from "../Utils/RestClient";
 
 export const GetAllEmployeeAttendanceWithMonth = async ( companyId,month,year) => getApi("attendance/GetAllEmployeeAttendanceWithMonth?companyId="+companyId+"&month="+month+"&year="+year);
 export const GetEmpInfoByUserId = async (userId,date) => getApi("RtEmployeeApi/GetEmpInfo?userId="+userId+"&date="+date);

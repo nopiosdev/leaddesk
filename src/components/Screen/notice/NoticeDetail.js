@@ -7,7 +7,7 @@ import { getNoticedetail } from "../../../services/Notice";
 import { NoticeStyle } from "./NoticeStyle"
 import { CommonStyles } from '../../../common/CommonStyles';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Header from '../../Header';

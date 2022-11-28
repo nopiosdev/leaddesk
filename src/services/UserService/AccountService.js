@@ -1,6 +1,5 @@
-import {postApi, deleteApi, getApi } from "../api";
+import {postApi, deleteApi, getApi } from "../../Utils/RestClient";
 
-export const ChangePasswords = async data => postApi("User/changepassword", data);
 
 export const ChangePasswordforEmp = async data => postApi("User/resetpassword", data);
 

@@ -13,7 +13,7 @@ import { DailyAttendanceStyle } from './DailyAttendanceStyle';
 import { GetAttendanceFeed } from '../../../../services//EmployeeTrackService'
 
 import { MyPanelCombo } from '../../../MenuDrawer/DrawerContent';
-import { urlDev, urlResource } from '../../../../services/api/config';
+import { urlDev, urlResource } from '../../../../Utils/config';
 import LocalStorage from '../../../../common/LocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleActive } from '../../../../Redux/Slices/UserSlice';
@@ -158,7 +158,7 @@ const DailyAttendances = ({ navigation }) => {
                 ]}>
                 <View style={DailyAttendanceStyle.FlatListLeft}>
                     <View style={{ paddingRight: 10, }}>
-                        {employeeDetail != null && employeeDetail?.ImageFileName ? (
+                        {employeeDetail != null && employeeDetail?.ImageFileName && employeeDetail?.ImageFileName !== 'null' ? (
                             <Image resizeMode='cover' style={
                                 DailyAttendanceStyle.ImageLocal
                             } source={{ uri: urlResource + employeeDetail?.ImageFileName }} />) :

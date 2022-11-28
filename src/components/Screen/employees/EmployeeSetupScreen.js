@@ -19,7 +19,7 @@ import RadioButton from 'radio-button-react-native';
 import { GetEmpInfoByUserId, GetEmployeeWithCompanyId, getTokenforResetEmptPass, UpdateEmployee, DeleteEmployee, CreateEmployee, ChangePasswordforEmp } from "../../../services/AccountService";
 import { GetDepartmentByCompanyId, CreateDepartment, } from "../../../services/DepartmentService";
 import { GetCompanyByUserId, } from '../../../services/CompanyService';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from 'react-redux';
 import { Clipboard } from '@react-native-community/clipboard'

@@ -5,7 +5,7 @@ import Modal from 'react-native-modalbox';
 import { GetCompanyByUserId } from "../../../services/CompanyService"
 import { useSelector } from "react-redux";
 import { GetAttendanceFeed } from '../../../services/EmployeeTrackService';
-import { urlResource } from '../../../services/api/config';
+import { urlResource } from '../../../Utils/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
@@ -54,7 +54,7 @@ const AdminTodayAttendance = ({ navigation }) => {
     }
 
     const goToDetail = (item) => {
-        console.log(item.PhoneNumber)
+        console.log(item?.PhoneNumber)
         navigation.navigate('Tab', {
             screen: 'DailyAttendanceDetails',
             params: { aItem: item }
@@ -131,17 +131,17 @@ const AdminTodayAttendance = ({ navigation }) => {
         try {
             await GetCompanyByUserId(user?.Id)
                 .then(res => {
-                    console.log('GetCompanyByUserId',res)
+                    console.log('GetCompanyByUserId', res)
                     if (res?.length > 0) {
                         const cList = [];
                         res?.forEach(function (item) {
                             const ob = {
-                                'Text': item.CompanyName,
-                                'Value': item.Id,
-                                'Address': item.Address,
-                                'phone': item.PhoneNumber,
-                                'MaximumOfficeHours': item.MaximumOfficeHours,
-                                'OfficeOutTime': item.OfficeOutTime,
+                                'Text': item?.CompanyName,
+                                'Value': item?.Id,
+                                'Address': item?.Address,
+                                'phone': item?.PhoneNumber,
+                                'MaximumOfficeHours': item?.MaximumOfficeHours,
+                                'OfficeOutTime': item?.OfficeOutTime,
                             }
                             cList.push(ob);
                         });
@@ -149,7 +149,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                     }
                 })
                 .catch((e) => {
-                    console.log("error occured",e);
+                    console.log("error occured", e);
                 });
         } catch (error) {
             console.log(error);
@@ -165,12 +165,12 @@ const AdminTodayAttendance = ({ navigation }) => {
                         const cList = [];
                         res?.forEach(function (item) {
                             const ob = {
-                                'Text': item.CompanyName,
-                                'Value': item.Id,
-                                'Address': item.Address,
-                                'phone': item.PhoneNumber,
-                                'MaximumOfficeHours': item.MaximumOfficeHours,
-                                'OfficeOutTime': item.OfficeOutTime,
+                                'Text': item?.CompanyName,
+                                'Value': item?.Id,
+                                'Address': item?.Address,
+                                'phone': item?.PhoneNumber,
+                                'MaximumOfficeHours': item?.MaximumOfficeHours,
+                                'OfficeOutTime': item?.OfficeOutTime,
                             }
                             cList.push(ob);
                         });
@@ -256,10 +256,8 @@ const AdminTodayAttendance = ({ navigation }) => {
                         </Text>
                     </View>
                 </TouchableOpacity>
-
             </View>
         );
-
     }
 
     return (
@@ -302,18 +300,19 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 DailyAttendanceStyle.FlatListAttendanceLeft
                                             }>
                                             <View style={{ paddingRight: 10, }}>
-                                                {item.ImageFileName ?
+                                                {item?.ImageFileName && item?.ImageFileName !== 'null' ?
                                                     <Image resizeMode='cover' style={
                                                         DailyAttendanceStyle.ImageLocal
-                                                    } source={{ uri: urlResource + item.ImageFileName }} /> : <Image style={
+                                                    } source={{ uri: urlResource + item?.ImageFileName }} /> : <Image style={
                                                         DailyAttendanceStyle.ImagestyleFromServer
                                                     } resizeMode='cover' source={require('../../../../assets/images/employee.png')} />}
 
 
-                                                {(item.CheckInTime && item?.CheckOutTime) ? (<Image resizeMode="contain"
-                                                    style={DailyAttendanceStyle.styleForonlineOfflineIcon}
-                                                    source={require('../../../../assets/images/icon_gray.png')} />)
-                                                    : ((item.CheckInTime && !item?.CheckOutTime) ?
+                                                {(item?.CheckInTime && item?.CheckOutTime) ?
+                                                    (<Image resizeMode="contain"
+                                                        style={DailyAttendanceStyle.styleForonlineOfflineIcon}
+                                                        source={require('../../../../assets/images/icon_gray.png')} />)
+                                                    : ((item?.CheckInTime && !item?.CheckOutTime) ?
                                                         (<Image style={DailyAttendanceStyle.styleForonlineOfflineIcon
                                                         } resizeMode='contain' source={require('../../../../assets/images/icon_green.png')} />)
                                                         : (<Image style={
@@ -326,46 +325,46 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                     DailyAttendanceStyle.NameText
                                                 }
                                                 >
-                                                    {item.EmployeeName}
+                                                    {item?.EmployeeName}
                                                 </Text>
                                                 <Text style={
                                                     DailyAttendanceStyle.DesignationText
                                                 }
                                                 >
-                                                    {item.Designation}
+                                                    {item?.Designation}
                                                 </Text>
                                                 <Text style={
                                                     DailyAttendanceStyle.DepartmentText
                                                 }
                                                 >
-                                                    {item.DepartmentName}
+                                                    {item?.DepartmentName}
                                                 </Text>
                                             </View>
 
                                         </View>
                                     </TouchableOpacity>
 
-                                    {item.CheckInTime && <View style={DailyAttendanceStyle.TimeContainer}>
-                                        <TouchableOpacity onPress={() => ShowImageViewer(item.ImageFileName)}>
+                                    {item?.CheckInTime && <View style={DailyAttendanceStyle.TimeContainer}>
+                                        <TouchableOpacity onPress={() => ShowImageViewer(item?.ImageFileName)}>
                                             <View style={DailyAttendanceStyle.AttendanceImageView1}>
                                                 <Image resizeMode='cover' style={
                                                     DailyAttendanceStyle.AttendanceImage
-                                                } source={{ uri: urlResource + item.ImageFileName }} />
+                                                } source={{ uri: urlResource + item?.ImageFileName }} />
                                                 <Text style={
                                                     DailyAttendanceStyle.CheckinTimeText
                                                 }>
-                                                    {item.CheckInTime ? moment(item.CheckInTime).format('DD/MM/YY') : ("")}</Text>
+                                                    {item?.CheckInTime ? moment(item?.CheckInTime).format('DD/MM/YY') : ("")}</Text>
                                             </View>
 
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => ShowImageViewer(item.CheckOutTimeFile)}>
+                                        <TouchableOpacity onPress={() => ShowImageViewer(item?.CheckOutTimeFile)}>
                                             <View style={DailyAttendanceStyle.AttendanceImageView2}>
                                                 <Image resizeMode='cover' style={
                                                     DailyAttendanceStyle.AttendanceImage
-                                                } source={{ uri: urlResource + item.CheckOutTimeFile }} />
+                                                } source={{ uri: urlResource + item?.CheckOutTimeFile }} />
                                                 <Text style={
                                                     DailyAttendanceStyle.CheckOutTimeText
-                                                }>{item.CheckOutTime ? moment(item.CheckOutTime).format('DD/MM/YY') : ("")}</Text>
+                                                }>{item?.CheckOutTime ? moment(item?.CheckOutTime).format('DD/MM/YY') : ("")}</Text>
                                             </View>
                                         </TouchableOpacity>
 

@@ -11,7 +11,7 @@ import { SearchBar } from 'react-native-elements';
 import {
     FontAwesome,
 } from '@expo/vector-icons';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
 import { useEffect } from 'react';

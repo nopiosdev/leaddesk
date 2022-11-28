@@ -15,7 +15,7 @@ import { TaskStatus, SaveTask, deleteTask, PriorityList, SaveFile, GetTaskAttach
 import { Menu, Divider } from 'react-native-paper';
 import { CommonStyles } from '../../../../common/CommonStyles';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import { urlResource } from '../../../../services/api/config';
+import { urlResource } from '../../../../Utils/config';
 import Modal from 'react-native-modalbox';
 import moment from 'moment'
 import * as ImagePicker from 'expo-image-picker';

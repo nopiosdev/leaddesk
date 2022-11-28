@@ -1,14 +1,14 @@
-import React, { Component, createRef, useRef, useState } from 'react';
+import React, { createRef, useState } from 'react';
 import {
     StyleSheet, ActivityIndicator, Text, View, TextInput,
     TouchableOpacity, Alert, Dimensions
 } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
-import { CreateAccount, CheckExistPhone } from "../../services/AccountService";
-import { Loading } from '../../common/loading';
+import { CreateAccount, CheckExistPhone } from "../../../services/AccountService";
+import { Loading } from '../../../common/loading';
 import RadioButton from 'radio-button-react-native';
-import { ProgressDialog, ConfirmDialog } from 'react-native-simple-dialogs';
-import { Feather, MaterialIcons, Entypo } from '@expo/vector-icons';
+import { ConfirmDialog } from 'react-native-simple-dialogs';
+import { Feather, Entypo } from '@expo/vector-icons';
 
 var { width } = Dimensions.get('window');
 

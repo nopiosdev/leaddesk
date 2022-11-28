@@ -1,11 +1,9 @@
 import { ToastAndroid } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import _ from "lodash";
 import apiConfig from "./config";
-import { CheckConnection } from '../../common/checkNetConnection'
 import axios from 'axios';
-import LocalStorage from "../../common/LocalStorage";
+import LocalStorage from "../common/LocalStorage";
 
 export const getApi = async (action, headers = {}) => {
   const Token = await LocalStorage.GetData("userToken")
@@ -17,8 +15,6 @@ export const getApi = async (action, headers = {}) => {
       return { success: false, message: "" };
     });
 }
-
-
 
 export const postApi = async (action, data) => {
   const Token = await LocalStorage.GetData("userToken")
@@ -34,52 +30,12 @@ export const postApi = async (action, data) => {
     });
 };
 
-
-// export const postApi = async (action, headers = {}, body = {}) => {
-//   try {
-//     console.log(`body: ${body}`);
-//     const userToken = await AsyncStorage.getItem("userToken");
-//     let requestHeaders = _.pickBy(
-//       {
-//         ...(userToken
-//           ? {
-//               Authorization: `Bearer ${userToken}`
-//             }
-//           : {
-//               "Client-ID": apiConfig.clientId
-//             }),
-//         ...headers,
-//         ...{
-//           "Content-Type": "application/json"
-//         }
-//       },
-//       item => !_.isEmpty(item)
-//     );
-//     var object = {
-//       method: 'POST',
-//       headers:requestHeaders,
-//       body:body
-//   };
-//     console.log(`postApi url: ${apiConfig.url}${action}`);
-//     console.log(`postApi body`,object);
-//     let response = await fetch(`${apiConfig.url}${action}`, object);
-//     let responseJson = await response.json();
-//     console.log("responseJson",responseJson);
-//      if (response.ok) {
-//       return { result: responseJson, isSuccess: true, message: "" };
-//     }
-//     return { result: null, isSuccess: false, message: "" };
-//   } catch (error) {
-//     console.error(error);
-//     return { result: null, isSuccess: false, message: error };
-//   }
-// };
 export const loginPostApi = async (action, headers = {}, body = {}) => {
   try {
     NetInfo.fetch().then(async state => {
       if (state.isConnected) {
         console.log(`body: ${body}`);
-        const userToken = await AsyncStorage.getItem("userToken");
+        const userToken = await LocalStorage.getItem("userToken");
         let requestHeaders = _.pickBy(
           {
             ...(userToken
@@ -91,15 +47,10 @@ export const loginPostApi = async (action, headers = {}, body = {}) => {
               }),
             ...headers,
             ...{
-              // "Content-Type": "application/x-www-form-urlencoded"
             }
           },
           item => !_.isEmpty(item)
         );
-        console.log(`postApi url: ${apiConfig.url}${action}`);
-        console.log(`postApi body`, "userName=" + encodeURIComponent(body.UserName) +
-          "&password=" + encodeURIComponent(body.Password) +
-          "&grant_type=password");
         let response = await fetch(`${apiConfig.url}${action}`, {
           method: "POST",
           headers: requestHeaders,
@@ -108,9 +59,7 @@ export const loginPostApi = async (action, headers = {}, body = {}) => {
             "&grant_type=password",
         });
 
-        console.log
         let responseJson = await response.json();
-        console.log("responseJson", responseJson);
         if (response.ok) {
           return { result: responseJson, isSuccess: true, message: "" };
         }
@@ -120,7 +69,6 @@ export const loginPostApi = async (action, headers = {}, body = {}) => {
       }
     });
   } catch (error) {
-    console.error(error);
     return { result: null, isSuccess: false, message: error };
   }
 };
@@ -136,7 +84,7 @@ export const postApiFormDataForPDF = async (
   try {
     NetInfo.fetch().then(async state => {
       if (state.isConnected) {
-        const userToken = await AsyncStorage.getItem("userToken");
+        const userToken = await LocalStorage.getItem("userToken");
         let requestHeaders = _.pickBy(
           {
             ...(userToken
@@ -186,6 +134,7 @@ export const postApiFormDataForPDF = async (
     return { result: null, isSuccess: false, message: error };
   }
 };
+
 export const postApiFormData = async (
   action,
   headers = {},
@@ -197,7 +146,7 @@ export const postApiFormData = async (
   try {
     NetInfo.fetch().then(async state => {
       if (state.isConnected) {
-        const userToken = await AsyncStorage.getItem("userToken");
+        const userToken = await LocalStorage.getItem("userToken");
         let requestHeaders = _.pickBy(
           {
             ...(userToken
@@ -230,8 +179,6 @@ export const postApiFormData = async (
           };
           formData.append("files", photo);
         }
-
-        console.log(`${apiConfig.url}${action}`);
         let response = await fetch(`${apiConfig.url}${action}`, {
           method: "POST",
           headers: requestHeaders,
@@ -257,7 +204,7 @@ export const deleteApi = async (action, headers = {}) => {
   try {
     NetInfo.fetch().then(async state => {
       if (state.isConnected) {
-        const userToken = await AsyncStorage.getItem("userToken");
+        const userToken = await LocalStorage.getItem("userToken");
         let requestHeaders = _.pickBy(
           {
             ...(userToken
@@ -276,12 +223,10 @@ export const deleteApi = async (action, headers = {}) => {
           item => !_.isEmpty(item)
         );
 
-        console.log(`${apiConfig.url}${action}`);
         let response = await fetch(`${apiConfig.url}${action}`, {
           method: "DELETE",
           headers: requestHeaders
         });
-        console.log(response, '..........................')
         if (response.ok) {
           let responseJson = await response.json();
           return { result: responseJson, isSuccess: true, message: "" };
@@ -292,7 +237,6 @@ export const deleteApi = async (action, headers = {}) => {
       }
     });
   } catch (error) {
-    console.error(error);
     return { result: null, isSuccess: false, message: error };
   }
 };

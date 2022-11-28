@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform, StatusBar, TouchableOpacity, View, Text, FlatList, Image, ActivityIndicator } from 'react-native';
 import { ReportStyle } from './ReportStyle';
 import ModalSelector from 'react-native-modal-selector';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import { useIsFocused } from '@react-navigation/native';
 import { GetAllEmployeeAttendanceWithMonth } from '../../../services/Report'
 import { CommonStyles } from '../../../common/CommonStyles';

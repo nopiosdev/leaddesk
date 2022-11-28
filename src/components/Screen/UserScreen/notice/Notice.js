@@ -10,7 +10,7 @@ import { getNotice } from '../../../../services/UserService/Notice';
 import { SearchBar } from 'react-native-elements';
 import LocalStorage from '../../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
-import { urlResource } from '../../../../services/api/config';
+import { urlResource } from '../../../../Utils/config';
 import Searchbar from '../../../Searchbar';
 
 const Notice = ({ navigation, route }) => {

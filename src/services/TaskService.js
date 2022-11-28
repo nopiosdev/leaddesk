@@ -1,4 +1,4 @@
-import { postApi, getApi } from "./api";
+import { postApi, getApi } from "../Utils/RestClient";
 
 export const GetRelatedToMeTasks = async (userId) => getApi("task/GetRelatedToMeTasks?userId=" + userId);
 export const SaveTask = async data => postApi("task/SaveTask", data);

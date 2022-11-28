@@ -66,8 +66,8 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
             if (response?.success) {
                 getDepartment();
                 ToastAndroid.show('Department created successully', ToastAndroid.TOP);
-                setEmployee({ DepartmentId: departmentList[0].Value })
-                setDeptId(departmentList[0].Value);
+                setEmployee({ DepartmentId: departmentList[0]?.Value })
+                setDeptId(departmentList[0]?.Value);
                 setDeptName('');
                 console.log('deptlist', departmentList);
             } else {

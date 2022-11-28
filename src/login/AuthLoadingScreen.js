@@ -1,19 +1,5 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  StatusBar,
-  StyleSheet,
-  View
-} from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  loadFromStorage,
-  storage,
-  CurrentUserProfile,
-  clearStorageValue
-} from "../common/storage";
-import { RemoveDeviceToken } from "../services/AccountService";
-import { getPushNotificationExpoTokenAsync } from "../services/api/RegisterForPushNotificationsAsync";
+import { StyleSheet, View } from "react-native";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addUser, toggleUser, toggleActive } from "../Redux/Slices/UserSlice";
@@ -27,35 +13,6 @@ const AuthLoadingScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const [loaded, setLoaded] = useState(false);
-  // Fetch the token from storage then navigate to our appropriate place
-  // const _bootstrapAsync = async () => {
-  //   var response = await loadFromStorage(storage, CurrentUserProfile);
-
-  //   if (response && response.isSuccess && response.item.UserName) {
-  //     const userToken = await AsyncStorage.getItem("userToken");
-  //     if (userToken) {
-  //       props.navigation.navigate('DailyAttendance');
-  //     }
-  //     else {
-  //       await clearStorageValue();
-  //       props.navigation.navigate('login');
-  //     }
-  //   } else {
-  //     await clearStorageValue();
-  //     props.navigation.navigate('login');
-  //   }
-  // };
-
-  // const _signOutAsync = async () => {
-  //   var token = await getPushNotificationExpoTokenAsync();
-  //   if (token) {
-  //     await RemoveDeviceToken(token);
-  //   }
-
-  //   await AsyncStorage.clear();
-
-  //   props.navigation.navigate("Auth");
-  // };
 
   const CheckStatus = async () => {
     await Font.loadAsync({
@@ -68,20 +25,23 @@ const AuthLoadingScreen = ({ navigation }) => {
       'PRODUCT_SANS_BOLD': require('../../assets/fonts/PRODUCT_SANS_BOLD.ttf')
     });
     const userLocal = await LocalStorage.GetData("CurrentUser");
-    const login = await LocalStorage.GetData("Login");
-    dispatch(toggleUser(login));
-    dispatch(addUser(JSON.parse(userLocal)));
-    dispatch(toggleActive(1));
-    setLoaded(true);
+    const userToken = await LocalStorage.GetData("userToken");
+    if (userLocal && userToken) {
+      const login = await LocalStorage.GetData("Login");
+      dispatch(toggleUser(login));
+      dispatch(addUser(JSON.parse(userLocal)));
+      dispatch(toggleActive(1));
+      setLoaded(true);
+    } else {
+      dispatch(user)
+      dispatch(toggleUser('Logout'));
+      LocalStorage.ClearData();
+    }
   }
 
   useEffect(() => {
     CheckStatus();
   }, [])
-  // useEffect(() => {
-  //   _bootstrapAsync();
-  // }, [])
-
 
   // Render any loading content that you like here
   return (

@@ -20,7 +20,7 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Modal as Modal1 } from 'react-native';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import _ from "lodash";
 import * as ImagePicker from 'expo-image-picker'

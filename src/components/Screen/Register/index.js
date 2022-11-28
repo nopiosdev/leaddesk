@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import RegisterForm from './Screen/registerForm';
+import RegisterForm from './registerForm';
 import { KeyboardAvoidingView, StyleSheet, Platform, View, Text, StatusBar, ScrollView } from 'react-native';
 
 

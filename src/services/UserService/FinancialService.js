@@ -1,4 +1,4 @@
-import { postApi,  getApi } from "../api";
+import { postApi,  getApi } from "../../Utils/RestClient";
 
 export const SaveInvoice = async data =>  postApi("RtFinancialApi/SaveInvoice", {}, data);
 export const SaveBillCollection = async data =>  postApi("RtFinancialApi/SaveBillCollection", {}, data);

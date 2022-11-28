@@ -20,7 +20,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import _ from "lodash";
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import LocalStorage from '../../../common/LocalStorage';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Loader from '../../Loader';

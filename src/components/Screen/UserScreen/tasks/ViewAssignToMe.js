@@ -23,7 +23,7 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import _ from "lodash";
-import { urlDev, urlResource } from '../../../../services/api/config';
+import { urlDev, urlResource } from '../../../../Utils/config';
 import { useSelector } from 'react-redux';
 import LocalStorage from '../../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';

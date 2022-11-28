@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshControl, TouchableOpacity, View, Text, FlatList, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { LeaveApproved, LeaveRejected } from '../../../services/Leave';
+import { GetAdminLeaveList, LeaveApproved, LeaveRejected } from '../../../services/Leave';
 import { LeaveListStyle } from '../UserScreen/leaves/LeaveListStyle';
 import { CommonStyles } from '../../../common/CommonStyles';
 import { useSelector } from 'react-redux';
@@ -65,9 +65,9 @@ const LeaveList = ({ navigation, route }) => {
         try {
             setprogressVisible(isProgress);
             if (user.UserType == 'admin') {
-                await GetLeaveList(companyId)
+                await GetAdminLeaveList(companyId)
                     .then(res => {
-                        console.log('GetLeaveList', res)
+                        console.log(companyId,'adminGetLeaveList', res)
                         setleaveList(res);
                         setTempList(res);
                         setprogressVisible(false);

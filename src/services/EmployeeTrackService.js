@@ -1,4 +1,4 @@
-import { postApi, getApi } from "./api";
+import { postApi, getApi } from "../Utils/RestClient";
 
 export const CreateTracking = async data => postApi("RtEmployeeTrackingApi/CreateTracking", data);
 export const CreateLeavingReason = async data => postApi("RtEmployeeApi/CreateLeavingReason", data);

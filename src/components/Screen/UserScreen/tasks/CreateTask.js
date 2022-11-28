@@ -7,7 +7,7 @@ import { EmployeeList } from '../../../../services/EmployeeTrackService';
 import Modal from 'react-native-modalbox';
 import moment from "moment"
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { urlDev, urlResource } from '../../../../services/api/config';
+import { urlDev, urlResource } from '../../../../Utils/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Entypo from 'react-native-vector-icons/Entypo'
 import Ionicons from 'react-native-vector-icons/Ionicons'

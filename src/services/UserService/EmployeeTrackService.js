@@ -1,4 +1,4 @@
-import { postApi,  getApi } from "../api";
+import { postApi,  getApi } from "../../Utils/RestClient";
 
 export const CheckIn = async data =>  postApi("attendance/CheckIn",data);
 export const CheckOut = async data =>  postApi("attendance/CheckOut",data);

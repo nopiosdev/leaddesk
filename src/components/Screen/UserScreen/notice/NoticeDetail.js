@@ -8,7 +8,7 @@ import { getNoticedetail } from "../../../../services/UserService/Notice";
 import { NoticeStyle } from "./NoticeStyle"
 import ImageViewer from 'react-native-image-zoom-viewer';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import { urlResource } from '../../../../services/api/config';
+import { urlResource } from '../../../../Utils/config';
 
 const NoticeDetail = ({ navigation, route }) => {
 

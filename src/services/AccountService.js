@@ -1,4 +1,5 @@
-import { postApi, deleteApi, getApi } from "./api";
+import { postApi, deleteApi, getApi } from "../Utils/RestClient";
+
 
 export const GetEmpInfoByUserId = async (userId, date) => getApi("RtEmployeeApi/GetEmpInfo?userId=" + userId + "&date=" + date);
 export const GetEmployeeWithCompanyId = async (companyId) => getApi("employee/GetEmployeeByCompanyId?companyId=" + companyId);
@@ -16,7 +17,6 @@ export const CreateAccount = (UserFullName, PhoneNumber, CompanyName, Password, 
     return postApi("user/Register", data)
 };
 
-export const ChangePasswords = async data => postApi("User/changepassword", data);
 export const ChangePasswordforEmp = async data => postApi("User/resetpassword", data);
 
 export const CreateEmployee = async data => postApi("employee/CreateEmployee", data);

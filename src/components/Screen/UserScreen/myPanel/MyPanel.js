@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Modal from 'react-native-modalbox';
 import Timeline from 'react-native-timeline-flatlist'
-import { googlemapApiForAutoCheckPoint } from '../../../../services/api/config';
+import { googlemapApiForAutoCheckPoint } from '../../../../Utils/config';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -43,7 +43,7 @@ import {
 } from '../../../MenuDrawer/DrawerContent';
 import * as TaskManager from 'expo-task-manager';
 import * as BackgroundFetch from 'expo-background-fetch';
-import { urlDev, urlResource } from '../../../../services/api/config';
+import { urlDev, urlResource } from '../../../../Utils/config';
 import { useSelector } from 'react-redux';
 import LocalStorage from '../../../../common/LocalStorage';
 import CustomImagePicker from '../../../CustomImagePicker';
@@ -160,7 +160,7 @@ const MyPanel = ({ navigation }) => {
     const [DeviceOSVersion, setDeviceOSVersion] = useState(Platform.OS === 'ios' ? Platform.systemVersion : Platform.Version);
     const [CompanyId, setCompanyId] = useState('');
     const [Reason, setReason] = useState('');
-    const [ImageFileName, setImageFileName] = useState('');
+    const [ImageFileName, setImageFileName] = useState(null);
     const [mobile, setmobile] = useState('');
     const [Imageparam, setImageparam] = useState("resourcetracker");
     const [ImageFileId, setImageFileId] = useState(null);
@@ -193,7 +193,7 @@ const MyPanel = ({ navigation }) => {
 
 
 
-    const _takeSelfiePhoto = async () => {
+    const _takeSelfiePhoto = async (statusPoint) => {
         await ImagePicker.getCameraPermissionsAsync()
         await ImagePicker.getMediaLibraryPermissionsAsync();
         let pickerResult = await ImagePicker.launchCameraAsync({
@@ -202,11 +202,11 @@ const MyPanel = ({ navigation }) => {
             width: 250,
         });
         if (pickerResult.cancelled == false) {
-            handleSelfiePhoto(pickerResult)
+            handleSelfiePhoto(pickerResult, statusPoint)
         }
     };
 
-    const handleSelfiePhoto = async (pickerResult) => {
+    const handleSelfiePhoto = async (pickerResult, statusPoint) => {
         let filename = pickerResult?.uri?.split('/')?.pop();
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `image/${match[1]}` : `image`;
@@ -217,31 +217,28 @@ const MyPanel = ({ navigation }) => {
             name: filename,
             type: type
         })
-        setprogressVisible(true);
         upLoadImage(data)
             .then(response => {
-                setprogressVisible(false);
                 console.log('ImagePath', response)
                 if (response?.success) {
-                    _sendToServer(response.image)
+                    _sendToServer(response.image, statusPoint)
                 } else {
                     ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
                 }
             })
             .catch(error => {
-                setprogressVisible(false);
                 console.log("upload error", error);
                 ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
             });
     };
 
-    const _sendToServer = async (fileId) => {
+    const _sendToServer = async (fileId, statusPoint) => {
         var s = await getLocation(Latitude, Longitude);
         setLogLocation(s);
-        console.log(Latitude, 'Latitude', 'Longitude', Longitude, '_sendToServer setLogLocation', s)
-        if (pointcheck == "CheckIn") {
+        console.log('pointcheck,_sendToServer', statusPoint)
+        if (statusPoint == "CheckIn") {
             createCheckingIn(fileId);
-        } else if (pointcheck == "CheckPoint") {
+        } else if (statusPoint == "CheckPoint") {
             createCheckPoint(fileId);
         } else {
             createCheckOut(fileId);
@@ -323,17 +320,17 @@ const MyPanel = ({ navigation }) => {
         }
     }, [])
 
-    const setInterval = () => {
-        var t = getMinute(AutoCheckPointTime);
-        interval = setInterval(() =>
-            getAutoLocation()
-            , 1000 * (t * 60));
-    }
-    const getAutoLocation = async () => {
-        setpointcheck("CheckPoint");
-        if (IsCheckedIn === 1 && IsCheckedOut !== 1) getLocationInfo();
-        console.log('I do not leak!', new Date());
-    }
+    // const SetInterval = () => {
+    //     var t = getMinute(AutoCheckPointTime);
+    //     interval = setInterval(() =>
+    //         getAutoLocation()
+    //         , 1000 * (t * 60));
+    // }
+    // const getAutoLocation = async () => {
+    //     setpointcheck("CheckPoint");
+    //     if (IsCheckedIn === 1 && IsCheckedOut !== 1) getLocationInfo();
+    //     console.log('I do not leak!', new Date());
+    // }
 
     const ClearInterval = () => {
         clearInterval(interval);
@@ -414,8 +411,8 @@ const MyPanel = ({ navigation }) => {
             });
     }
 
-    const getLocationInfo = async () => {
-        console.log('_getLocationAsync')
+    const getLocationInfo = async (statusPoint) => {
+        console.log('_getLocationAsync', Constants.isDevice)
         var that = this;
         //Checking for the permission just after component loaded
         if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -423,13 +420,13 @@ const MyPanel = ({ navigation }) => {
             ToastAndroid.show(errorMessage, ToastAndroid.TOP);
             setprogressVisible(false)
         } else {
-            await _getLocationAsync();
-            setprogressVisible(false);
+        await _getLocationAsync(statusPoint);
+        setprogressVisible(false);
         }
     }
 
 
-    const _getLocationAsync = async () => {
+    const _getLocationAsync = async (statusPoint) => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
             ToastAndroid.show('Permission to access location was denied', ToastAndroid.TOP);
@@ -445,11 +442,11 @@ const MyPanel = ({ navigation }) => {
             const currentLatitude = JSON.stringify(position.coords.latitude);
             setLatitude(currentLatitude);
             setLongitude(currentLongitude);
-            if (pointcheck == "CheckPoint") {
+            console.log('pointcheck', statusPoint)
+            if (statusPoint == "CheckPoint") {
                 _sendCheckpointToServer();
-            }
-            else {
-                _takeSelfiePhoto();
+            } else {
+                _takeSelfiePhoto(statusPoint);
             }
         });
     };
@@ -553,7 +550,6 @@ const MyPanel = ({ navigation }) => {
                 toggle();
                 //  this.getEmpTrackingTodayList();
                 getMyTodayAttendance();
-
                 setprogressVisible(false);
             } else {
                 ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
@@ -603,7 +599,6 @@ const MyPanel = ({ navigation }) => {
     }
 
     const getCheckIn = async () => {
-
         setpointcheck('CheckIn')
         settouchabledisablepointcheckin(true);
         settouchabledisable(true);
@@ -614,8 +609,9 @@ const MyPanel = ({ navigation }) => {
         if (IsCheckedOut !== 1) {
             if (IsCheckedIn !== 1) {
                 setprogressVisible(true);
-                await getLocationInfo();
-            } else {
+                await getLocationInfo('CheckIn');
+            }
+            else {
                 setprogressVisible(false);
                 ToastAndroid.show('You have already checked in today', ToastAndroid.TOP);
             }
@@ -633,7 +629,6 @@ const MyPanel = ({ navigation }) => {
 
         console.log('check for getCheckOut', IsCheckedOut);
 
-        setpointcheck('CheckOut')
         // settouchabledisablepointcheckout(true);
         settouchabledisable(true);
         setprogressVisible(true);
@@ -641,7 +636,7 @@ const MyPanel = ({ navigation }) => {
         if (IsCheckedOut !== 1) {
             if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
                 setprogressVisible(false);
-                await getLocationInfo();
+                await getLocationInfo('CheckOut');
 
             } else {
                 setprogressVisible(false);
@@ -657,7 +652,6 @@ const MyPanel = ({ navigation }) => {
     }
 
     const getCheckPoint = async () => {
-        setpointcheck('CheckPoint')
         settouchabledisablepoint(true);
         settouchabledisable(true);
         setprogressVisible(true);
@@ -670,7 +664,7 @@ const MyPanel = ({ navigation }) => {
         }
         if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
 
-            getLocationInfo();
+            getLocationInfo('CheckPoint');
             // console.log("clicked");
             setprogressVisible(false);
             settouchabledisablepoint(false);
@@ -795,7 +789,7 @@ const MyPanel = ({ navigation }) => {
                         <View
                             style={MyPanelStyle.MainInfoBarTopRow}>
                             <View style={MyPanelStyle.MainInfoBarTopRowLeft}>
-                                {ImageFileName ? (
+                                {ImageFileName && ImageFileName !== 'null' && ImageFileName !== 'undefined' ? (
                                     <Image resizeMode='cover' style={
                                         {
                                             ...Platform.select({
@@ -814,7 +808,6 @@ const MyPanel = ({ navigation }) => {
                                             }),
                                         }
                                     } source={{ uri: urlResource + ImageFileName }} />) :
-
                                     (<Image style={
                                         {
                                             ...Platform.select({
@@ -832,7 +825,8 @@ const MyPanel = ({ navigation }) => {
                                                 },
                                             }),
                                         }
-                                    } resizeMode='contain' source={require('../../../../../assets/images/employee.png')} />)}
+                                    } resizeMode='contain' source={require('../../../../../assets/images/employee.png')} />)
+                                }
                                 <View
                                     style={MyPanelStyle.TextInfoBar}>
                                     <Text style={MyPanelStyle.UserNameTextStyle}>
@@ -860,7 +854,6 @@ const MyPanel = ({ navigation }) => {
                         </View>
                     </View>
                     <View>
-
                         {renderTimeStatusList()}
                     </View>
                     <View
@@ -1018,7 +1011,7 @@ const MyPanel = ({ navigation }) => {
                         >
                         </TextInput> */}
                         <TextInput
-                            style={{ height: 40, margin: 15, padding: 5,  backgroundColor: "#f1f4f6", borderRadius: 10, }}
+                            style={{ height: 40, margin: 15, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
                             value={EmployeeName}
                             placeholder="Employee Name"
                             placeholderTextColor="#dee1e5"

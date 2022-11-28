@@ -23,7 +23,7 @@ import { Modal as Modal1 } from 'react-native';
 import moment from "moment";
 import { CommonStyles } from '../../../common/CommonStyles';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Entypo from 'react-native-vector-icons/Entypo'
 
@@ -302,7 +302,7 @@ const CreateTask = ({ navigation, route }) => {
                 navigation={navigation}
                 goBack={true}
                 onPress={() => { navigation.goBack() }}
-                btnAction={() => goToCsaveTaskreateTask()}
+                btnAction={() => saveTask()}
                 btnTitle='POST'
                 saveImg={true}
             />           

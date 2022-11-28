@@ -1,4 +1,4 @@
-import { postApi, getApi } from "../api";
+import { postApi, getApi } from "../../Utils/RestClient";
 
 export const createLeave = async data => postApi("leave/CreateLeave", data);
 

@@ -19,8 +19,8 @@ import {
 import Iconic from 'react-native-vector-icons/Feather'
 import { CommonStyles } from '../../../common/CommonStyles';
 import { GetEmployeeWithCompanyId } from "../../../services/AccountService";
-import { urlDev, urlResource } from '../../../services/api/config';
-import { googlemapApiForAutoCheckPoint } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
+import { googlemapApiForAutoCheckPoint } from '../../../Utils/config';
 import * as Location from 'expo-location';
 import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-import { postApi, getApi } from "./api";
+import { postApi, getApi } from "../Utils/RestClient";
 
 //export const CreateCompany = async data =>  postApi("RtCompanyApi/Save", {}, data);
 

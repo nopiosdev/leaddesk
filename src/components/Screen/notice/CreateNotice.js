@@ -8,7 +8,7 @@ import {
 } from '@expo/vector-icons'
 import _ from "lodash";
 import ImageViewer from 'react-native-image-zoom-viewer';
-import { urlDev, urlResource } from '../../../services/api/config';
+import { urlDev, urlResource } from '../../../Utils/config';
 import Entypo from 'react-native-vector-icons/Entypo'
 import { CommonStyles } from '../../../common/CommonStyles';
 import { NoticeStyle } from './NoticeStyle';

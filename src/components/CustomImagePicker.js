@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { NoticeStyle } from './Screen/notice/NoticeStyle';
 import LocalStorage from '../common/LocalStorage';
 import axios from 'axios';
-import { urlResource } from '../services/api/config';
+import { urlResource } from '../Utils/config';
 import { upLoadImage } from '../services/TaskService';
 
 const width = Dimensions.get('window').width;
