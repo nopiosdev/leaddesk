@@ -135,8 +135,6 @@ const MyPanel = ({ navigation }) => {
     const [ImageFileId, setImageFileId] = useState(null);
     const [EmployeeId, setEmployeeId] = useState(null);
     const [data, setdata] = useState([]);
-    const [currentLongitude, setcurrentLongitude] = useState('unknown');
-    const [currentLatitude, setcurrentLatitude] = useState('unknown');
     const [pointcheck, setpointcheck] = useState('');
     const [fetchDate, setfetchDate] = useState(null);
     const [status, setstatus] = useState(null);
@@ -372,13 +370,12 @@ const MyPanel = ({ navigation }) => {
     const getLocationInfo = async (statusPoint) => {
         var that = this;
         //Checking for the permission just after component loaded
-        if (Platform.OS === 'android' && !Constants.isDevice) {
-            seterrorMessage('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
-            ToastAndroid.show(errorMessage, ToastAndroid.TOP);
-            setprogressVisible(false)
-        } else {
-            await _getLocationAsync(statusPoint);
-        }
+        // if (Platform.OS === 'android' && !Constants.isDevice) {
+        //     ToastAndroid.show('Oops, this will not work on Sketch in an Android emulator. Try it on your device!', ToastAndroid.TOP);
+        //     setprogressVisible(false)
+        // } else {
+        await _getLocationAsync(statusPoint);
+        // }
     }
 
 
@@ -401,7 +398,7 @@ const MyPanel = ({ navigation }) => {
             if (statusPoint == "CheckPoint") {
                 _sendCheckpointToServer();
             } else {
-                _takeSelfiePhoto(statusPoint, currentLongitude, currentLatitude);
+                _takeSelfiePhoto(statusPoint, currentLatitude, currentLongitude);
             }
         });
     };
@@ -795,7 +792,7 @@ const MyPanel = ({ navigation }) => {
                     <View
                         style={MyPanelStyle.ButtonBar}>
                         <TouchableOpacity
-                            disabled={IsCheckedIn === 1 ? true : false}
+                            // disabled={IsCheckedIn === 1 ? true : false}
                             onPress={() => getCheckIn()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -806,7 +803,7 @@ const MyPanel = ({ navigation }) => {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            disabled={IsCheckedIn === 1 && IsCheckedOut !== 1 ? true : false}
+                            // disabled={IsCheckedIn === 1 && IsCheckedOut !== 1 ? true : false}
                             onPress={() => getCheckPoint()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -816,7 +813,7 @@ const MyPanel = ({ navigation }) => {
                             </Image>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            disabled={IsCheckedOut === 1 ? true : false}
+                            // disabled={IsCheckedOut === 1 ? true : false}
                             onPress={() => getCheckOut()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image

@@ -57,7 +57,6 @@ const LiveTracking = ({ navigation, route }) => {
     const isFocused = useIsFocused();
     let mapView = null;
 
-    const user = useSelector((state) => state.user.currentUser);
 
     useEffect(() => {
         (async () => {
@@ -118,22 +117,20 @@ const LiveTracking = ({ navigation, route }) => {
     const getEmpTrackInfo = async (selectedVal) => {
         try {
             setmarkers([]);
-            console.log('selctedEmployeeValue', selectedVal)
-
-            if (selectedVal) {
+            if (selectedVal === 'All Employee') {
                 await GetMovementDetailsAll(companyId)
                     .then(res => {
                         setEmpTrackList(res)
                         var markerlist = [];
-                        console.log('GetMovementDetailsAll')
+                        console.log('GetMovementDetailsAll',res)
                         if (res?.length > 0) {
                             res?.map((userData, index) => {
                                 var title = '';
                                 var color = '';
-                                if (userData.IsCheckInPoint) {
+                                if (userData?.IsCheckInPoint) {
                                     title = "Checked In";
                                     color = 'green';
-                                } else if (userData.IsCheckOutPoint) {
+                                } else if (userData?.IsCheckOutPoint) {
                                     title = "Checked Out";
                                     color = 'red';
                                 } else {
@@ -141,12 +138,12 @@ const LiveTracking = ({ navigation, route }) => {
                                     color = 'yellow';
                                 }
                                 var newMarkerObj = {
-                                    "title": userData.UserName + " " + title + " " + (index + 1),
-                                    "description": userData.LogLocation,
+                                    "title": userData?.UserName + " " + title + " " + (index + 1),
+                                    "description": userData?.LogLocation,
                                     "color": color,
                                     coordinates: {
-                                        "latitude": Number(userData.Latitude),
-                                        "longitude": Number(userData.Longitude)
+                                        "latitude": Number(userData?.Latitude),
+                                        "longitude": Number(userData?.Longitude)
                                     },
                                 }
                                 markerlist.push(newMarkerObj);
@@ -164,18 +161,18 @@ const LiveTracking = ({ navigation, route }) => {
                         console.log(ex, "GetMovementDetails error occured");
                     });
             } else {
-                await GetMovementDetails(slectedEmployeeId)
+                await GetMovementDetails(selectedVal?.UserId)
                     .then(res => {
-                        console.log('GetMovementDetails')
+                        console.log(selectedVal, 'GetMovementDetails', res)
                         setEmpTrackList(res);
                         var markerlist = [];
                         res?.map((userData, index) => {
                             var title = '';
                             var color = '';
-                            if (userData.IsCheckInPoint) {
+                            if (userData?.IsCheckInPoint) {
                                 title = "Checked In";
                                 color = 'green';
-                            } else if (userData.IsCheckOutPoint) {
+                            } else if (userData?.IsCheckOutPoint) {
                                 title = "Checked Out";
                                 color = 'red';
                             } else {
@@ -184,11 +181,11 @@ const LiveTracking = ({ navigation, route }) => {
                             }
                             var newMarkerObj = {
                                 "title": title + " " + (index + 1),
-                                "description": userData.LogLocation,
+                                "description": userData?.LogLocation,
                                 "color": color,
                                 coordinates: {
-                                    "latitude": Number(userData.Latitude),
-                                    "longitude": Number(userData.Longitude)
+                                    "latitude": Number(userData?.Latitude),
+                                    "longitude": Number(userData?.Longitude)
                                 },
                             }
                             markerlist.push(newMarkerObj);
@@ -212,9 +209,9 @@ const LiveTracking = ({ navigation, route }) => {
     const closeEmployeeModal = async (item) => {
         setemployeeModal(false);
         if (item?.UserName) {
-            setselctedEmployeeValue(item?.UserName);
             setslectedEmployeeId(item.UserId);
-            getEmpTrackInfo(item?.UserName);
+            setselctedEmployeeValue(item?.UserName);
+            getEmpTrackInfo(item);
         } else {
             setselctedEmployeeValue(item);
             getEmpTrackInfo(item);
@@ -236,7 +233,7 @@ const LiveTracking = ({ navigation, route }) => {
 
 
     const onReady = (result) => {
-        mapView.fitToCoordinates(result.coordinates, {
+        mapView?.fitToCoordinates(result?.coordinates, {
             edgePadding: {
                 right: (width / 20),
                 bottom: (height / 20),
@@ -251,6 +248,7 @@ const LiveTracking = ({ navigation, route }) => {
     const onError = (errorMessage) => {
         console.log(errorMessage);
     }
+    console.log('selctedEmployeeValue',selctedEmployeeValue)
     const renderMapView = () => {
         return (
             <View style={{
@@ -286,7 +284,7 @@ const LiveTracking = ({ navigation, route }) => {
                                 description={marker.description}
                             />
                         ))}
-                        {selctedEmployeeValue != "All Employee" && markers.length > 1 ?
+                        {(selctedEmployeeValue != "All Employee" && markers.length > 1) ?
                             <MapViewDirections
                                 origin={markers[0]?.coordinates}
                                 destination={markers[markers.length - 1]?.coordinates}
