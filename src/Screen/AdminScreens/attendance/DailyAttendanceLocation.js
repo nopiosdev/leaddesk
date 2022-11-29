@@ -44,13 +44,13 @@ const DailyAttendanceLocation = ({ navigation }) => {
     const [svgLinHeight, setsvgLinHeight] = useState(null);
     const user = useSelector((state) => state.user.currentUser);
     const dispatch = useDispatch();
-    const clientId = useSelector((state) => state.user.clientId);
+    const selectedEmp = useSelector((state) => state.user.selectedEmp);
     const isFocused = useIsFocused();
 
     const Call = () => {
         //handler to make a call
         const args = {
-            number: user.PhoneNumber,
+            number: selectedEmp.PhoneNumber,
             prompt: false,
         };
         call(args).catch(console.error);
@@ -60,23 +60,14 @@ const DailyAttendanceLocation = ({ navigation }) => {
         (async () => {
             getEmpTrackInfo();
             getEmpInfo();
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
 
-    const handleBackButton = () => {
-        navigation.navigate('DailyAttendance');
-        return true;
-    }
-    console.log('clientId', clientId)
     const getEmpTrackInfo = async () => {
         setrefreshing(true);
         try {
-            await GetMovementDetails(clientId)
+            await GetMovementDetails(selectedEmp?.UserId)
                 .then(res => {
                     console.log('movement details', res)
                     if (!res?.success && res?.success !== false) {
@@ -138,13 +129,13 @@ const DailyAttendanceLocation = ({ navigation }) => {
     const getEmpInfo = async () => {
         try {
 
-            await GetMyTodayAttendance(clientId)
+            await GetMyTodayAttendance(selectedEmp?.UserId)
                 .then(res => {
                     if (res) {
                         setEmployeeName(res?.EmployeeName);
                         setDepartmentName(res?.DepartmentName);
                         setDesignation(res?.Designation);
-                        dispatch(updateUserEmployee(res?.EmployeeName));
+                        // dispatch(updateUserEmployee(res?.EmployeeName));
                     }
                 })
                 .catch(() => {
@@ -186,7 +177,7 @@ const DailyAttendanceLocation = ({ navigation }) => {
             <View style={{
                 flexDirection: 'column'
             }}>
-                <View style={{ margin: 10 }}>
+                <View style={{  }}>
                     <MapView
 
                         provider={PROVIDER_GOOGLE}
@@ -227,7 +218,7 @@ const DailyAttendanceLocation = ({ navigation }) => {
                 title={EmployeeName}
                 navigation={navigation}
                 goBack={true}
-                onPress={() => { goBack() }}
+                onPress={() => { navigation.goBack() }}
                 makeCall={Call}
             />
             {refreshing ? <ActivityIndicator size="large" color="#1B7F67"

@@ -23,6 +23,8 @@ import { setSelectedEmployee, updateUserEmployee, updateUserPhone } from '../../
 import { useIsFocused } from '@react-navigation/native';
 import CustomTimeLine from '../../../components/CustomTimeLine';
 import Header from '../../../components/Header';
+import EmptyScreen from '../../../components/EmptyScreen';
+import { Feather } from '@expo/vector-icons';
 
 
 
@@ -60,11 +62,11 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
             await getEmpTrackInfo();
             await getEmpInfo();
             // dispatch(updateUserPhone(paramsData?.aItem?.PhoneNumber))
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+            // BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })()
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
+        // return () => {
+        //     BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        // }
     }, [isFocused])
 
 
@@ -121,19 +123,19 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
     }
 
     const goBack = () => {
-        navigation.navigate('DailyAttendance')
+        // navigation.navigate('DailyAttendance')
     };
 
     const getEmpInfo = async () => {
         try {
 
-            await GetMyTodayAttendance(clientId)
+            await GetMyTodayAttendance(selectedEmp?.UserId)
                 .then(res => {
                     console.log("getEmpInfo", res);
                     setEmployeeName(res?.EmployeeName);
                     setDepartmentName(res?.DepartmentName);
                     setDesignation(res?.Designation);
-                    dispatch(updateUserEmployee(res?.EmployeeName))
+                    // dispatch(updateUserEmployee(res?.EmployeeName))
                 })
                 .catch(() => {
                     console.log("error occured");
@@ -160,10 +162,10 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
                 title={EmployeeName}
                 navigation={navigation}
                 goBack={true}
-                onPress={() => { goBack() }}
+                onPress={() => { navigation.goBack() }}
                 makeCall={makeCall}
             />
-            <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} >
+            {!refreshing ? data?.length > 0 ? <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} >
                 <View
                     style={{
                         flexDirection: 'column',
@@ -171,12 +173,18 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
                     }}>
                     <View style={{ backgroundColor: '#ffffff' }}>
                         <View style={{ flexDirection: 'column' }}>
-                            {!refreshing ? data?.length > 0 ? renderTrackList() : <View style={{ width: '100%', padding: 10 }}><Text style={{ textAlign: 'center' }}>No Activities Found!</Text></View> : <ActivityIndicator />}
+                            {renderTrackList()}
                         </View>
                     </View>
                 </View>
-            </ScrollView>
-
+            </ScrollView >
+                :
+                    <EmptyScreen
+                        title={"This employee has no activity!"}
+                        description="This section will list the activities made for this employee."
+                        icon={<Feather color="#6f9fc9" name="activity" size={Dimensions.get('window').width * 0.3} />}
+                    />
+                : <ActivityIndicator />}
         </View >
     );
 }

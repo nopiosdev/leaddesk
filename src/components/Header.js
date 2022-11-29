@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, BackHandler } from 'react-native'
 import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
@@ -7,8 +7,9 @@ import { CommonStyles } from '../common/CommonStyles';
 import Iconic from 'react-native-vector-icons/Feather'
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 
-const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, btnTitle, btnAction, saveImg, deleteAction,btnContainerStyle,btnStyle }) => {
+const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, btnTitle, btnAction, saveImg, deleteAction, btnContainerStyle, btnStyle }) => {
 
     const [showMenu, setShowMenu] = useState(false);
 
@@ -16,9 +17,25 @@ const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, b
         setShowMenu(false);
         deleteAction();
     }
+
+    useFocusEffect(() => {
+        const onBackPress = () => {
+            if (onPress) {
+                onPress();
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+        return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    });
+
     return (
         <>
-            <View style={CommonStyles.HeaderContent}>
+            <View style={[CommonStyles.HeaderContent, { marginBottom: 10 }]}>
                 <View style={CommonStyles.HeaderFirstView}>
                     <TouchableOpacity
                         style={CommonStyles.HeaderMenuicon}
@@ -76,14 +93,14 @@ const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, b
                         <TouchableOpacity
                             onPress={btnAction}
                             style={CommonStyles.createTaskButtonTouch}>
-                            <View style={[CommonStyles.plusButton,btnStyle]}>
+                            <View style={[CommonStyles.plusButton, btnStyle]}>
                                 {saveImg ?
                                     <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" /> :
                                     <FontAwesome
                                         name="plus" size={Platform.OS === 'ios' ? 16.6 : 18} color="#ffffff">
                                     </FontAwesome>}
                             </View>
-                            <View style={[CommonStyles.ApplyTextButton,btnContainerStyle]}>
+                            <View style={[CommonStyles.ApplyTextButton, btnContainerStyle]}>
                                 <Text style={CommonStyles.ApplyButtonText}>
                                     {btnTitle}
                                 </Text>

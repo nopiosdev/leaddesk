@@ -18,12 +18,12 @@ export const userSlice = createSlice({
         addUser(state, action) {
             state.currentUser = action.payload
         },
-        updateUserPhone(state, action) {
-            state.currentUser.PhoneNumber = action.payload
-        },
-        updateUserEmployee(state, action) {
-            state.currentUser.aItemEmployeeName = action.payload
-        },
+        // updateUserPhone(state, action) {
+        //     state.currentUser.PhoneNumber = action.payload
+        // },
+        // updateUserEmployee(state, action) {
+        //     state.currentUser.aItemEmployeeName = action.payload
+        // },
         removeUser(state, action) {
             state.currentUser = {}
         },

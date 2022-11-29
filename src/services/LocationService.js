@@ -1,4 +1,5 @@
 import * as Location from 'expo-location';
+import { googlemapApiForAutoCheckPoint } from '../Utils/config';
 
 export const getLocation = async (currentLatitude, currentLongitude) => {
 

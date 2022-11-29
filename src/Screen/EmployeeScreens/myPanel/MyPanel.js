@@ -68,9 +68,6 @@ const createCheckPoint = async (Latitude, Longitude, loglocation) => {
         data.append('DeviceOSVersion', Platform.OS === 'ios' ? Platform.systemVersion : Platform.Version);
         data.append('companyId', comIdd);
 
-        console.log("TrackingModel response", data)
-
-
         const response = await CheckPoint(data);
         if (response && response.success) {
             console.log("createCheckPoint response", response)
@@ -140,7 +137,6 @@ const MyPanel = ({ navigation }) => {
     const [data, setdata] = useState([]);
     const [currentLongitude, setcurrentLongitude] = useState('unknown');
     const [currentLatitude, setcurrentLatitude] = useState('unknown');
-    const [myApiKey, setmyApiKey] = useState("AIzaSyAuojF8qZ_EOF1uLSddHckbEAKtbbwA2uY");
     const [pointcheck, setpointcheck] = useState('');
     const [fetchDate, setfetchDate] = useState(null);
     const [status, setstatus] = useState(null);
@@ -172,6 +168,7 @@ const MyPanel = ({ navigation }) => {
             allowsEditing: true,
             height: 250,
             width: 250,
+            quality: 0.1
         });
         if (pickerResult.cancelled == false) {
             handleSelfiePhoto(pickerResult, statusPoint, Latd, Logtd)
@@ -191,7 +188,6 @@ const MyPanel = ({ navigation }) => {
         })
         upLoadImage(data)
             .then(response => {
-                console.log('ImagePath', response)
                 if (response?.success) {
                     _sendToServer(response.image, statusPoint, Latd, Logtd)
                 } else {
@@ -205,15 +201,15 @@ const MyPanel = ({ navigation }) => {
     };
 
     const _sendToServer = async (fileId, statusPoint, Latd, Logtd) => {
-        var s = await getLocation(Latd, Logtd);
-        setLogLocation(s);
-        console.log(s, 'getLocation', Latd, Logtd)
+        var loaction = await getLocation(Latd, Logtd);
+        setLogLocation(loaction);
+        console.log(loaction, 'getLocation', Latd, Logtd)
         if (statusPoint == "CheckIn") {
-            createCheckingIn(fileId, Latd, Logtd);
+            createCheckingIn(fileId, Latd, Logtd, loaction);
         } else if (statusPoint == "CheckPoint") {
-            createCheckPoint(Latd, Logtd);
+            createCheckPoint(Latd, Logtd, loaction);
         } else {
-            createCheckOut(fileId, Latd, Logtd);
+            createCheckOut(fileId, Latd, Logtd, loaction);
         }
     }
 
@@ -228,7 +224,7 @@ const MyPanel = ({ navigation }) => {
     }
 
     const updateEmployeeRecords = async () => {
-
+        console.log('ImageFileName', ImageFileName, 'ImageFileId', ImageFileId)
         var data = new FormData();
         data.append('UserFullName', EmployeeName);
         data.append('EmployeeCode', EmployeeCode);
@@ -238,7 +234,7 @@ const MyPanel = ({ navigation }) => {
         data.append('ImageFileId', ImageFileId);
         data.append('AutoCheckPointTime', AutoCheckPointTime);
         data.append('IsAutoCheckPoint', IsAutoCheckPoint);
-        data.append('IsActive', null);
+        data.append('IsActive', 1);
 
 
 
@@ -277,7 +273,6 @@ const MyPanel = ({ navigation }) => {
 
         (async () => {
             const comId = await LocalStorage.GetData("companyId");
-            console.log(user);
             setEmployeeName(user?.UserFullName);
             setmobile(user?.PhoneNumber);
             //setgmail(user?.Email);
@@ -313,11 +308,9 @@ const MyPanel = ({ navigation }) => {
     }
 
     const getMyTodayAttendance = async () => {
-
         setprogressVisible(true);
         await GetMyTodayAttendance(user?.Id)
             .then(res => {
-                console.log('GetMyTodayAttendance', res)
                 if (!res?.success && res?.success !== false) {
                     setattendanceModel(res);
                     setEmployeeCode(res?.EmployeeCode);
@@ -341,7 +334,6 @@ const MyPanel = ({ navigation }) => {
         await GetMovementDetails(user?.Id)
             .then(res => {
                 setdata([]);
-                console.log('GetMovementDetails', res)
                 if (!res?.success && res?.success !== false) {
 
                     setEmpTrackList(res);
@@ -378,16 +370,15 @@ const MyPanel = ({ navigation }) => {
     }
 
     const getLocationInfo = async (statusPoint) => {
-        console.log('_getLocationAsync', Constants.isDevice)
         var that = this;
         //Checking for the permission just after component loaded
-        // if (Platform.OS === 'android' && !Constants.isDevice) {
-        //     seterrorMessage('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
-        //     ToastAndroid.show(errorMessage, ToastAndroid.TOP);
-        //     setprogressVisible(false)
-        // } else {
-        await _getLocationAsync(statusPoint);
-        // }
+        if (Platform.OS === 'android' && !Constants.isDevice) {
+            seterrorMessage('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
+            ToastAndroid.show(errorMessage, ToastAndroid.TOP);
+            setprogressVisible(false)
+        } else {
+            await _getLocationAsync(statusPoint);
+        }
     }
 
 
@@ -407,7 +398,6 @@ const MyPanel = ({ navigation }) => {
             const currentLatitude = JSON.stringify(position.coords.latitude);
             setLatitude(currentLatitude);
             setLongitude(currentLongitude);
-            console.log('pointcheck', statusPoint)
             if (statusPoint == "CheckPoint") {
                 _sendCheckpointToServer();
             } else {
@@ -463,13 +453,13 @@ const MyPanel = ({ navigation }) => {
         return <CustomTimeLine data={data} />
     }
 
-    const createCheckingIn = async (fileId, Latd, Logtd) => {
+    const createCheckingIn = async (fileId, Latd, Logtd, loaction) => {
         try {
             var data = new FormData();
             data.append('Latitude', Latd);
             data.append('Longitude', Logtd);
             data.append('userId', user?.Id);
-            data.append('LogLocation', LogLocation ? LogLocation : '');
+            data.append('LogLocation', loaction);
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
@@ -495,7 +485,7 @@ const MyPanel = ({ navigation }) => {
         }
     }
 
-    const createCheckPoint = async (Latd, Logtd) => {
+    const createCheckPoint = async (Latd, Logtd, loaction) => {
         try {
             setprogressVisible(true);
 
@@ -503,7 +493,7 @@ const MyPanel = ({ navigation }) => {
             data.append('Latitude', Latd);
             data.append('Longitude', Logtd);
             data.append('userId', user?.Id);
-            data.append('LogLocation', LogLocation ? LogLocation : '');
+            data.append('LogLocation', loaction);
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
@@ -526,14 +516,14 @@ const MyPanel = ({ navigation }) => {
         }
     }
 
-    const createCheckOut = async (fileId, Latd, Logtd) => {
+    const createCheckOut = async (fileId, Latd, Logtd, loaction) => {
         try {
 
             var data = new FormData();
             data.append('Latitude', Latd);
             data.append('Longitude', Logtd);
             data.append('userId', user?.Id);
-            data.append('LogLocation', LogLocation ? LogLocation : '');
+            data.append('LogLocation', loaction);
             data.append('DeviceName', '');
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
@@ -567,30 +557,21 @@ const MyPanel = ({ navigation }) => {
         setpointcheck('CheckIn')
         settouchabledisablepointcheckin(true);
         settouchabledisable(true);
-        console.log('check for getCheckIn', IsCheckedIn);
-
-
         if (IsCheckedOut !== 1) {
             if (IsCheckedIn !== 1) {
                 await getLocationInfo('CheckIn');
             }
             else {
                 ToastAndroid.show('You have already checked in today', ToastAndroid.TOP);
+                settouchabledisablepointcheckin(false);
             }
         } else {
             ToastAndroid.show('You have already checked out today', ToastAndroid.TOP);
+            settouchabledisablepointcheckin(false);
         }
-        settouchabledisablepointcheckin(false);
-
-        // } else {
-        //     ToastAndroid.show("No Internet Detected", ToastAndroid.TOP);
-        // }
     }
     const getCheckOut = async () => {
-
-        console.log('check for getCheckOut', IsCheckedOut);
-
-        // settouchabledisablepointcheckout(true);
+        settouchabledisablepointcheckout(true);
         settouchabledisable(true);
         setprogressVisible(true);
 
@@ -598,7 +579,6 @@ const MyPanel = ({ navigation }) => {
             if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
                 setprogressVisible(false);
                 await getLocationInfo('CheckOut');
-
             } else {
                 setprogressVisible(false);
                 settouchabledisablepointcheckout(false);
@@ -611,25 +591,20 @@ const MyPanel = ({ navigation }) => {
         }
 
     }
-
     const getCheckPoint = async () => {
         settouchabledisablepoint(true);
         settouchabledisable(true);
         setprogressVisible(true);
 
-        console.log('check for getCheckPoint', IsCheckedIn);
         if (IsCheckedOut === 1) {
             setprogressVisible(false);
             settouchabledisablepoint(false);
             return ToastAndroid.show('You have already checked out today', ToastAndroid.TOP);
         }
         if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
-
             getLocationInfo('CheckPoint');
-            // console.log("clicked");
             setprogressVisible(false);
             settouchabledisablepoint(false);
-
         } else {
             setprogressVisible(false);
             ToastAndroid.show('You have not checked in today', ToastAndroid.TOP);
@@ -820,7 +795,7 @@ const MyPanel = ({ navigation }) => {
                     <View
                         style={MyPanelStyle.ButtonBar}>
                         <TouchableOpacity
-                            disabled={touchabledisablepointcheckin}
+                            disabled={IsCheckedIn === 1 ? true : false}
                             onPress={() => getCheckIn()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -831,7 +806,7 @@ const MyPanel = ({ navigation }) => {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            disabled={touchabledisablepoint}
+                            disabled={IsCheckedIn === 1 && IsCheckedOut !== 1 ? true : false}
                             onPress={() => getCheckPoint()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -841,7 +816,7 @@ const MyPanel = ({ navigation }) => {
                             </Image>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            disabled={touchabledisablepointcheckout}
+                            disabled={IsCheckedOut === 1 ? true : false}
                             onPress={() => getCheckOut()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -901,46 +876,53 @@ const MyPanel = ({ navigation }) => {
                         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
                             EDIT PROFILE
                         </Text>
-                        {image == null ? (ImageFileName ? (<Image style={{
-                            ...Platform.select({
-                                ios: {
-                                    width: 60, height: 60, borderRadius: 50
-                                },
-                                android: {
-                                    width: 60,
-                                    height: 60,
-                                    marginVertical: 12,
-                                    borderRadius: 50,
-                                    alignSelf: 'center'
-                                },
-                            }),
-                        }} resizeMode='cover' source={{ uri: urlResource + ImageFileName }} />) : (<Image style={{
-                            ...Platform.select({
-                                ios: {
-                                    width: 60, height: 60, borderRadius: 50
-                                },
-                                android: {
-                                    width: 100,
-                                    height: 100,
-                                    marginVertical: 12,
-                                    borderRadius: 50,
-                                    alignSelf: 'center'
-                                },
-                            }),
-                        }} resizeMode='contain' source={require('../../../../assets/images/employee.png')} />)) : (<Image style={{
-                            ...Platform.select({
-                                ios: {
-                                    width: 60, height: 60, borderRadius: 50
-                                },
-                                android: {
-                                    width: 60,
-                                    height: 60,
-                                    marginVertical: 12,
-                                    borderRadius: 600,
-                                    alignSelf: 'center'
-                                },
-                            }),
-                        }} resizeMode='contain' source={{ uri: image }} />)}
+                        {image ?
+                            <Image style={{
+                                ...Platform.select({
+                                    ios: {
+                                        width: 60, height: 60, borderRadius: 50
+                                    },
+                                    android: {
+                                        width: 60,
+                                        height: 60,
+                                        marginVertical: 12,
+                                        borderRadius: 600,
+                                        alignSelf: 'center'
+                                    },
+                                }),
+                            }} resizeMode='contain' source={{ uri: image }} />
+                            :
+                            (ImageFileName && ImageFileName !== 'null') ?
+                                <Image style={{
+                                    ...Platform.select({
+                                        ios: {
+                                            width: 60, height: 60, borderRadius: 50
+                                        },
+                                        android: {
+                                            width: 60,
+                                            height: 60,
+                                            marginVertical: 12,
+                                            borderRadius: 50,
+                                            alignSelf: 'center'
+                                        },
+                                    }),
+                                }} resizeMode='cover' source={{ uri: urlResource + ImageFileName }} />
+                                :
+                                <Image style={{
+                                    ...Platform.select({
+                                        ios: {
+                                            width: 60, height: 60, borderRadius: 50
+                                        },
+                                        android: {
+                                            width: 100,
+                                            height: 100,
+                                            marginVertical: 12,
+                                            borderRadius: 50,
+                                            alignSelf: 'center'
+                                        },
+                                    }),
+                                }} resizeMode='contain' source={require('../../../../assets/images/employee.png')} />
+                        }
 
                     </View>
 
@@ -961,16 +943,6 @@ const MyPanel = ({ navigation }) => {
                         (<ActivityIndicator size="large" color="#1B7F67"
                             style={MyPanelStyle.loaderIndicator} />) : null}
                     <View style={{ width: "100%" }}>
-
-                        {/* <TextInput
-                            style={{ height: 40, margin: 15, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
-                            value={EmployeeCode}
-                            placeholder="Employee Code"
-                            placeholderTextColor="#dee1e5"
-                            autoCapitalize="none"
-                            onChangeText={text => setEmployeeCode(text)}
-                        >
-                        </TextInput> */}
                         <TextInput
                             style={{ height: 40, margin: 15, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
                             value={EmployeeName}
@@ -993,10 +965,11 @@ const MyPanel = ({ navigation }) => {
                         <TextInput
                             style={{ height: 40, margin: 10, marginTop: 0, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
                             value={Designation}
-                            placeholder="Gmail"
+                            placeholder="Email"
                             placeholderTextColor="#dee1e5"
                             autoCapitalize="none"
                             onChangeText={text => setDesignation(text)}
+                            onSubmitEditing={() => closeModalEditProfile()}
                         >
                         </TextInput>
                     </View>

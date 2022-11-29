@@ -23,7 +23,7 @@ const UserSpecificTasks = ({ navigation }) => {
     const [tempList, setTempList] = useState([]);
     const [search, setSearch] = useState(null);
     const user = useSelector((state) => state.user.currentUser);
-    const client = useSelector((state) => state.user.clientId);
+    const selectedEmp = useSelector((state) => state.user.selectedEmp);
     const isFocused = useIsFocused();
 
     const _onRefresh = async () => {
@@ -33,12 +33,12 @@ const UserSpecificTasks = ({ navigation }) => {
 
         }, 2000);
 
-        getTaskList(client, false);
+        getTaskList(false);
     };
     const Call = () => {
         //handler to make a call
         const args = {
-            number: client?.PhoneNumber,
+            number: selectedEmp?.PhoneNumber,
             prompt: false,
         };
         call(args).catch(console.error);
@@ -46,7 +46,7 @@ const UserSpecificTasks = ({ navigation }) => {
 
     useEffect(() => {
         (async () => {
-            getTaskList(client?.UserId, true);
+            getTaskList(true);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
         return () => {
@@ -73,10 +73,10 @@ const UserSpecificTasks = ({ navigation }) => {
         }
     };
 
-    const getTaskList = async (userId, isProgress) => {
+    const getTaskList = async (isProgress) => {
         try {
             setprogressVisible(isProgress);
-            await GetRelatedToMeTasks(clientId)
+            await GetRelatedToMeTasks(selectedEmp?.UserId)
                 .then(res => {
                     console.log('RESPONSE', res)
                     settaskList(res);
@@ -107,7 +107,7 @@ const UserSpecificTasks = ({ navigation }) => {
         <View
             style={TaskStyle.container}>
             <Header
-                title={user.aItemEmployeeName}
+                title={selectedEmp?.EmployeeName}
                 navigation={navigation}
                 goBack={true}
                 onPress={() => { handleBackButton() }}

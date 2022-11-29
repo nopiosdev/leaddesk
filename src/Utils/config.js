@@ -13,6 +13,3 @@ export default {
   interstitialUnitId: "",
   rewardedUnitId: ""
 };
-
-// empPass=HzO6wI
-// ph no:852147963

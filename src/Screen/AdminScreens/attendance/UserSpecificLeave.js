@@ -21,7 +21,7 @@ const UserSpecificLeave = ({ navigation }) => {
     const [search, setsearch] = useState('');
     const user = useSelector((state) => state.user.currentUser);
     const [tempList, settempList] = useState([]);
-    const clientId = useSelector((state) => state.user.clientId);
+    const selectedEmp = useSelector((state) => state.user.selectedEmp);
 
     const _onRefresh = async () => {
         setrefreshing(true);
@@ -47,7 +47,7 @@ const UserSpecificLeave = ({ navigation }) => {
     const Call = () => {
         //handler to make a call
         const args = {
-            number: user?.PhoneNumber,
+            number: selectedEmp?.PhoneNumber,
             prompt: false,
         };
         call(args).catch(console.error);
@@ -75,7 +75,7 @@ const UserSpecificLeave = ({ navigation }) => {
     const getLeaveList = async (isProgress) => {
         try {
             setprogressVisible(isProgress);
-            await GetUserLeaves(clientId)
+            await GetUserLeaves(selectedEmp?.UserId)
                 .then(res => {
                     setleaveList(res);
                     console.log('leaveresultlist.............', res)
@@ -126,7 +126,7 @@ const UserSpecificLeave = ({ navigation }) => {
     return (
         <View style={LeaveListStyle.container}>
             <Header
-                title={user.aItemEmployeeName}
+                title={selectedEmp?.EmployeeName}
                 navigation={navigation}
                 goBack={true}
                 onPress={() => { handleBackButton() }}
