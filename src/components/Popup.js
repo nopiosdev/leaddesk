@@ -1,35 +1,39 @@
 import React, { useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Dimensions } from 'react-native'
 import { Portal, Dialog, Paragraph, Button } from 'react-native-paper';
 import * as Update from 'expo-updates';
+import CustomButton from './CustomButton';
 
+
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 const Popup = ({ show, onPress, description, connectBtn, title }) => {
 
 
     return (
         <>
-            <View style={styles.mainContainer}>
-                <Portal>
-                    <Dialog visible={show} onDismiss={onPress} style={{ marginTop: height * 0.80, width: '100%', alignItems: 'center', marginHorizontal: 0, marginBottom: 0, }}>
-                        <>
-                            <View style={[styles.child1, { backgroundColor: colors.primary }]}>
-                                <Dialog.Title style={[styles.child1Text, { color: colors.secondary }]}>{title}</Dialog.Title>
-                            </View>
-                            <Dialog.Content style={[styles.child2, { backgroundColor: colors.secondary }]}>
-                                <Paragraph style={[styles.child2Text, { color: colors.tertiary }]}>{description}</Paragraph>
-                            </Dialog.Content>
-                            <Dialog.Actions style={{ alignItems: 'center', width: '100%', justifyContent: 'space-evenly', flexDirection: 'row' }}>
-                                <View style={{ width: '50%' }}>
-                                    {connectBtn ? <Button title='Try Again' btntextstyle={{ color: colors.secondary }} btnstyle={{ height: 40, backgroundColor: colors.primary }} onPress={onPress} />
-                                        :
-                                        <Button title='Update' btntextstyle={{ color: colors.secondary }} btnstyle={{ height: 40, backgroundColor: colors.primary }} onPress={() => Update.reloadAsync()} />}
-                                </View>
-                            </Dialog.Actions>
-                        </>
-                    </Dialog>
-                </Portal>
-            </View>
+            {/* <View style={styles.mainContainer}> */}
+            <Portal style={styles.mainContainer}>
+                <Dialog visible={show} onDismiss={onPress} style={{ width: '90%', alignSelf: 'center', alignItems: 'center', marginHorizontal: 0, marginBottom: 0, }}>
+                    <>
+                        <View style={[styles.child1, { backgroundColor: 'purple' }]}>
+                            <Dialog.Title style={[styles.child1Text, { color: 'white' }]}>{title}</Dialog.Title>
+                        </View>
+                        <Dialog.Content style={[styles.child2, { backgroundColor: 'white' }]}>
+                            <Paragraph style={[styles.child2Text]}>{description}</Paragraph>
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                            <CustomButton
+                                title={'Update'}
+                                onPress={() => Update.reloadAsync()}
+                                btnStyle={{ width: '50%' }}
+                            />
+                        </Dialog.Actions>
+                    </>
+                </Dialog>
+            </Portal>
+            {/* </View> */}
         </>
     )
 }

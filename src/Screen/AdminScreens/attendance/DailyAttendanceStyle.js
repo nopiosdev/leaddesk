@@ -198,19 +198,19 @@ export const DailyAttendanceStyle = StyleSheet.create({
     },
     NameText: {
         fontFamily: "OPENSANS_BOLD",
-        fontSize: 14,
+        fontSize: width * 0.034,
         textAlign: "left",
         color: "#19260c",
         marginBottom: -15
     },
     DesignationText: {
-        fontSize: 12,
+        fontSize: width * 0.03,
         fontFamily: "OPENSANS_REGULAR",
         textAlign: "left",
         color: "#8f8f8f"
     },
     DepartmentText: {
-        fontSize: 12,
+        fontSize: width * 0.03,
         fontFamily: "OPENSANS_REGULAR",
         textAlign: "left",
         color: "#b5b5b5"

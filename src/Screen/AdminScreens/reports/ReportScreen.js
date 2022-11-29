@@ -99,7 +99,6 @@ const ReportScreen = ({ navigation, route }) => {
     }
     const goToDetail = (item) => {
         navigation.navigate("DetailScreen", { detailItem: item, month: VistNumber, year: year });
-        //  Actions.DetailScreen();
     }
     const renderDropDownMonth = () => {
         if (Platform.OS === 'android') {
@@ -113,7 +112,6 @@ const ReportScreen = ({ navigation, route }) => {
                         selectedItem(itemValue)
                     }
                     }>
-                    <Picker.Item label={VistNumber} value={VistNumber} />
                     {monthList.map((item, key) => {
                         return <Picker.Item value={item.key} label={item.label} key={key} />
                     })}

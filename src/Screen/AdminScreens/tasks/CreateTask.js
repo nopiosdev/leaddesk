@@ -53,7 +53,7 @@ const CreateTask = ({ navigation, route }) => {
     const [modalForImage, setmodalForImage] = useState(false);
     const [companyId, setcompanyId] = useState("");
     const [TaskId, setTaskId] = useState(null);
-    const [date, setdate] = useState('');
+    const [date, setdate] = useState(Date.now());
     const [taskTitle, settaskTitle] = useState("");
     const [taskDescription, settaskDescription] = useState("");
     const [employeeList, setEmployeeList] = useState([]);
@@ -76,15 +76,12 @@ const CreateTask = ({ navigation, route }) => {
     const isFocused = useIsFocused();
 
 
-
-
     const refreshOnBack = () => {
         // if (user?.UserType == "admin") {
         //     navigation.navigate('TaskListBottomTab', { screen: 'TaskListScreen' });
         // } else {
         //     navigation.navigate('TaskListBottomTab', { screen: 'CreateByMe' });
         // }
-
     }
 
     const goBack = () => {
@@ -115,6 +112,10 @@ const CreateTask = ({ navigation, route }) => {
             setcompanyId(cId);
             getEmployeeList(cId);
             getPriorityList();
+            if (user?.UserType !== 'admin') {
+                setEmpName(user?.UserFullName);
+                setEmpValue(user?.Id);
+            }
             // setTaskGroupId(paramsData?.BoardId);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
@@ -314,7 +315,7 @@ const CreateTask = ({ navigation, route }) => {
                         </Text>
                         <TextInput
                             style={TaskStyle.createTaskTitleTextBox1}
-                            placeholder="write a task name here"
+                            placeholder="Name"
                             placeholderTextColor="#dee1e5"
                             autoCapitalize="none"
                             onChangeText={text => settaskTitle(text)}
@@ -331,7 +332,7 @@ const CreateTask = ({ navigation, route }) => {
                         <TextInput
                             style={TaskStyle.createTaskDescriptionTextBox}
                             multiline={true}
-                            placeholder="write details here"
+                            placeholder="Descripttion..."
                             placeholderTextColor="#dee1e5"
                             autoCorrect={false}
                             autoCapitalize="none"
@@ -342,10 +343,8 @@ const CreateTask = ({ navigation, route }) => {
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', }}>
                         <View style={{ flex: 1, flexDirection: 'column', }}>
-                            <TouchableOpacity onPress={() => setmodal1(true)}>
-                                <View
-
-                                    style={TaskStyle.assignePeopleContainer}>
+                            <TouchableOpacity onPress={() => { user?.UserType === 'admin' && setmodal1(true) }}>
+                                <View style={TaskStyle.assignePeopleContainer}>
                                     <Ionicons name="md-people" size={20} style={{ marginRight: 4, }} color="#4a535b" />
                                     <TextInput
                                         style={TaskStyle.assigneePeopleTextBox}
@@ -399,7 +398,7 @@ const CreateTask = ({ navigation, route }) => {
                                     </Text> :
                                     <Text
                                         style={TaskStyle.createTaskDueDateText}>
-                                        {moment(date).format("DD MMMM YYYYY")}
+                                        {moment(date).format("DD MMMM YYYY")}
                                     </Text>
                                 }
 

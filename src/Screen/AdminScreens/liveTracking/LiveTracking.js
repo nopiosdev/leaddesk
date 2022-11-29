@@ -62,7 +62,7 @@ const LiveTracking = ({ navigation, route }) => {
         (async () => {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
-            await getEmpTrackInfo(selctedEmployeeValue);
+            await getEmpTrackInfo(selctedEmployeeValue, cId);
             await getEmpAllWithCompanyId(cId);
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
@@ -114,15 +114,15 @@ const LiveTracking = ({ navigation, route }) => {
             console.log(error);
         }
     }
-    const getEmpTrackInfo = async (selectedVal) => {
+    const getEmpTrackInfo = async (selectedVal, cId) => {
         try {
             setmarkers([]);
             if (selectedVal === 'All Employee') {
-                await GetMovementDetailsAll(companyId)
+                await GetMovementDetailsAll(cId ? cId : companyId)
                     .then(res => {
                         setEmpTrackList(res)
                         var markerlist = [];
-                        console.log('GetMovementDetailsAll',res)
+                        console.log('companyId', companyId, 'GetMovementDetailsAll', res)
                         if (res?.length > 0) {
                             res?.map((userData, index) => {
                                 var title = '';
@@ -220,7 +220,7 @@ const LiveTracking = ({ navigation, route }) => {
     const searchFilterFunction = text => {
         if (text !== '') {
             const newData = tempList?.filter(item => {
-                const itemData = `${item.Title.toUpperCase()}`;
+                const itemData = `${item.UserName.toUpperCase()}`;
                 const textData = text.toUpperCase();
 
                 return itemData.indexOf(textData) > -1;
@@ -248,7 +248,7 @@ const LiveTracking = ({ navigation, route }) => {
     const onError = (errorMessage) => {
         console.log(errorMessage);
     }
-    console.log('selctedEmployeeValue',selctedEmployeeValue)
+    console.log(markers)
     const renderMapView = () => {
         return (
             <View style={{
@@ -340,46 +340,44 @@ const LiveTracking = ({ navigation, route }) => {
                 </View>
                 <View style={{ paddingVertical: 20, }}>
                     <Searchbar searchFilterFunction={searchFilterFunction} />
+                    <TouchableOpacity onPress={() => closeEmployeeModal('All Employee')}>
+                        <View
+                            style={LiveTrackingStyle.FlatlistMainView}>
+                            <Text style={[LiveTrackingStyle.EmpText, { fontSize: 14 }]}>
+                                All Employees
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <FlatList
                         data={employeeList}
                         keyExtractor={(x, i) => i.toString()}
                         style={{ height: '100%' }}
                         renderItem={({ item }) =>
-                            <>
-                                <TouchableOpacity onPress={() => closeEmployeeModal('All Employee')}>
-                                    <View
-                                        style={LiveTrackingStyle.FlatlistMainView}>
-                                        <Text style={[LiveTrackingStyle.EmpText, { fontSize: 14 }]}>
-                                            All Employees
+                            <TouchableOpacity onPress={() => closeEmployeeModal(item)}>
+                                <View
+                                    style={LiveTrackingStyle.FlatlistMainView}>
+                                    <View style={{ paddingRight: 10, }}>
+                                        {item.ImageFileName && item.ImageFileName !== 'null' ?
+                                            (<Image style={LiveTrackingStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />) :
+                                            (<Image style={
+                                                LiveTrackingStyle.imageradious
+                                            } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />)}
+
+                                    </View>
+                                    <View>
+                                        <Text style={LiveTrackingStyle.EmpText}>
+                                            {item.UserName}
+                                        </Text>
+                                        <Text style={LiveTrackingStyle.EmpText}>
+                                            {item.Designation}
+                                        </Text>
+                                        <Text style={LiveTrackingStyle.EmpText}>
+                                            {item.DepartmentName}
                                         </Text>
                                     </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => closeEmployeeModal(item)}>
-                                    <View
-                                        style={LiveTrackingStyle.FlatlistMainView}>
-                                        <View style={{ paddingRight: 10, }}>
-                                            {item.ImageFileName && item.ImageFileName !== 'null' ?
-                                                (<Image style={LiveTrackingStyle.imageradious} resizeMode="contain" source={{ uri: urlResource + item.ImageFileName }} />) :
-                                                (<Image style={
-                                                    LiveTrackingStyle.imageradious
-                                                } resizeMode='contain' source={require('../../../../assets/images/employee.png')} />)}
 
-                                        </View>
-                                        <View>
-                                            <Text style={LiveTrackingStyle.EmpText}>
-                                                {item.UserName}
-                                            </Text>
-                                            <Text style={LiveTrackingStyle.EmpText}>
-                                                {item.Designation}
-                                            </Text>
-                                            <Text style={LiveTrackingStyle.EmpText}>
-                                                {item.DepartmentName}
-                                            </Text>
-                                        </View>
-
-                                    </View>
-                                </TouchableOpacity>
-                            </>
+                                </View>
+                            </TouchableOpacity>
                         }
                     />
                 </View>

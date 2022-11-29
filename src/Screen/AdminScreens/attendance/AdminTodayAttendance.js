@@ -289,14 +289,9 @@ const AdminTodayAttendance = ({ navigation }) => {
                             keyExtractor={(x, i) => i.toString()}
                             renderItem={({ item }) =>
 
-                                <View style={
-                                    DailyAttendanceStyle.FlatListTouchableOpacity
-                                }>
+                                <View style={DailyAttendanceStyle.FlatListTouchableOpacity}>
                                     <TouchableOpacity onPress={() => goToDetail(item)}>
-                                        <View
-                                            style={
-                                                DailyAttendanceStyle.FlatListAttendanceLeft
-                                            }>
+                                        <View style={DailyAttendanceStyle.FlatListAttendanceLeft}>
                                             <View style={{ paddingRight: 10, }}>
                                                 {item?.ImageFileName && item?.ImageFileName !== 'null' ?
                                                     <Image resizeMode='cover' style={
@@ -319,22 +314,13 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                 }
                                             </View>
                                             <View style={DailyAttendanceStyle.RightTextView}>
-                                                <Text style={
-                                                    DailyAttendanceStyle.NameText
-                                                }
-                                                >
+                                                <Text style={DailyAttendanceStyle.NameText}>
                                                     {item?.EmployeeName}
                                                 </Text>
-                                                <Text style={
-                                                    DailyAttendanceStyle.DesignationText
-                                                }
-                                                >
+                                                <Text style={DailyAttendanceStyle.DesignationText}>
                                                     {item?.Designation}
                                                 </Text>
-                                                <Text style={
-                                                    DailyAttendanceStyle.DepartmentText
-                                                }
-                                                >
+                                                <Text style={DailyAttendanceStyle.DepartmentText} >
                                                     {item?.DepartmentName}
                                                 </Text>
                                             </View>

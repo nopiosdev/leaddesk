@@ -4,6 +4,8 @@ import AdminTodayAttendance from '../attendance/AdminTodayAttendance';
 import { useSelector } from "react-redux";
 import * as Notifications from 'expo-notifications';
 import * as Update from 'expo-updates';
+import Popup from '../../../components/Popup';
+import { View } from 'react-native';
 
 
 const DailyAttendance = ({ navigation }) => {
@@ -53,12 +55,15 @@ const DailyAttendance = ({ navigation }) => {
         checkupdate();
         // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));   
     }, []);
-
-    if (userDetails?.UserType == 'admin') {
-        return (<AdminTodayAttendance navigation={navigation} />);
-    }
-    else {
-        return (<DailyAttendances navigation={navigation} />)
-    }
+    return (
+        <>
+            {userDetails?.UserType == 'admin' ? <AdminTodayAttendance navigation={navigation} /> : <DailyAttendances navigation={navigation} />}
+                <Popup
+                    show={updatevisible}
+                    title={'Update'}
+                    description={'New Updates Are Available'}
+                />
+        </>
+    );
 }
 export default DailyAttendance

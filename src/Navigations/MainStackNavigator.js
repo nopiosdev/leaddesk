@@ -95,7 +95,7 @@ const AdminBottomTab = () => {
                     return <Image source={require('../../assets/images/briefcase.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }}></Image>
                 }
             },
-            tabBarActiveTintColor: 'purple',
+            tabBarActiveTintColor: 'red',
             tabBarInactiveTintColor: 'gray',
             tabBarHideOnKeyboard: true,
         })} >

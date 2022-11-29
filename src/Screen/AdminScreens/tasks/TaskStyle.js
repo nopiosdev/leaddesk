@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
-const { height } = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
+
 export const TaskStyle = StyleSheet.create({
 
     container: {
@@ -432,7 +433,7 @@ export const TaskStyle = StyleSheet.create({
     createTaskTitleLabelExpenses: {
         fontFamily: "PRODUCT_SANS_BOLD", fontSize: 13,
         textAlign: "left", color: "#848f98",
-        marginBottom:5, marginLeft: 20, marginTop: 12
+        marginBottom: 5, marginLeft: 20, marginTop: 12
     },
     createTaskTitleLabel1: {
         fontFamily: "PRODUCT_SANS_BOLD", fontSize: 13,
@@ -462,8 +463,8 @@ export const TaskStyle = StyleSheet.create({
         fontFamily: "PRODUCT_SANS_BOLD", fontSize: 13,
         textAlign: "left", color: "#4a535b",
         flex: 1, flexWrap: 'wrap', paddingHorizontal: 10,
-        paddingVertical:7, borderRadius: 8,
-        backgroundColor: "#f5f7fb", margin: 10,marginTop:3,
+        paddingVertical: 7, borderRadius: 8,
+        backgroundColor: "#f5f7fb", margin: 10, marginTop: 3,
     },
     createTaskDescriptionLabel: {
         fontFamily: "PRODUCT_SANS_BOLD", fontSize: 13,
@@ -495,7 +496,7 @@ export const TaskStyle = StyleSheet.create({
         height: 50
     },
     assigneePeopleTextBox: {
-        fontFamily: "Montserrat_Bold", fontSize: 13,
+        fontFamily: "Montserrat_Bold", fontSize: width * 0.028,
         textAlign: "left", color: "#4a535b",
         flex: 1, paddingHorizontal: 7,
     },
@@ -562,7 +563,7 @@ export const TaskStyle = StyleSheet.create({
         alignItems: "flex-end"
     },
     closemodalImage: {
-        width:15 , height: 15,marginRight:17,marginTop:15,
+        width: 15, height: 15, marginRight: 17, marginTop: 15,
     },
     titleText: {
         color: '#848f98', fontFamily: 'PRODUCT_SANS_BOLD', marginLeft: 30

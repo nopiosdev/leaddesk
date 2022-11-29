@@ -111,12 +111,9 @@ const LeaderBoardScreen = ({ navigation, route }) => {
             return (
                 <Picker
                     selectedValue={VistNumber}
-                    itemStyle={{ borderWidth: 1, borderColor: 'red', fontSize: 12, fontWeight: '500', padding: 0, borderColor: '#798187', borderRadius: 10, borderWidth: 1 }}
+                    itemStyle={{ borderWidth: 1, borderColor: 'purple', fontSize: 12, fontWeight: '500', padding: 0, borderColor: '#798187', borderRadius: 10, borderWidth: 1 }}
                     style={{ height: 50, width: 130, borderWidth: 1, marginTop: -15, padding: 0, borderColor: '#798187', borderRadius: 10, }}
-                    onValueChange={(itemValue, itemIndex) =>
-                        selectedItem(itemValue)
-                    }>
-                    <Picker.Item label={VistNumber} value={VistNumber} />
+                    onValueChange={(itemValue, itemIndex) => selectedItem(itemValue)}>
                     {monthList.map((item, key) => {
                         return <Picker.Item value={item.key} label={item.label} key={key} />
                     })}
@@ -128,9 +125,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
                     style={CommonStyles.ModalSelectorStyle}
                     data={monthList}
                     initValue={selectedMonth}
-                    onChange={(option) => {
-                        selectedItem(option.key)
-                    }}
+                    onChange={(option) => selectedItem(option.key)}
                 />
             )
         }
@@ -140,11 +135,9 @@ const LeaderBoardScreen = ({ navigation, route }) => {
             return (
                 <Picker
                     selectedValue={year}
-                    itemStyle={{ borderWidth: 1, borderColor: 'red', fontSize: 12, padding: 0, borderColor: 'black', borderRadius: 10, borderWidth: 1 }}
+                    itemStyle={{ borderWidth: 1, borderColor: 'purple', fontSize: 12, padding: 0, borderColor: 'black', borderRadius: 10, borderWidth: 1 }}
                     style={{ height: 50, width: 100, borderWidth: 1, marginTop: -15, padding: 0, borderColor: 'black', borderRadius: 10, }}
-                    onValueChange={(itemValue, itemIndex) =>
-                        selectedItemYear(itemValue)
-                    }>
+                    onValueChange={(itemValue, itemIndex) => selectedItemYear(itemValue)}>
                     {yearList?.map((item, key) => { return <Picker.Item value={item.key} label={item.label} key={key} /> })}
                 </Picker>
             )
@@ -154,10 +147,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
                     style={CommonStyles.ModalSelectorStyle}
                     data={yearList}
                     initValue={year}
-                    onChange={(option) => {
-                        const newUser = option.key
-                        selectedItemYear(newUser)
-                    }}
+                    onChange={(option) => selectedItemYear(option.key)}
                 />
             )
         }

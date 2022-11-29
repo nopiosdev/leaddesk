@@ -24,6 +24,7 @@ import CustomTimeLine from '../../../components/CustomTimeLine';
 import { upLoadImage } from '../../../services/TaskService';
 import Header from '../../../components/Header';
 import Loader from '../../../components/Loader';
+import moment from 'moment';
 
 
 let uIdd = "";
@@ -350,9 +351,9 @@ const MyPanel = ({ navigation }) => {
                             title = "Checked point";
                             color = "gray"
                         }
-
+                        let temp = ConvertUtcToLocalTime(userData?.LogDateTime)
                         var myObj = {
-                            "time": ConvertUtcToLocalTime(userData?.LogDateTime),
+                            "time": moment(temp,'h:mm A').format('hh:mm A'),
                             "title": title,
                             "description": userData?.LogLocation,
                             "circleColor": color
@@ -396,17 +397,17 @@ const MyPanel = ({ navigation }) => {
             setLatitude(currentLatitude);
             setLongitude(currentLongitude);
             if (statusPoint == "CheckPoint") {
-                _sendCheckpointToServer();
+                _sendCheckpointToServer(currentLatitude, currentLongitude);
             } else {
                 _takeSelfiePhoto(statusPoint, currentLatitude, currentLongitude);
             }
         });
     };
 
-    const _sendCheckpointToServer = async () => {
-        var s = await getLocation(currentLatitude, currentLongitude);
-        setLogLocation(s);
-        createCheckPoint();
+    const _sendCheckpointToServer = async (currentLatitude, currentLongitude) => {
+        var location = await getLocation(currentLatitude, currentLongitude);
+        setLogLocation(location);
+        createCheckPoint(currentLatitude, currentLongitude, location);
     }
     // const _getLocationAsyncforgps = async () => {
 
@@ -599,7 +600,7 @@ const MyPanel = ({ navigation }) => {
             return ToastAndroid.show('You have already checked out today', ToastAndroid.TOP);
         }
         if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
-            getLocationInfo('CheckPoint');
+            await getLocationInfo('CheckPoint');
             setprogressVisible(false);
             settouchabledisablepoint(false);
         } else {

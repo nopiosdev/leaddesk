@@ -5,17 +5,17 @@ import { Provider } from 'react-redux';
 import { store } from './src/Redux/store/Store';
 import AuthLoadingScreen from './src/login/AuthLoadingScreen';
 
-const App = () => {          
-        return (
-          <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-            <PaperProvider>
-              <Provider store={store}>
-                <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
-                <AuthLoadingScreen/>
-              </Provider>
-            </PaperProvider>
-          </SafeAreaView>
-        );
+const App = () => {
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <Provider store={store}>
+        <PaperProvider>
+        <StatusBar hidden={false} backgroundColor="rgba(0, 0, 0, 0.2)" />
+          <AuthLoadingScreen />
+        </PaperProvider>
+      </Provider>
+    </SafeAreaView>
+  );
 }
 
 export default App;
