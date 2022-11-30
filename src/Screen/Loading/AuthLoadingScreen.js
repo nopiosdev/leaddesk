@@ -17,13 +17,13 @@ const AuthLoadingScreen = ({ navigation }) => {
   const CheckStatus = async () => {
     setLoaded(false);
     await Font.loadAsync({
-      'PRODUCT_SANS_REGULAR': require('../../assets/fonts/PRODUCT_SANS_REGULAR.ttf'),
-      'Montserrat_Bold': require('../../assets/fonts/Montserrat_Bold.ttf'),
-      'Montserrat_Medium': require('../../assets/fonts/Montserrat_Medium.ttf'),
-      'Montserrat_SemiBold': require('../../assets/fonts/Montserrat_SemiBold.ttf'),
-      'OPENSANS_BOLD': require('../../assets/fonts/OPENSANS_BOLD.ttf'),
-      'OPENSANS_REGULAR': require('../../assets/fonts/OPENSANS_REGULAR.ttf'),
-      'PRODUCT_SANS_BOLD': require('../../assets/fonts/PRODUCT_SANS_BOLD.ttf')
+      'PRODUCT_SANS_REGULAR': require('../../../assets/fonts/PRODUCT_SANS_REGULAR.ttf'),
+      'Montserrat_Bold': require('../../../assets/fonts/Montserrat_Bold.ttf'),
+      'Montserrat_Medium': require('../../../assets/fonts/Montserrat_Medium.ttf'),
+      'Montserrat_SemiBold': require('../../../assets/fonts/Montserrat_SemiBold.ttf'),
+      'OPENSANS_BOLD': require('../../../assets/fonts/OPENSANS_BOLD.ttf'),
+      'OPENSANS_REGULAR': require('../../../assets/fonts/OPENSANS_REGULAR.ttf'),
+      'PRODUCT_SANS_BOLD': require('../../../assets/fonts/PRODUCT_SANS_BOLD.ttf')
     });
     const userLocal = await LocalStorage.GetData("CurrentUser");
     const userToken = await LocalStorage.GetData("userToken");

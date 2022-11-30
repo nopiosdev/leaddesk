@@ -3,7 +3,7 @@ import { ActivityIndicator, SafeAreaView, StatusBar } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
 import { store } from './src/Redux/store/Store';
-import AuthLoadingScreen from './src/login/AuthLoadingScreen';
+import AuthLoadingScreen from './src/Screen/Loading/AuthLoadingScreen';
 
 const App = () => {
   return (
