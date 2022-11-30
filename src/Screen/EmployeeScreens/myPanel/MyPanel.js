@@ -10,7 +10,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 // import Geolocation from 'react-native-geolocation-service';
 import { CheckIn, CheckOut, CheckPoint } from '../../../services/EmployeeService/EmployeeTrackService';
-import { GetMovementDetails, GetMyTodayAttendance } from '../../../services/EmployeeService/EmployeeTrackService';
+import { GetMovementDetails, GetMyTodayAttendance } from '../../../services/EmployeeTrackService';
 import { getLocation } from '../../../services/LocationService'
 import { UpdateEmployee } from '../../../services/AccountService'
 import { NoticeStyle } from '../../AdminScreens/notice/NoticeStyle'
@@ -236,9 +236,6 @@ const MyPanel = ({ navigation }) => {
         data.append('AutoCheckPointTime', AutoCheckPointTime);
         data.append('IsAutoCheckPoint', IsAutoCheckPoint);
         data.append('IsActive', 1);
-
-
-
         try {
             let response = await UpdateEmployee(data);
             console.log('UpdateEmployee', response)
@@ -306,6 +303,7 @@ const MyPanel = ({ navigation }) => {
         setprogressVisible(true);
         await GetMyTodayAttendance(user?.Id)
             .then(res => {
+                console.log('GetMyTodayAttendance',res)
                 if (!res?.success && res?.success !== false) {
                     setattendanceModel(res);
                     setEmployeeCode(res?.EmployeeCode);
@@ -328,6 +326,7 @@ const MyPanel = ({ navigation }) => {
             });
         await GetMovementDetails(user?.Id)
             .then(res => {
+                console.log('GetMovementDetails',res)
                 setdata([]);
                 if (!res?.success && res?.success !== false) {
 

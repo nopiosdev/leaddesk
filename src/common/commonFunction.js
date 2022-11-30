@@ -1,7 +1,15 @@
 //import moment from "moment";
 import moment from "moment-timezone";
 import * as Localization from 'expo-localization';
-
+export const IsNullOrEmpty = (value ) => {
+    if (value ==null){
+        return true;
+    }
+    if(value ==""){
+        return true;
+    }
+    return false;
+};
 export const ConvertUtcToLocalTime = (date ) => {
     if (IsNullOrEmpty(date)){
         return date;

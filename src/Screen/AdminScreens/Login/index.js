@@ -10,9 +10,9 @@ var { height } = Dimensions.get('window');
 const Login = ({ navigation, route }) => {
     const [popup, setPopup] = useState(false);
     useEffect(() => {
-        LocalStorage.SetData('URL', 'https://asdsa.com')
+        LocalStorage.SetData('URL', 'https://theleaddesk.com')
     }, [])
-    // https://theleaddesk.com
+
     return (
         <KeyboardAvoidingView enabled style={styles.container}>
             <Pressable onPress={() => setPopup(true)} style={[styles.logoContainer]}>
