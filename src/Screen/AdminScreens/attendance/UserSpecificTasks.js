@@ -21,8 +21,6 @@ const UserSpecificTasks = ({ navigation }) => {
     const [refreshing, setrefreshing] = useState(false);
     const [taskList, settaskList] = useState([]);
     const [tempList, setTempList] = useState([]);
-    const [search, setSearch] = useState(null);
-    const user = useSelector((state) => state.user.currentUser);
     const selectedEmp = useSelector((state) => state.user.selectedEmp);
     const isFocused = useIsFocused();
 
@@ -47,17 +45,9 @@ const UserSpecificTasks = ({ navigation }) => {
     useEffect(() => {
         (async () => {
             getTaskList(true);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
-    const handleBackButton = () => {
-        navigation.navigate('DailyAttendance')
-        return true;
-    }
 
     const searchFilterFunction = text => {
         if (text != '') {
@@ -94,15 +84,6 @@ const UserSpecificTasks = ({ navigation }) => {
         }
     }
 
-    const goToCreateTask = () => {
-        navigation.navigate('CreateTask')
-    }
-
-
-    const gotoDetails = (task) => {
-        navigation.navigate('ViewAssignToMe', { TaskModel: task, arrayholder: arrayholder, })
-    }
-
     return (
         <View
             style={TaskStyle.container}>
@@ -110,7 +91,7 @@ const UserSpecificTasks = ({ navigation }) => {
                 title={selectedEmp?.EmployeeName}
                 navigation={navigation}
                 goBack={true}
-                onPress={() => { handleBackButton() }}
+                onPress={() => { navigation.goBack() }}
                 makeCall={Call}
             />
             {progressVisible == true ?

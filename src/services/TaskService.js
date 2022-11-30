@@ -9,7 +9,6 @@ export const GetTaskByGroup = async (groupId) => getApi("RtTaskApi/GetTasksByGro
 export const deleteTask = async (taskId) => getApi("task/DeleteTask?taskId=" + taskId);
 export const PriorityList = async () => getApi("task/GetPriorityList");
 export const upLoadImage = async (data) => postApi("task/UploadDocuments", data);
-export const SaveFile = async data => postApi("RtTaskApi/SaveTaskAttachment", data);
 export const GetTaskAttachments = async (taskId) => getApi("task/GetTaskAttachments?taskId=" + taskId);
 
 

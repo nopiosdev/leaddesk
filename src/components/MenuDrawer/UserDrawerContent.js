@@ -66,15 +66,6 @@ const SettingsCombo = (dispatch) => {
 
 }
 
-export {
-  DailyAttendanceCombo,
-  TasksCombo,
-  LeavesCombo,
-  NoticeCombo, SettingsCombo,
-  drawerSelectedOption,
-  MyPanelCombo,
-}
-
 // const StatusBarPlaceHolder = () => {
 //   return (
 //     <View style={{
@@ -88,7 +79,6 @@ export {
 // }
 
 const UserDrawerContent = ({ navigation }) => {
-  const userDetails = useSelector((state) => state.user.currentUser);
   const active = useSelector((state) => state.user.active);
   const dispatch = useDispatch();
 

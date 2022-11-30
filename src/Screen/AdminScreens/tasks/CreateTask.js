@@ -6,16 +6,7 @@ import {
     BackHandler, TextInput, TouchableOpacity,
     ToastAndroid, Platform, KeyboardAvoidingView, FlatList
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
-
-import {
-    DailyAttendanceCombo, TasksCombo,
-    LeavesCombo, FinanceCombo,
-    ReportsCombo, NoticeCombo, SettingsCombo,
-    drawerSelectedOption
-} from '../../../components/MenuDrawer/DrawerContent';
-
 import { EmployeeList } from '../../../services/EmployeeTrackService';
 import { NoticeStyle } from '../notice/NoticeStyle'
 import Modal from 'react-native-modalbox';
@@ -117,12 +108,8 @@ const CreateTask = ({ navigation, route }) => {
                 setEmpValue(user?.Id);
             }
             // setTaskGroupId(paramsData?.BoardId);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
 
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
     const saveTask = async () => {
@@ -161,7 +148,7 @@ const CreateTask = ({ navigation, route }) => {
                         setTaskGroupId('');
                         setPriorityId('');
                         setdate('');
-                        // navigation.goBack();
+                        navigation.goBack();
                     }
                 })
                 .catch(error => {
@@ -300,7 +287,7 @@ const CreateTask = ({ navigation, route }) => {
                 onPress={() => { navigation.goBack() }}
                 btnAction={() => saveTask()}
                 btnTitle='POST'
-                saveImg={true}
+                saveImg={true}                
             />
 
             <View style={{ flex: 1 }}>

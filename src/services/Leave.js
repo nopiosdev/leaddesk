@@ -1,7 +1,5 @@
 import { postApi, getApi } from "../Utils/RestClient";
 
-export const createLeave = async data => postApi("RtLeaveApi/CreateLeave", data);
-export const acceptrequest = async data => postApi("RtLeaveApi/UpdateLeaveStatus",data);
 
 
 export const GetAdminLeaveList = async (CompanyId) => getApi("leave/GetLeaveByCompanyId?companyId=" + CompanyId);

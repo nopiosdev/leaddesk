@@ -96,22 +96,12 @@ const CompanysetupScreen = ({ navigation, route }) => {
         // alert( moment(date).format("HH:mm:ss"));
     }
 
-    const handleBackButton = () => {
-        navigation.navigate('SettingScreen');
-        return true;
-    }
-
     useEffect(() => {
         (async () => {
             getCompany();
             const companyid = await LocalStorage.GetData("companyId");
             setcompanyid(companyid);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
 

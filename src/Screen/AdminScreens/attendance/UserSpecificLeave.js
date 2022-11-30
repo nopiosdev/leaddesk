@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { RefreshControl, TouchableOpacity, View, Text, FlatList, ScrollView, ActivityIndicator, BackHandler, Image } from 'react-native';
 import { GetUserLeaves, LeaveApproved, LeaveRejected } from '../../../services/Leave';
 import call from 'react-native-phone-call'
-import { LeaveListStyle } from '../leaves/LeaveListStyle';
+import { LeaveListAdminStyle, LeaveListStyle } from '../leaves/LeaveListStyle';
 import { CommonStyles } from '../../../common/CommonStyles';
 import { useState } from 'react';
 import LocalStorage from '../../../common/LocalStorage';
@@ -37,11 +37,7 @@ const UserSpecificLeave = ({ navigation }) => {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId)
             getLeaveList(true);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [])
 
     const Call = () => {
@@ -51,10 +47,6 @@ const UserSpecificLeave = ({ navigation }) => {
             prompt: false,
         };
         call(args).catch(console.error);
-    }
-    const handleBackButton = () => {
-        navigation.navigate('DailyAttendance');
-        return true;
     }
 
     const searchFilterFunction = text => {
@@ -124,17 +116,18 @@ const UserSpecificLeave = ({ navigation }) => {
 
 
     return (
-        <View style={LeaveListStyle.container}>
+        <View style={(user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle)?.container}>
             <Header
                 title={selectedEmp?.EmployeeName}
                 navigation={navigation}
                 goBack={true}
-                onPress={() => { handleBackButton() }}
+                onPress={() => { navigation.goBack() }}
                 makeCall={Call}
             />
             <View style={{ flex: 1, }}>
 
-                {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />)
+                {progressVisible == true ?
+                    <ActivityIndicator size="large" color="#1B7F67" style={(user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle)?.loaderIndicator} />
                     :
                     <View style={{ flex: 1, padding: 10, }}>
                         {<Searchbar searchFilterFunction={searchFilterFunction} />}
@@ -154,6 +147,7 @@ const UserSpecificLeave = ({ navigation }) => {
                                     item={item}
                                     onApprove={() => leaveApprove(item)}
                                     onReject={() => leaveReject(item)}
+                                    styles={user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle}
                                 />
                             }
                         />}

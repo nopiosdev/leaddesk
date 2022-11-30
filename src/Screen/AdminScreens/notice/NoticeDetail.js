@@ -19,17 +19,8 @@ const NoticeDetail = ({ navigation, route }) => {
     const [isModelVisible, setisModelVisible] = useState(false);
     const paramsData = route?.params;
 
-    const handleBackButton = () => {
-        navigation.navigate('Notice');
-        return true;
-    }
-
     useEffect(() => {
         GetNoticeDetatil();
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [])
 
 

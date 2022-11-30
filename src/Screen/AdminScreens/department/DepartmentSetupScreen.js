@@ -79,18 +79,8 @@ const DepartmentSetupScreen = ({ navigation, route }) => {
 
     }
 
-    const handleBackButton = () => {
-
-        navigation.goBack();
-        return true;
-    }
-
     useEffect(() => {
-        getDepartment()
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
+        getDepartment()       
     }, [IsFocused])
 
     // const openModal3 = () => {

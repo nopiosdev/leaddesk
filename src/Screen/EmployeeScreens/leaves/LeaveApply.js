@@ -10,10 +10,10 @@ import {
 import Modal from 'react-native-modalbox';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { LeaveApplyStyle, } from './LeaveApplyStyle';
-import { LeaveListStyle } from './LeaveListStyle';
+import { LeaveListStyle } from '../../AdminScreens/leaves/LeaveListStyle';
 import moment from 'moment'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { createLeave, GetLeaveStatusList } from '../../../services/UserService/Leave';
+import { createLeave, GetLeaveStatusList } from '../../../services/EmployeeService/Leave';
 import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from 'react-redux';
 import Header from '../../../components/Header';
@@ -62,26 +62,14 @@ const LeaveApply = ({ navigation, route }) => {
         }
     }
 
-    const handleBackButton = () => {
-        goBack();
-        return true;
-    }
 
-    const goBack = () => {
-        navigation.navigate('LeaveList');
-    }
 
     useEffect(() => {
         (async () => {
             const cId = await LocalStorage.GetData("companyId");
             setCompanyId(cId);
             getStatus();
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [])
 
     const LeaveTypeDropDown = (value, text) => {
@@ -108,7 +96,7 @@ const LeaveApply = ({ navigation, route }) => {
                 let response = await createLeave(data);
                 console.log('createLeave', response)
                 ToastAndroid.show('Leave applied successfully', ToastAndroid.TOP);
-                goBack();
+                navigation.goBack();
             }
             else {
                 ToastAndroid.show('Please Enter Reason', ToastAndroid.TOP);
@@ -143,66 +131,26 @@ const LeaveApply = ({ navigation, route }) => {
     var { height, width } = Dimensions.get('window');
     return (
         <View style={LeaveApplyStyle.container}>
-             <Header
-                    title={'Leave Apply'}
-                    goBack={true}
-                    onPress={() => { navigation.goBack() }}
-                    btnAction={() => CreateLeave()}
-                    btnTitle='REQUEST'
-                    btnContainerStyle={LeaveListStyle.ApplyTextButton}
-                    btnStyle={LeaveListStyle.plusButton}
-                    saveImg={true}
-                />   
-            {/* <View
-                style={CommonStyles.HeaderContent}>
-                <View
-                    style={CommonStyles.HeaderFirstView}>
-                    <TouchableOpacity
-                        style={CommonStyles.HeaderMenuicon}
-                        onPress={() => { goBack() }}>
-                        <Image resizeMode="contain" style={CommonStyles.HeaderMenuiconstyle}
-                            source={require('../../../../assets/images/left_arrow.png')}>
-                        </Image>
-                    </TouchableOpacity>
-                    <View
-                        style={CommonStyles.HeaderTextView}>
-                        <Text
-                            style={CommonStyles.HeaderTextstyle}>
-                            Leave Apply
-                        </Text>
-                    </View>
-                </View>
-                <View
-                    style={LeaveListStyle.ApplyButtonContainer}>
-                    <TouchableOpacity
-                        onPress={() => CreateLeave()}
-                        style={LeaveListStyle.ApplyButtonTouch}>
-                        <View style={LeaveListStyle.plusButton}>
-                            <MaterialCommunityIcons name="content-save" size={Platform.OS === 'ios' ? 15.3 : 17.5} color="#ffffff" />
-                        </View>
-                        <View style={LeaveListStyle.ApplyTextButton}>
-                            <Text style={LeaveListStyle.ApplyButtonText}>
-                                REQUEST
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View> */}
+            <Header
+                title={'Leave Apply'}
+                goBack={true}
+                onPress={() => { navigation.goBack() }}
+                btnAction={() => CreateLeave()}
+                btnTitle='REQUEST'
+                btnContainerStyle={LeaveListStyle.ApplyTextButton}
+                btnStyle={LeaveListStyle.plusButton}
+                saveImg={true}
+            />
             <View style={{ flex: 1 }}>
-                <KeyboardAvoidingView behavior="padding" enabled style={{ flex: 1, }}>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : 'height'} enabled style={{ flex: 1, }}>
                     <ScrollView showsVerticalScrollIndicator={false}
-                        keyboardDismissMode="on-drag"
-                        style={{ flex: 1, }}>
-                        <View
-                            style={LeaveApplyStyle.mainBodyStyle}>
-                            <View
-                                style={LeaveApplyStyle.mainBodyTopStyle}>
-                                <Text
-                                    style={LeaveApplyStyle.fromTextStyle}>
+                        keyboardDismissMode="on-drag" keyboardShouldPersistTaps={'always'} style={{ flex: 1, }}>
+                        <View style={LeaveApplyStyle.mainBodyStyle}>
+                            <View style={LeaveApplyStyle.mainBodyTopStyle}>
+                                <Text style={LeaveApplyStyle.fromTextStyle}>
                                     From:
                                 </Text>
-                                <Text
-                                    style={LeaveApplyStyle.toTextStyle}>
+                                <Text style={LeaveApplyStyle.toTextStyle}>
                                     To:
                                 </Text>
                             </View>

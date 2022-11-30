@@ -455,7 +455,7 @@ export const TaskStyle = StyleSheet.create({
     createTaskTitleTextBox1: {
         fontFamily: "PRODUCT_SANS_BOLD", fontSize: 16,
         textAlign: "left", color: "#4a535b",
-        flex: 1, flexWrap: 'wrap', paddingHorizontal: 7,
+        flexWrap: 'wrap', paddingHorizontal: 7,
         paddingVertical: 8, borderRadius: 8,
         backgroundColor: "#f5f7fb", marginLeft: 10, marginRight: 10,
     },

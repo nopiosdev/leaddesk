@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { RefreshControl, TouchableOpacity,
+import {
+    RefreshControl, TouchableOpacity,
     View, Text, FlatList, Image, ActivityIndicator, BackHandler,
 } from 'react-native';
 import { NoticeStyle } from './NoticeStyle';
@@ -13,6 +14,8 @@ import { useIsFocused } from '@react-navigation/native';
 import Searchbar from '../../../components/Searchbar';
 import moment from 'moment';
 import Header from '../../../components/Header';
+import { useDispatch } from 'react-redux';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
 
 const Notice = ({ navigation, route }) => {
 
@@ -22,11 +25,8 @@ const Notice = ({ navigation, route }) => {
     const [companyId, setcompanyId] = useState(0);
     const [refreshing, setrefreshing] = useState(false);
     const [progressVisible, setprogressVisible] = useState(false);
-    const [search, setSearch] = useState('');
     const isFocused = useIsFocused();
-    const goBack = () => {
-        navigation.goBack();
-    }
+    const dispatch = useDispatch();
 
     const goToDetail = (item) => {
         console.log(item, '.............item');
@@ -49,19 +49,10 @@ const Notice = ({ navigation, route }) => {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
             getNoticeList(cId, true);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
 
-    const handleBackButton = () => {
-        BackHandler.exitApp()
-        return true;
-    }
 
     const searchFilterFunction = text => {
 
@@ -108,6 +99,7 @@ const Notice = ({ navigation, route }) => {
                 btnTitle='NOTICE'
                 btnContainerStyle={NoticeStyle.ApplyTextButton}
                 btnStyle={NoticeStyle.plusButton}
+                onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack() }}
             />
             <View style={{ flex: 1, }}>
                 {<Searchbar searchFilterFunction={searchFilterFunction} />}
@@ -120,6 +112,7 @@ const Notice = ({ navigation, route }) => {
                                     onRefresh={_onRefresh}
                                 />
                             }
+                            showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps='always'
                             data={noticeList}
                             keyExtractor={(x, i) => i.toString()}

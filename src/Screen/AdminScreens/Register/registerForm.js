@@ -4,8 +4,7 @@ import {
     TouchableOpacity, Alert, Dimensions
 } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
-import { CreateAccount, CheckExistPhone } from "../../../services/AccountService";
-import { Loading } from '../../../common/loading';
+import { CreateAccount } from "../../../services/AccountService";
 import RadioButton from 'radio-button-react-native';
 import { ConfirmDialog } from 'react-native-simple-dialogs';
 import { Feather, Entypo } from '@expo/vector-icons';
@@ -121,7 +120,6 @@ const RegisterForm = ({ navigation }) => {
     return (
 
         <View style={styles.container}>
-
             <View style={[styles.TextInputView, { marginBottom: 10 }]}>
                 <Entypo name="user" size={20} color="#4b4b4b"
                     style={styles.InputIcon} />
@@ -181,8 +179,7 @@ const RegisterForm = ({ navigation }) => {
                 />
             </View>
 
-            {loading ? (<ActivityIndicator size="large" color="#1B7F67"
-                style={styles.ActivityIndicatorStyle} />) : null}
+
 
             <View style={[styles.TextInputView, { marginBottom: 10 }]}>
                 <Feather name="lock" size={20} color="#4b4b4b"
@@ -239,20 +236,19 @@ const RegisterForm = ({ navigation }) => {
                 <Text style={styles.signupagreeTxt}>by signing up you agree to the</Text>
                 <Text style={styles.termsServiceTxt}>terms of service <Text style={{ color: '#c6c7c7' }}>and</Text> privacy policy</Text>
             </View>
+            {loading && (<ActivityIndicator size="large" color="#1B7F67"
+                style={styles.ActivityIndicatorStyle} />)}
             <TouchableOpacity style={styles.buttonRegisterContainer} >
                 <Text style={styles.registerButtonText} onPress={onPressSighUpButton}>Submit</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.LoginButton}
                 onPress={onPressSighUpButton}>
-                <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
-
-                </View>
-                <View style={{ alignItems: 'center' }}>
+                <View style={{ alignItems: 'center', flex: 2.5 }}>
                     <Text style={styles.TextStyle}>
                         CREATE ACCOUNT
                     </Text>
                 </View>
-                <View style={{ alignItems: 'flex-end', marginRight: 10, }}>
+                <View style={{ alignItems: 'flex-end', flex: 1, marginRight: 10, }}>
                     <Entypo name="chevron-right" size={20} color="#ffffff" />
                 </View>
             </TouchableOpacity>
@@ -264,7 +260,6 @@ const RegisterForm = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={{ color: '#c6c7c7' }}>?</Text>
             </View>
-            <Loading showProgress={loading} />
             <ConfirmDialog
                 title="Registration Successfull"
                 message={successMessage}
@@ -318,7 +313,9 @@ const styles = StyleSheet.create({
     TextStyle: {
         fontSize: 13,
         fontFamily: "Montserrat_Bold",
-        color: "#ffffff"
+        color: "#ffffff",
+        width: '100%',
+        textAlign: 'right'
     },
     inputBox: {
         width: 300,

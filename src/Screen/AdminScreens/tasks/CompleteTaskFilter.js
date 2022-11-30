@@ -13,6 +13,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Searchbar from '../../../components/Searchbar';
 import Header from '../../../components/Header';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
 
 var screen = Dimensions.get('window');
 
@@ -38,16 +39,9 @@ const CompleteTaskFilter = ({ navigation, route }) => {
 
     useEffect(() => {
         getTaskList(true);
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
-    const handleBackButton = () => {
-        BackHandler.exitApp()
-        return true;
-    }
+
     const searchFilterFunction = text => {
         if (text !== '') {
             const newData = tempList?.filter(item => {
@@ -93,9 +87,6 @@ const CompleteTaskFilter = ({ navigation, route }) => {
         navigation.navigate('CreateTask');
     }
 
-    const gotoDetails = (task) => {
-        navigation.navigate("ViewTask", { TaskModel: task, arrayholder: tempList });
-    }
 
     return (
         <View
@@ -103,7 +94,8 @@ const CompleteTaskFilter = ({ navigation, route }) => {
             <Header
                 title={'Tasks'}
                 navigation={navigation}
-                onPress={() => { navigation.goBack() }}
+                onPress={() => { navigation.openDrawer() }}
+                onGoBack={() => { navigation.goBack() }}
                 btnAction={() => goToCreateTask()}
                 btnTitle='TASK'
             />

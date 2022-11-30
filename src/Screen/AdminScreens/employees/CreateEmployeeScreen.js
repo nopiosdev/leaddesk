@@ -77,12 +77,7 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
             setuserId(uId);
             setcompanyId(cId);
             getDepartment(cId);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
 
@@ -188,22 +183,22 @@ const CreateEmployeeScreen = ({ navigation, route }) => {
     const saveEmployee = async () => {
 
         var data = new FormData();
-        data.append('UserFullName',UserFullName);
-        data.append('EmployeeCode',EmployeeCode);
-        data.append('PhoneNumber',PhoneNumber);
-        data.append('UserType',0);
-        data.append('Designation',Designation);
-        data.append('DepartmentId',Employee?.DepartmentId);
-        data.append('CompanyId',companyId);
-        data.append('Gender',value);
-        data.append('Email',Email);
-        data.append('IsAutoCheckPoint',IsAutoCheckPoint ? 1 : 0);
-        data.append('AutoCheckPointTime',AutoCheckPointTime);
-        data.append('MaximumOfficeHours',MaximumOfficeHours);
-        data.append('OfficeOutTime',OfficeOutTime);
-        data.append('AdminEmail',user?.Email);
-        data.append('AdminName',user?.UserFullName);
-console.log(data)
+        data.append('UserFullName', UserFullName);
+        data.append('EmployeeCode', EmployeeCode);
+        data.append('PhoneNumber', PhoneNumber);
+        data.append('UserType', 0);
+        data.append('Designation', Designation);
+        data.append('DepartmentId', Employee?.DepartmentId);
+        data.append('CompanyId', companyId);
+        data.append('Gender', value);
+        data.append('Email', Email);
+        data.append('IsAutoCheckPoint', IsAutoCheckPoint ? 1 : 0);
+        data.append('AutoCheckPointTime', AutoCheckPointTime);
+        data.append('MaximumOfficeHours', MaximumOfficeHours);
+        data.append('OfficeOutTime', OfficeOutTime);
+        data.append('AdminEmail', user?.Email);
+        data.append('AdminName', user?.UserFullName);
+        console.log(data)
 
         try {
             let response = await CreateEmployee(data)
@@ -257,10 +252,7 @@ console.log(data)
         console.log('A date has been picked: ', moment(date).format("HH:mm:ss"));
         _hideDateTimePicker1();
     }
-    const handleBackButton = () => {
-        goBack();
-        return true;
-    }
+
     // const openModalForDeptSelection = () => {
     //     setModalForDeptSelection(true);
     // }
@@ -327,14 +319,14 @@ console.log(data)
         <View style={{
             flex: 1, flexDirection: 'column',
         }}>
-             <Header
+            <Header
                 title={'Create Employee'}
                 onPress={() => { navigation.goBack() }}
                 goBack={true}
                 btnAction={() => openModaladdPeople()}
                 btnTitle='POST'
                 saveImg={true}
-            />            
+            />
             <KeyboardAvoidingView enabled style={{ flex: 1, }}>
                 <ScrollView keyboardShouldPersistTaps='always' showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag" style={{ flex: 1, }}>
                     {/* <View>
@@ -400,7 +392,7 @@ console.log(data)
                                     data={departmentList}
                                     initValue="Select Department"
                                     onChange={(option) => {
-                                        setEmployee({ DepartmentId:  option.key });
+                                        setEmployee({ DepartmentId: option.key });
                                     }}
                                 />
                             </View>

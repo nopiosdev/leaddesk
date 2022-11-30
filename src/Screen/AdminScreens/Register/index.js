@@ -8,7 +8,6 @@ function StatusBarPlaceHolder() {
     return (
         <View style={{
             width: "100%",
-
             height: STATUS_BAR_HEIGHT,
             backgroundColor: '#F3F3F3',
         }}>

@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginForm from './loginForm';
-import {
-    KeyboardAvoidingView, StyleSheet, Platform,
-    Dimensions, View, Image, StatusBar,
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Dimensions, View, Image, Pressable } from 'react-native';
+import Popup from '../../../components/Popup';
+import LocalStorage from '../../../common/LocalStorage';
 
 
 var { height } = Dimensions.get('window');
 
 const Login = ({ navigation, route }) => {
-
+    const [popup, setPopup] = useState(false);
+    useEffect(() => {
+        LocalStorage.SetData('URL', 'https://asdsa.com')
+    }, [])
+    // https://theleaddesk.com
     return (
         <KeyboardAvoidingView enabled style={styles.container}>
-            <View style={[styles.logoContainer,]}>
+            <Pressable onPress={() => setPopup(true)} style={[styles.logoContainer]}>
                 <Image
                     style={{
                         width: 275, height: 255,
@@ -21,9 +24,8 @@ const Login = ({ navigation, route }) => {
                         width: "90%",
                     }}
                     resizeMode="contain"
-                    source={require('../../../../assets/images/login.png')}>
-                </Image>
-            </View>
+                    source={require('../../../../assets/images/login.png')} />
+            </Pressable>
             <View style={{
                 flex: 1,
                 marginTop: -(height * 10) / 100,
@@ -32,6 +34,11 @@ const Login = ({ navigation, route }) => {
             }}>
                 <LoginForm navigation={navigation} phoneno={route?.params?.phoneno} />
             </View>
+            <Popup
+                show={popup}
+                testingPopup={true}
+                onPress={() => setPopup(false)}
+            />
         </KeyboardAvoidingView >
 
     )

@@ -3,12 +3,14 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-
+import { useRoute } from '@react-navigation/native';
 const TaskBottomTabs = ({ navigation }) => {
     const [active, setActive] = useState('Pending');
     const [userActive, setUserActive] = useState('Assigned');
     const user = useSelector((state) => state.user.currentUser);
     const isFocused = useIsFocused();
+    const route = useRoute();
+    console.log(route.name);
     // useEffect(() => {
     //   setActive('Pending')
     // }, [isFocused])
@@ -34,12 +36,12 @@ const TaskBottomTabs = ({ navigation }) => {
                 <>
                     <Pressable onPress={() => { setUserActive('Assigned'); navigation.navigate('TaskListScreen') }} style={{ zIndex: 1, width: '50%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <MaterialCommunityIcons name="account-arrow-left" size={23} color={userActive === 'Assigned' ? "#2c82a1" : "#4a535b"} style={{ marginTop: 10 }} />
-                        <Text style={{ marginTop: 10, color: userActive === 'Assigned' ? 'green' : 'black', marginLeft: 10 }}>Assigned To Me</Text>
+                        <Text style={{ marginTop: 10, color: userActive === 'Assigned' ? 'purple' : 'black', marginLeft: 10 }}>Assigned To Me</Text>
                     </Pressable>
 
                     <Pressable onPress={() => { setUserActive('Created'); navigation.navigate('CompleteTaskFilter') }} style={{ zIndex: 1, width: '50%', flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialCommunityIcons name="card-bulleted-outline" size={30} color={userActive === 'Created' ? "#2c82a1" : "#4a535b"} style={{ marginTop: 10 }} />
-                        <Text style={{ marginTop: 10, color: userActive === 'Created' ? 'green' : 'black', marginLeft: 10 }}>Created By Me</Text>
+                        <Text style={{ marginTop: 10, color: userActive === 'Created' ? 'purple' : 'black', marginLeft: 10 }}>Created By Me</Text>
                     </Pressable>
                 </>
             }

@@ -34,6 +34,7 @@ const AdminTodayAttendance = ({ navigation }) => {
     const user = useSelector((state) => state.user.currentUser);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    // console.log('user',user)
 
     const handleBackButton = () => {
         BackHandler.exitApp()
@@ -56,7 +57,6 @@ const AdminTodayAttendance = ({ navigation }) => {
     }
 
     const goToDetail = (item) => {
-        console.log(item)
         dispatch(setSelectedEmployee(item))
         navigation.navigate('Tab', {
             screen: 'DailyAttendanceDetails',
@@ -89,14 +89,10 @@ const AdminTodayAttendance = ({ navigation }) => {
             }
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
-            console.log(cId)
             getAttendanceFeed(cId);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
             setIsLoaded(true);
         })();
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
+
     }, [isFocused])
 
     const closeCompanyModal = async (index, value) => {

@@ -13,22 +13,24 @@ import { CommonStyles } from '../../../common/CommonStyles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DailyAttendanceDetails from '../attendance/DailyAttendanceDetails';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../../components/Loader';
 import Searchbar from '../../../components/Searchbar';
 import Header from '../../../components/Header';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
 
 const TaskList = ({ navigation, route }) => {
 
     const user = useSelector((state) => state.user.currentUser);
     const [progressVisible, setprogressVisible] = useState(false);
     const [refreshing, setrefreshing] = useState(false);
-    const [search, setsearch] = useState('');
     const [taskList, settaskList] = useState([]);
     const [tempList, settempList] = useState([]);
+    const dispatch = useDispatch();
+
 
     const _onRefresh = async () => {
         setrefreshing(true);
@@ -44,21 +46,12 @@ const TaskList = ({ navigation, route }) => {
             () => {
                 (async () => {
                     getTaskList(user?.Id, true);
-                    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
                 })();
-
-                return () => {
-                    BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-                }
             },
             [],
         )
     )
 
-    const handleBackButton = () => {
-        BackHandler.exitApp()
-        return true;
-    }
     const searchFilterFunction = text => {
         if (text !== '') {
             const newData = tempList?.filter(item => {
@@ -78,13 +71,13 @@ const TaskList = ({ navigation, route }) => {
             setprogressVisible(isProgress);
             await GetRelatedToMeTasks(userId)
                 .then(res => {
-                    console.log('TASK', res)
+                    console.log(res)
                     if (user?.UserType == 'admin') {
-                        settaskList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
-                        settempList(res?.filter(x => x.StatusId !== 4 && x.StatusId !== 6 && x.StatusId !== 5))
+                        settaskList(res?.filter(x => x.StatusId != 4 && x.StatusId != 6 && x.StatusId != 5))
+                        settempList(res?.filter(x => x.StatusId != 4 && x.StatusId != 6 && x.StatusId != 5))
                     } else {
-                        settaskList(res?.filter(x => x.AssignedToId == user?.Id))
-                        settempList(res?.filter(x => x.AssignedToId == user?.Id))
+                        settaskList(res?.filter(x => x.AssignedToId == user?.Id && x.CreatedById != user?.Id))
+                        settempList(res?.filter(x => x.AssignedToId == user?.Id && x.CreatedById != user?.Id))
                     }
                     setprogressVisible(false);
                     console.log(tempList, 'taskresutl...');
@@ -107,20 +100,21 @@ const TaskList = ({ navigation, route }) => {
 
     return (
         <>
-                <View style={TaskStyle.container}>
-                    <Header
-                        title={'Tasks'}
-                        onPress={() => { navigation.openDrawer() }}
-                        btnAction={() => goToCreateTask()}
-                        btnTitle='TASKS'
-                    />
-                    {<Searchbar searchFilterFunction={searchFilterFunction} />}
-                    {progressVisible == true ?
-                        <ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />
-                        :
-                        <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh} />
-                    }
-                </View >
+            <View style={TaskStyle.container}>
+                <Header
+                    title={'Tasks'}
+                    onPress={() => { navigation.openDrawer() }}
+                    btnAction={() => goToCreateTask()}
+                    btnTitle='TASKS'
+                    onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack() }}
+                />
+                {<Searchbar searchFilterFunction={searchFilterFunction} />}
+                {progressVisible == true ?
+                    <ActivityIndicator size="large" color="#1B7F67" style={TaskStyle.loaderIndicator} />
+                    :
+                    <TaskLists itemList={taskList} refreshing={refreshing} onRefresh={_onRefresh} />
+                }
+            </View >
         </>
     )
 

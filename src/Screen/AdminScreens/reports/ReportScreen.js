@@ -14,12 +14,14 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import Header from '../../../components/Header';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
+import { useDispatch } from 'react-redux';
 
 
 const ReportScreen = ({ navigation, route }) => {
 
     const isFocused = useIsFocused();
-    const [yearList, setYearList] = useState([
+    const [yearList] = useState([
         { label: '2019', key: '2019' },
         { label: '2020', key: '2020' },
         { label: '2021', key: '2021' },
@@ -33,7 +35,7 @@ const ReportScreen = ({ navigation, route }) => {
         { label: '2029', key: '2029' },
         { label: '2030', key: '2030' },
     ]);
-    const [monthList, setMonthList] = useState([
+    const [monthList] = useState([
         { label: 'January', key: '1' },
         { label: 'February', key: '2' },
         { label: 'March', key: '3' },
@@ -52,16 +54,12 @@ const ReportScreen = ({ navigation, route }) => {
     const [workingReportList, setworkingReportList] = useState([]);
     const [companyId, setcompanyId] = useState(0);
     const [progressVisible, setprogressVisible] = useState(false);
-
+    const dispatch = useDispatch();
 
     useEffect(() => {
         getAllEmployeeAttendanceWithMonth(VistNumber, year);
-
     }, [isFocused])
 
-    const goBack = () => {
-        navigation.goBack();
-    }
     const selectedItem = async (itemValue) => {
         setVistNumber(itemValue);
         getAllEmployeeAttendanceWithMonth(itemValue, year);
@@ -73,10 +71,8 @@ const ReportScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetAllEmployeeAttendanceWithMonth(cId, monthNo, yearNo)
                 .then(res => {
-                    console.log("res", res);
-                    if (!res?.success && res?.success !== false) {
-                        setworkingReportList(res);
-                    } else {
+                    console.log("cId, monthNo, yearNo", cId, monthNo, yearNo);
+                    if (!res?.success) {
                         setworkingReportList(res);
                     }
                     setprogressVisible(false);
@@ -164,6 +160,7 @@ const ReportScreen = ({ navigation, route }) => {
             <Header
                 title={'ATTENDANCE REPORT'}
                 onPress={() => { navigation.openDrawer() }}
+                onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack() }}
             />
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 10, marginBottom: 0, padding: 10, paddingBottom: 0, }}>
                 <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>

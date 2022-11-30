@@ -9,15 +9,16 @@ import { Platform, ScrollView, Text, View, Image, StatusBar, ActivityIndicator, 
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 // import Geolocation from 'react-native-geolocation-service';
-import { CheckIn, CheckOut, CheckPoint, GetMyTodayAttendance, GetMovementDetails } from '../../../services/UserService/EmployeeTrackService';
+import { CheckIn, CheckOut, CheckPoint } from '../../../services/EmployeeService/EmployeeTrackService';
+import { GetMovementDetails, GetMyTodayAttendance } from '../../../services/EmployeeService/EmployeeTrackService';
 import { getLocation } from '../../../services/LocationService'
-import { UpdateEmployee } from '../../../services/UserService/AccountService'
+import { UpdateEmployee } from '../../../services/AccountService'
 import { NoticeStyle } from '../../AdminScreens/notice/NoticeStyle'
 import { ConvertUtcToLocalTime } from '../../../common/commonFunction'
 import * as TaskManager from 'expo-task-manager';
 import * as BackgroundFetch from 'expo-background-fetch';
 import { urlDev, urlResource } from '../../../Utils/config';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import LocalStorage from '../../../common/LocalStorage';
 import CustomImagePicker from '../../../components/CustomImagePicker';
 import CustomTimeLine from '../../../components/CustomTimeLine';
@@ -25,6 +26,7 @@ import { upLoadImage } from '../../../services/TaskService';
 import Header from '../../../components/Header';
 import Loader from '../../../components/Loader';
 import moment from 'moment';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
 
 
 let uIdd = "";
@@ -147,7 +149,7 @@ const MyPanel = ({ navigation }) => {
     const [modalForImage, setmodalForImage] = useState(false);
     const [successMessage, setsuccessMessage] = useState(null);
     const [error, seterror] = useState(null);
-
+    const dispatch = useDispatch();
 
 
     const _onRefresh = async () => {
@@ -277,11 +279,9 @@ const MyPanel = ({ navigation }) => {
             //setgmail(user?.Email);
             setCompanyId(comId);
             getMyTodayAttendance();
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
 
         return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
             ClearInterval();
         }
     }, [])
@@ -300,10 +300,6 @@ const MyPanel = ({ navigation }) => {
 
     const ClearInterval = () => {
         clearInterval(interval);
-    }
-    const handleBackButton = () => {
-        BackHandler.exitApp()
-        return true;
     }
 
     const getMyTodayAttendance = async () => {
@@ -353,7 +349,7 @@ const MyPanel = ({ navigation }) => {
                         }
                         let temp = ConvertUtcToLocalTime(userData?.LogDateTime)
                         var myObj = {
-                            "time": moment(temp,'h:mm A').format('hh:mm A'),
+                            "time": moment(temp, 'h:mm A').format('hh:mm A'),
                             "title": title,
                             "description": userData?.LogLocation,
                             "circleColor": color
@@ -709,6 +705,7 @@ const MyPanel = ({ navigation }) => {
             <Header
                 title={"My Panel"}
                 onPress={() => navigation.openDrawer()}
+                onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack(); }}
             />
             {!progressVisible ?
                 <ScrollView

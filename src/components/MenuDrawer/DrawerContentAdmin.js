@@ -36,11 +36,11 @@ const drawerSelectedOption = (id, dispatch) => {
 };
 const LiveTrackingCombo = (navigation, dispatch) => {
     navigation.navigate('LiveTraking');
-    drawerSelectedOption(1, dispatch);
+    drawerSelectedOption(2, dispatch);
 }
 const DailyAttendanceCombo = (navigation, dispatch) => {
     navigation.navigate('DailyAttendance');
-    drawerSelectedOption(2, dispatch);
+    drawerSelectedOption(1, dispatch);
 }
 const TasksCombo = (navigation, dispatch) => {
     navigation.navigate('TaskListBottomTab');
@@ -129,7 +129,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                 <TouchableOpacity
                     onPress={() => DailyAttendanceCombo(navigation, dispatch)}
                     style={
-                        active == 2 ?
+                        active == 1 ?
                             DrawerContentStyle.itemContainerSelected :
                             DrawerContentStyle.itemContainer}>
                     <Image
@@ -146,7 +146,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                 <TouchableOpacity
                     onPress={() => LiveTrackingCombo(navigation, dispatch)}
                     style={
-                        active == 1 ?
+                        active == 2 ?
                             DrawerContentStyle.itemContainerSelected :
                             DrawerContentStyle.itemContainer}>
                     <Image

@@ -1,66 +1,65 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { LeaveListStyle } from '../Screen/AdminScreens/leaves/LeaveListStyle'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 
-const LeaveBox = ({ item, onApprove, onReject }) => {
+const LeaveBox = ({ item, onApprove, onReject, styles }) => {
     const user = useSelector((state) => state.user.currentUser);
-// console.log(new Date(item.ToDate.replace(/-/g,'/')) - new Date(item.FromDate.replace(/-/g,'/')))
+
     return (
         <View
-            style={LeaveListStyle.listContainer}
+            style={styles.listContainer}
         >
-            <View style={LeaveListStyle.listInnerContainer}>
-                <Text style={LeaveListStyle.leaveType}>
+            <View style={styles.listInnerContainer}>
+                <Text style={styles.leaveType}>
                     Name:
                 </Text>
-                <Text style={LeaveListStyle.leaveFrom}>
+                <Text style={styles.leaveFrom}>
                     From:
                 </Text>
             </View>
 
-            <View style={LeaveListStyle.leaveReasonContainer}>
+            <View style={styles.leaveReasonContainer}>
                 <Text
-                    style={LeaveListStyle.leaveReasonText}>
+                    style={styles.leaveReasonText}>
                     {item.EmployeeName}
                 </Text>
                 <Text
-                    style={LeaveListStyle.reasonFromDate}>
+                    style={styles.reasonFromDate}>
                     {moment(item.FromDate).format('DD/MM/YYYY')}
                 </Text>
             </View>
 
             <View
-                style={LeaveListStyle.causeContainer}>
+                style={styles.causeContainer}>
                 <Text
-                    style={LeaveListStyle.causeText}>
+                    style={styles.causeText}>
                     Cause:
                 </Text>
                 <Text
-                    style={LeaveListStyle.leaveToText}>
+                    style={styles.leaveToText}>
                     To:
                 </Text>
             </View>
 
             <View
-                style={LeaveListStyle.detailsContainer}>
+                style={styles.detailsContainer}>
                 <Text
-                    style={LeaveListStyle.detailsText}>
+                    style={styles.detailsText}>
                     {item.LeaveReason}
                 </Text>
                 <Text
-                    style={LeaveListStyle.detailsTextInner}>
+                    style={styles.detailsTextInner}>
                     {moment(item.ToDate).format('DD/MM/YYYY')}
                 </Text>
             </View>
 
             <View
-                style={LeaveListStyle.causeContainer1}>
-                <Text style={LeaveListStyle.causeText}>
+                style={styles.causeContainer1}>
+                <Text style={styles.causeText}>
                     Leave Type:
                 </Text>
-                <Text style={LeaveListStyle.causeText1}>
+                <Text style={styles.causeText1}>
                     {item.LeaveTypeId === 1 && 'Casual Leave'}
                     {item.LeaveTypeId === 2 && 'Sick Leave'}
                 </Text>
@@ -69,25 +68,25 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
 
             {(item.ApprovedBy != null && item.ApprovedBy != '') &&
                 <View
-                    style={LeaveListStyle.approvedByContainer}>
+                    style={styles.approvedByContainer}>
                     <View style={{ flexDirection: 'column' }}>
                         <Text
-                            style={LeaveListStyle.approvedByText}>
+                            style={styles.approvedByText}>
                             Approved By:
                         </Text>
                         <Text
-                            style={LeaveListStyle.approvedByText1}>
+                            style={styles.approvedByText1}>
                             {item.ApprovedBy}
 
                         </Text>
                     </View>
                     <View>
                         <Text
-                            style={LeaveListStyle.approvedAtText}>
+                            style={styles.approvedAtText}>
                             Approved At:
                         </Text>
                         <Text
-                            style={LeaveListStyle.approvedAtText1}>
+                            style={styles.approvedAtText1}>
                             {moment(item.ApprovedAt).format('DD/MM/YYYY')}
                         </Text>
                     </View>
@@ -96,34 +95,34 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
 
             {(!item.IsApproved && !item.IsRejected && user.UserType == 'admin') ?
                 <View
-                    style={LeaveListStyle.buttonContainer}>
-                    <View style={LeaveListStyle.foraligmentitem}>
+                    style={styles.buttonContainer}>
+                    <View style={styles.foraligmentitem}>
                         <TouchableOpacity
                             onPress={onApprove}
-                            style={LeaveListStyle.buttonTouchable}>
-                            <Text style={LeaveListStyle.approveText}>
+                            style={styles.buttonTouchable}>
+                            <Text style={styles.approveText}>
                                 APPROVE
                             </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={onReject}
-                            style={LeaveListStyle.rejectButtonTouchable}>
+                            style={styles.rejectButtonTouchable}>
                             <Text
-                                style={LeaveListStyle.rejectText}>
+                                style={styles.rejectText}>
                                 REJECT
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={LeaveListStyle.statusDate1}>
-                        {item?.leaveInDays} Days
+                    <Text style={styles.statusDate1}>
+                        {item?.leaveInDays} Day{item?.leaveInDays > 1 ? "s" : ""}
                     </Text>
                 </View>
                 :
                 <View
-                    style={LeaveListStyle.statusButton}>
+                    style={styles.statusButton}>
                     <View
-                        style={LeaveListStyle.statusButtonInner}>
+                        style={styles.statusButtonInner}>
                         {item.IsApproved === 1 ?
                             (<Text style={{ color: 'green', }}>
                                 Approved
@@ -139,7 +138,7 @@ const LeaveBox = ({ item, onApprove, onReject }) => {
                     </View>
 
                     <Text
-                        style={LeaveListStyle.statusDate}>
+                        style={styles.statusDate}>
                         {item?.leaveInDays} Days
                     </Text>
                 </View>

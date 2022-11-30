@@ -165,25 +165,22 @@ const DailyAttendanceDetails = ({ navigation, route }) => {
                 onPress={() => { navigation.goBack() }}
                 makeCall={makeCall}
             />
-            {!refreshing ? data?.length > 0 ? <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} >
-                <View
-                    style={{
-                        flexDirection: 'column',
-                        backgroundColor: '#f5f7f9',
-                    }}>
-                    <View style={{ backgroundColor: '#ffffff' }}>
-                        <View style={{ flexDirection: 'column' }}>
-                            {renderTrackList()}
+            {!refreshing ? data?.length > 0 ?
+                <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} >
+                    <View style={{ flexDirection: 'column', backgroundColor: '#f5f7f9' }}>
+                        <View style={{ backgroundColor: '#ffffff' }}>
+                            <View style={{ flexDirection: 'column' }}>
+                                {renderTrackList()}
+                            </View>
                         </View>
                     </View>
-                </View>
-            </ScrollView >
+                </ScrollView >
                 :
-                    <EmptyScreen
-                        title={"This employee has no activity!"}
-                        description="This section will list the activities made for this employee."
-                        icon={<Feather color="#6f9fc9" name="activity" size={Dimensions.get('window').width * 0.3} />}
-                    />
+                <EmptyScreen
+                    title={"This employee has no activity!"}
+                    description="This section will list the activities made for this employee."
+                    icon={<Feather color="purple" name="activity" size={Dimensions.get('window').width * 0.3} />}
+                />
                 : <ActivityIndicator />}
         </View >
     );

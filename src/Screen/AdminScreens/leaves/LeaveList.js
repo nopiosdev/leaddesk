@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshControl, TouchableOpacity, View, Text, FlatList, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { GetAdminLeaveList, LeaveApproved, LeaveRejected } from '../../../services/Leave';
-import { LeaveListStyle } from '../../EmployeeScreens/leaves/LeaveListStyle';
-import { useSelector } from 'react-redux';
+import { LeaveListAdminStyle, LeaveListStyle } from './LeaveListStyle';
+import { useDispatch, useSelector } from 'react-redux';
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Searchbar from '../../../components/Searchbar';
 import LeaveBox from '../../../components/LeaveBox';
-import { GetLeaveList } from '../../../services/UserService/Leave';
+import { GetLeaveList } from '../../../services/EmployeeService/Leave';
 import Header from '../../../components/Header';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
 
 
 const LeaveList = ({ navigation, route }) => {
@@ -20,9 +21,8 @@ const LeaveList = ({ navigation, route }) => {
     const [refreshing, setrefreshing] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [companyId, setcompanyId] = useState(null);
-    const [search, setSearch] = useState('');
     const isFocused = useIsFocused();
-
+    const dispatch = useDispatch();
 
     const _onRefresh = async () => {
         setrefreshing(true);
@@ -64,7 +64,7 @@ const LeaveList = ({ navigation, route }) => {
             if (user.UserType == 'admin') {
                 await GetAdminLeaveList(companyId)
                     .then(res => {
-                        console.log(companyId,'adminGetLeaveList', res)
+                        console.log(companyId, 'adminGetLeaveList', res)
                         setleaveList(res);
                         setTempList(res);
                         setprogressVisible(false);
@@ -118,17 +118,18 @@ const LeaveList = ({ navigation, route }) => {
     return (
         <>
 
-            <View style={LeaveListStyle.container}>
+            <View style={(user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle)?.container}>
                 <Header
-                    title={'Leave Requests'}
+                    title={user?.UserType === 'admin' ? 'Leave Requests' : 'Leave List'}
                     onPress={() => { navigation.openDrawer() }}
                     btnAction={user?.UserType === 'admin' ? null : () => navigation.navigate('LeaveApply')}
                     btnTitle='LEAVE'
-                    btnContainerStyle={LeaveListStyle.ApplyTextButton}
-                    btnStyle={LeaveListStyle.plusButton}
-                />                
+                    btnContainerStyle={(user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle)?.ApplyTextButton}
+                    btnStyle={(user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle)?.plusButton}
+                    onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack() }}
+                />
                 <View style={{ flex: 1, }}>
-                    {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={LeaveListStyle.loaderIndicator} />) :
+                    {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={(user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle)?.loaderIndicator} />) :
                         <View style={{ flex: 1, }}>
                             <FlatList
                                 refreshControl={
@@ -144,6 +145,7 @@ const LeaveList = ({ navigation, route }) => {
                                         item={item}
                                         onApprove={() => leaveApprove(item)}
                                         onReject={() => leaveReject(item)}
+                                        styles={user?.UserType == 'admin' ? LeaveListAdminStyle : LeaveListStyle}
                                     />
                                 }
                                 ListHeaderComponent={<Searchbar searchFilterFunction={searchFilterFunction} />}

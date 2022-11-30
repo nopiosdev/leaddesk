@@ -13,12 +13,14 @@ import LocalStorage from '../../../common/LocalStorage';
 import { useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import Header from '../../../components/Header';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
+import { useDispatch } from 'react-redux';
 
 
 
 const LeaderBoardScreen = ({ navigation, route }) => {
     const isFocused = useIsFocused();
-    const [yearList, setYearList] = useState([
+    const [yearList] = useState([
         { label: '2019', key: '2019' },
         { label: '2020', key: '2020' },
         { label: '2021', key: '2021' },
@@ -32,7 +34,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
         { label: '2029', key: '2029' },
         { label: '2030', key: '2030' },
     ]);
-    const [monthList, setMonthList] = useState([
+    const [monthList] = useState([
         { label: 'January', key: '1' },
         { label: 'February', key: '2' },
         { label: 'March', key: '3' },
@@ -51,19 +53,14 @@ const LeaderBoardScreen = ({ navigation, route }) => {
     const [workingReportList, setworkingReportList] = useState([]);
     const [companyId, setcompanyId] = useState(0);
     const [progressVisible, setprogressVisible] = useState(false);
-    const [data, setdata] = useState([
-        { userName: 'Joe', highScore: 52 },
-        { userName: 'Jenny', highScore: 120 },
-    ])
+    const dispatch = useDispatch();
 
 
     useEffect(() => {
         GetLeaderboardDataWithMonth(VistNumber, year);
     }, [isFocused])
 
-    const goBack = () => {
-        navigation.navigate('DailyAttendance');
-    }
+
     const selectedItem = async (itemValue) => {
         setVistNumber(itemValue);
         GetLeaderboardDataWithMonth(itemValue, year);
@@ -158,6 +155,7 @@ const LeaderBoardScreen = ({ navigation, route }) => {
             <Header
                 title={'Leader Board'}
                 onPress={() => { navigation.openDrawer() }}
+                onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack() }}
             />
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 10, marginBottom: 0, padding: 10, paddingBottom: 0, }}>
                 <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>

@@ -21,6 +21,8 @@ const DailyAttendances = ({ navigation }) => {
     const [employeeDetail, setemployeeDetail] = useState({});
     const user = useSelector((state) => state.user.currentUser);
     const dispatch = useDispatch();
+
+    
     const handleBackButton = () => {
         BackHandler.exitApp()
         return true;
@@ -56,12 +58,7 @@ const DailyAttendances = ({ navigation }) => {
             setCompanyId(cId);
             console.log(cId)
             getAttendanceFeed(cId);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-
-        }
     }, [])
 
 
@@ -137,6 +134,7 @@ const DailyAttendances = ({ navigation }) => {
             <Header
                 title={"Today's Feed"}
                 onPress={() => navigation.openDrawer()}
+                onGoBack={() => handleBackButton()}
             />
             <View
                 style={[

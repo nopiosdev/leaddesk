@@ -16,10 +16,9 @@ import { NoticeStyle } from '../notice/NoticeStyle';
 import { EmpSetScreenStyle } from './EmpSetScreenStyle';
 import { CommonStyles } from '../../../common/CommonStyles';
 import RadioButton from 'radio-button-react-native';
-import { GetEmpInfoByUserId, GetEmployeeWithCompanyId, getTokenforResetEmptPass, UpdateEmployee, DeleteEmployee, CreateEmployee, ChangePasswordforEmp } from "../../../services/AccountService";
-import { GetDepartmentByCompanyId, CreateDepartment, } from "../../../services/DepartmentService";
-import { GetCompanyByUserId, } from '../../../services/CompanyService';
-import { urlDev, urlResource } from '../../../Utils/config';
+import { GetEmployeeWithCompanyId, UpdateEmployee } from "../../../services/AccountService";
+import { GetDepartmentByCompanyId,  } from "../../../services/DepartmentService";
+import { urlResource } from '../../../Utils/config';
 import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from 'react-redux';
 import { Clipboard } from '@react-native-community/clipboard'
@@ -172,12 +171,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
             getDepartment(cId);
             setcompanyId(cId);
             getEmpAllWithCompanyId(cId);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
     // const openModal2 = () => {

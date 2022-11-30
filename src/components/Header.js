@@ -9,7 +9,7 @@ import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Menu, Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 
-const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, btnTitle, btnAction, saveImg, deleteAction, btnContainerStyle, btnStyle }) => {
+const Header = ({ onSelect, selected, onPress, goBack, onGoBack, makeCall = null, title, btnTitle, btnAction, saveImg, deleteAction, btnContainerStyle, btnStyle }) => {
 
     const [showMenu, setShowMenu] = useState(false);
 
@@ -20,7 +20,10 @@ const Header = ({ onSelect, selected, onPress, goBack, makeCall = null, title, b
 
     useFocusEffect(() => {
         const onBackPress = () => {
-            if (onPress) {
+            if (onGoBack) {
+                onGoBack();
+                return true;
+            } else if (onPress) {
                 onPress();
                 return true;
             } else {

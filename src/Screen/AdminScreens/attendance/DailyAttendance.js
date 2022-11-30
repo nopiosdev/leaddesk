@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import DailyAttendances from '../../EmployeeScreens/attendance/DailyAttendance';
 import AdminTodayAttendance from '../attendance/AdminTodayAttendance';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as Notifications from 'expo-notifications';
 import * as Update from 'expo-updates';
 import Popup from '../../../components/Popup';
 import { View } from 'react-native';
+import { toggleActive } from '../../../Redux/Slices/UserSlice';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const DailyAttendance = ({ navigation }) => {
     const userDetails = useSelector((state) => state.user.currentUser);
     const [expoPushToken, setExpoPushToken] = useState('');
     const [updatevisible, setUpdateVisible] = useState(false);
-
+    const dispatch = useDispatch();
+    const isFocused = useIsFocused();
     // const registerForPushNotificationsAsync = async() => {
     //     let token;
 
@@ -52,17 +55,18 @@ const DailyAttendance = ({ navigation }) => {
     }
 
     useEffect(() => {
+        dispatch(toggleActive(1));
         checkupdate();
         // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));   
     }, []);
     return (
         <>
             {userDetails?.UserType == 'admin' ? <AdminTodayAttendance navigation={navigation} /> : <DailyAttendances navigation={navigation} />}
-                <Popup
-                    show={updatevisible}
-                    title={'Update'}
-                    description={'New Updates Are Available'}
-                />
+            <Popup
+                show={updatevisible}
+                title={'Update'}
+                description={'New Updates Are Available'}
+            />
         </>
     );
 }

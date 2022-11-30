@@ -1,27 +1,11 @@
 import React, { useEffect } from 'react';
-import {
-    Platform, StatusBar, Dimensions,
-    TouchableOpacity, View, Text,
-    Image, ScrollView,
-    BackHandler,
-    RefreshControl,
-    FlatList, StyleSheet,
-} from 'react-native';
+import { Dimensions, View, Text, StyleSheet } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import Timeline from 'react-native-timeline-flatlist'
-import * as actions from '../../../common/actions';
 import { DailyAttendanceStyle } from './DailyAttendanceStyle';
-import {
-    GetMyTodayAttendance,
-    GetMovementDetails
-} from '../../../services/EmployeeTrackService';
-
-import { CommonStyles } from '../../../common/CommonStyles';
-
+import { GetMyTodayAttendance, GetMovementDetails } from '../../../services/EmployeeTrackService';
 import call from 'react-native-phone-call'
 import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { updateUserEmployee } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
 import Header from '../../../components/Header';
 import { ActivityIndicator } from 'react-native';
@@ -85,12 +69,6 @@ const DailyAttendanceLocation = ({ navigation }) => {
                                 title = "Checked point";
                                 color = "gray"
                             }
-                            // var myObj = {
-                            //     "time": userData.LogTimeVw,
-                            //     "title": title,
-                            //     "description": userData.LogLocation,
-                            //     "circleColor": color
-                            // };
                             var newMarkerObj = {
                                 "title": title + " " + (index + 1),
                                 "description": userData.LogLocation,
@@ -101,8 +79,6 @@ const DailyAttendanceLocation = ({ navigation }) => {
                             }
                             setmarkers([newMarkerObj])
                         });
-                        console.log('Lat', res[res?.length - 1])
-
                         setLongitude(Number(res[res?.length - 1]?.Longitude));
                         setLatitude(Number(res[res?.length - 1]?.Latitude));
                         setLogLocation(res[res?.length - 1]?.LogLocation);
@@ -177,9 +153,8 @@ const DailyAttendanceLocation = ({ navigation }) => {
             <View style={{
                 flexDirection: 'column'
             }}>
-                <View style={{  }}>
+                <View style={{}}>
                     <MapView
-
                         provider={PROVIDER_GOOGLE}
                         style={{
                             height: (height * 80) / 100,

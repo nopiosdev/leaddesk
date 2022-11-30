@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addUser, toggleUser, toggleActive } from "../Redux/Slices/UserSlice";
-import MainStackNavigator from "../Navigations/MainStackNavigator";
+import { addUser, toggleUser, toggleActive } from "../../Redux/Slices/UserSlice";
+import MainStackNavigator from "../../Navigations/MainStackNavigator";
 import { useState } from "react";
-import LocalStorage from "../common/LocalStorage";
-import Loader from "../components/Loader";
+import LocalStorage from "../../common/LocalStorage";
+import Loader from "../../components/Loader";
 import * as Font from 'expo-font'
 
 const AuthLoadingScreen = ({ navigation }) => {

@@ -40,9 +40,9 @@ import { Image, View } from 'react-native';
 import TaskBottomTabs from '../helperComponents/TaskBottomTabs';
 import MyPanel from '../Screen/EmployeeScreens/myPanel/MyPanel';
 import LeaveApply from '../Screen/EmployeeScreens/leaves/LeaveApply';
-import MyTask from '../Screen/EmployeeScreens/tasks/MyTask';
-import CreateByMe from '../Screen/EmployeeScreens/tasks/CreateByMe';
 import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -56,17 +56,8 @@ const TaskListBottomTab = () => {
         <Tab.Navigator tabBar={props => <TaskBottomTabs {...props} />} initialRouteName={'TaskListScreen'} screenOptions={({ route }) => ({
             tabBarHideOnKeyboard: true,
         })} >
-            {/* {userDetails?.UserType == 'admin' ? */}
-            <>
-                <Tab.Screen name="TaskListScreen" component={TaskListScreen} options={{ headerShown: false }} />
-                <Tab.Screen name="CompleteTaskFilter" component={CompleteTaskFilter} options={{ headerShown: false }} />
-            </>
-            {/* // :
-                // <>
-                //     <Tab.Screen name="TaskListScreen" component={CreateByMe} options={{ headerShown: false }} />
-                //     <Tab.Screen name="MyTask" component={MyTask} options={{ headerShown: false }} />
-                // </> */}
-            {/* // } */}
+            <Tab.Screen name="TaskListScreen" component={TaskListScreen} options={{ headerShown: false }} />
+            <Tab.Screen name="CompleteTaskFilter" component={CompleteTaskFilter} options={{ headerShown: false }} />
         </Tab.Navigator>
     )
 }
@@ -95,7 +86,7 @@ const AdminBottomTab = () => {
                     return <Image source={require('../../assets/images/briefcase.png')} resizeMode='contain' style={{ height: 20, width: 20, marginTop: 15 }}></Image>
                 }
             },
-            tabBarActiveTintColor: 'red',
+            tabBarActiveTintColor: 'purple',
             tabBarInactiveTintColor: 'gray',
             tabBarHideOnKeyboard: true,
         })} >
@@ -107,43 +98,7 @@ const AdminBottomTab = () => {
     );
 }
 
-const AdminHomeTab = () => {
 
-    return (
-        <Tab.Navigator initialRouteName='DailyAttendance' screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-                if (route.name === 'DailyAttendance' && focused) {
-                    return <AntDesign name="home" size={24} style={{ marginBottom: -5 }} color="#6f9fc9" />
-                } else if (route.name === 'DailyAttendance' && !focused) {
-                    return <AntDesign name="home" size={24} style={{ marginBottom: -5 }} color="#bbc3c7" />
-                }
-                if (route.name === 'LiveTraking' && focused) {
-                    return <Feather name="map-pin" size={24} style={{ marginBottom: -5 }} color="#6f9fc9" />
-                } else if (route.name === 'LiveTraking' && !focused) {
-                    return <Feather name="map-pin" size={24} style={{ marginBottom: -5 }} color="#bbc3c7" />
-                }
-                if (route.name === 'TaskListBottomTab' && focused) {
-                    return <FontAwesome name="list-alt" size={24} style={{ marginBottom: -5 }} color="#6f9fc9" />
-                } else if (route.name === 'TaskListBottomTab' && !focused) {
-                    return <FontAwesome name="list-alt" size={24} style={{ marginBottom: -5 }} color="#bbc3c7" />
-                }
-                if (route.name === 'LeaveList' && focused) {
-                    return <Ionicons name="ios-briefcase-outline" style={{ marginBottom: -5 }} size={24} color="#6f9fc9" />
-                } else if (route.name === 'LeaveList' && !focused) {
-                    return <Ionicons name="ios-briefcase-outline" style={{ marginBottom: -5 }} size={24} color="#bbc3c7" />
-                }
-            },
-            tabBarActiveTintColor: '#6f9fc9',
-            tabBarInactiveTintColor: 'gray',
-            tabBarHideOnKeyboard: true,
-        })} >
-            <Tab.Screen name="DailyAttendance" component={DailyAttendance} options={{ headerShown: false, title: 'Today Attendance' }} />
-            <Tab.Screen name="LiveTraking" component={LiveTracking} options={{ headerShown: false, title: "Live Tracking" }} />
-            <Tab.Screen name="TaskListBottomTab" component={TaskListBottomTab} options={{ headerShown: false, title: "All Tasks" }} />
-            <Tab.Screen name="LeaveList" component={LeaveList} options={{ headerShown: false, title: "Leaves" }} />
-        </Tab.Navigator>
-    );
-}
 const DashboardScreen = () => {
     const userDetails = useSelector((state) => state.user.currentUser);
     return (

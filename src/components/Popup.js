@@ -1,39 +1,64 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Dimensions } from 'react-native'
-import { Portal, Dialog, Paragraph, Button } from 'react-native-paper';
+import { View, StyleSheet, Dimensions, Pressable } from 'react-native'
+import { Portal, Dialog, Paragraph, Button, TextInput } from 'react-native-paper';
 import * as Update from 'expo-updates';
 import CustomButton from './CustomButton';
+import LocalStorage from '../common/LocalStorage';
 
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Popup = ({ show, onPress, description, connectBtn, title }) => {
-
+const Popup = ({ show, onPress, description, testingPopup, title }) => {
+    const [url, setUrl] = useState('')
 
     return (
         <>
-            {/* <View style={styles.mainContainer}> */}
             <Portal style={styles.mainContainer}>
                 <Dialog visible={show} onDismiss={onPress} style={{ width: '90%', alignSelf: 'center', alignItems: 'center', marginHorizontal: 0, marginBottom: 0, }}>
-                    <>
-                        <View style={[styles.child1, { backgroundColor: 'purple' }]}>
-                            <Dialog.Title style={[styles.child1Text, { color: 'white' }]}>{title}</Dialog.Title>
-                        </View>
-                        <Dialog.Content style={[styles.child2, { backgroundColor: 'white' }]}>
-                            <Paragraph style={[styles.child2Text]}>{description}</Paragraph>
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                            <CustomButton
-                                title={'Update'}
-                                onPress={() => Update.reloadAsync()}
-                                btnStyle={{ width: '50%' }}
-                            />
-                        </Dialog.Actions>
-                    </>
+                    {testingPopup ?
+                        <>
+                            <View style={[styles.child1, { backgroundColor: 'purple' }]}>
+                                <Dialog.Title style={[styles.child1Text, { color: 'white' }]}>{title}</Dialog.Title>
+                            </View>
+                            <Dialog.Content style={[{ backgroundColor: 'white', marginTop: 10, width: '100%' }]}>
+                                <TextInput
+                                    onChangeText={(e) => setUrl(e)}
+                                    value={url}
+                                />
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <CustomButton
+                                    title={'Update'}
+                                    onPress={() => { LocalStorage.SetData('URL', url?.toString()); onPress() }}
+                                    btnStyle={{ width: '40%', marginRight: 5 }}
+                                />
+                                <CustomButton
+                                    title={'Close'}
+                                    onPress={onPress}
+                                    btnStyle={{ width: '40%' }}
+                                />
+                            </Dialog.Actions>
+                        </>
+                        :
+                        <>
+                            <View style={[styles.child1, { backgroundColor: 'purple' }]}>
+                                <Dialog.Title style={[styles.child1Text, { color: 'white' }]}>{title}</Dialog.Title>
+                            </View>
+                            <Dialog.Content style={[styles.child2, { backgroundColor: 'white' }]}>
+                                <Paragraph style={[styles.child2Text]}>{description}</Paragraph>
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <CustomButton
+                                    title={'Update'}
+                                    onPress={() => Update.reloadAsync()}
+                                    btnStyle={{ width: '50%' }}
+                                />
+                            </Dialog.Actions>
+                        </>
+                    }
                 </Dialog>
             </Portal>
-            {/* </View> */}
         </>
     )
 }

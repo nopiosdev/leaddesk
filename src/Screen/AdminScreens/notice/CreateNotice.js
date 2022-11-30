@@ -53,20 +53,10 @@ const CreateNotice = ({ navigation, route }) => {
             const cId = await LocalStorage.GetData("companyId");
             setcompanyId(cId);
             // getDepartment("1")
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [])
 
     const saveNotice = async () => {
-        NetInfo.fetch().then(state => {
-            if (!state.isConnected) {
-                return ToastAndroid.show('Plese Connect the Internet', ToastAndroid.TOP);
-            }
-        });
         if (!details) return ToastAndroid.show('Please fill all the field', ToastAndroid.TOP);
         if (!ImageFileName) return ToastAndroid.show('Please select image', ToastAndroid.TOP);
         try {
@@ -81,13 +71,11 @@ const CreateNotice = ({ navigation, route }) => {
             await SaveNotice(data)
                 .then(res => {
                     console.log('SaveNotice', res)
-                    // if (res?.success) {
                     setprogressVisible(false);
                     ToastAndroid.show('Notice saved successfully', ToastAndroid.TOP);
                     setdetails('');
                     setImageFileName('');
-                    navigation.navigate('Notice');
-                    // }
+                    navigation.goBack();
                 })
                 .catch(() => {
                     setprogressVisible(false);
@@ -125,10 +113,7 @@ const CreateNotice = ({ navigation, route }) => {
     //     console.log(tempCheckValues, '......test1')
     //     console.log(test.CheckBoxList, '......test')
     // }
-    const handleBackButton = () => {
-        navigation.navigate('Notice');
-        return true;
-    }
+
 
     // const openModaldept = () => {
     //     setmodalfordept(true);
@@ -231,64 +216,65 @@ const CreateNotice = ({ navigation, route }) => {
                 saveImg={true}
                 btnContainerStyle={NoticeStyle.ApplyTextButton}
                 btnStyle={NoticeStyle.plusButton}
-            />           
+            />
 
 
-            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={NoticeStyle.loaderIndicator} />) : null}
+            {progressVisible == true ? (<ActivityIndicator size="large" color="#1B7F67" style={NoticeStyle.loaderIndicator} />) :
 
-            <KeyboardAvoidingView enabled style={NoticeStyle.createnoticecontainer}>
-                {/* <View style={NoticeStyle.createnoticecontainer}> */}
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={NoticeStyle.selectContainer}>
-                        <TouchableOpacity onPress={() => openmodalForImage()}
-                            style={NoticeStyle.opencemarTouchableopacity}>
-                            <View>
+                <KeyboardAvoidingView enabled style={NoticeStyle.createnoticecontainer}>
+                    {/* <View style={NoticeStyle.createnoticecontainer}> */}
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View style={NoticeStyle.selectContainer}>
+                            <TouchableOpacity onPress={() => openmodalForImage()}
+                                style={NoticeStyle.opencemarTouchableopacity}>
+                                <View>
+                                    <Image resizeMode='contain'
+                                        style={NoticeStyle.opencemarastle}
+                                        source={require('../../../../assets/images/camera_white.png')}>
+                                    </Image>
+
+                                </View>
+                                <View style={NoticeStyle.selectContainerview}>
+                                    <Text style={NoticeStyle.selectText}>
+                                        SELECT TO
+                                    </Text>
+                                    <Text style={NoticeStyle.addPhotoText1}>
+                                        ADD PHOTO
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            {/* </View> */}
+                            <TouchableOpacity
+                                style={NoticeStyle.openDeptTouhableOpacity}>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View
+                            style={NoticeStyle.inputTextContainer}>
+
+
+                            <TextInput
+                                style={NoticeStyle.inputText}
+                                multiline={true}
+                                placeholderTextColor="#cbcbcb"
+                                placeholder="Write your notice here..."
+                                returnKeyType="next"
+                                autoCorrect={false}
+                                onChangeText={text => setdetails(text)}
+                            />
+                            <TouchableOpacity
+                                style={NoticeStyle.ImageTouchableOpacity} onPress={() => { gotoBordDetail(urlResource + ImageFileName) }}>
                                 <Image resizeMode='contain'
-                                    style={NoticeStyle.opencemarastle}
-                                    source={require('../../../../assets/images/camera_white.png')}>
-                                </Image>
+                                    style={NoticeStyle.uploadImageStyle}
+                                    source={{ uri: urlResource + ImageFileName }}></Image>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
 
-                            </View>
-                            <View style={NoticeStyle.selectContainerview}>
-                                <Text style={NoticeStyle.selectText}>
-                                    SELECT TO
-                                </Text>
-                                <Text style={NoticeStyle.addPhotoText1}>
-                                    ADD PHOTO
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        {/* </View> */}
-                        <TouchableOpacity
-                            style={NoticeStyle.openDeptTouhableOpacity}>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View
-                        style={NoticeStyle.inputTextContainer}>
-
-
-                        <TextInput
-                            style={NoticeStyle.inputText}
-                            multiline={true}
-                            placeholderTextColor="#cbcbcb"
-                            placeholder="Write your notice here..."
-                            returnKeyType="next"
-                            autoCorrect={false}
-                            onChangeText={text => setdetails(text)}
-                        />
-                        <TouchableOpacity
-                            style={NoticeStyle.ImageTouchableOpacity} onPress={() => { gotoBordDetail(urlResource + ImageFileName) }}>
-                            <Image resizeMode='contain'
-                                style={NoticeStyle.uploadImageStyle}
-                                source={{ uri: urlResource + ImageFileName }}></Image>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-
-                {/* </View> */}
-            </KeyboardAvoidingView>
+                    {/* </View> */}
+                </KeyboardAvoidingView>
+            }
             <Modal
                 style={NoticeStyle.ImagemodalContainer}
                 position={"center"}

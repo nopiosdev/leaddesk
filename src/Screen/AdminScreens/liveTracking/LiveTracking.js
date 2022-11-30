@@ -24,12 +24,12 @@ import { googlemapApiForAutoCheckPoint } from '../../../Utils/config';
 import * as Location from 'expo-location';
 import LocalStorage from '../../../common/LocalStorage';
 import { useState } from 'react';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from 'react';
 import Searchbar from '../../../components/Searchbar';
 import Header from '../../../components/Header';
 import { useIsFocused } from '@react-navigation/native';
-
+import { toggleActive } from '../../../Redux/Slices/UserSlice'
 const { width, height } = Dimensions.get('window');
 
 
@@ -55,8 +55,8 @@ const LiveTracking = ({ navigation, route }) => {
     const [employeeModal, setemployeeModal] = useState(false);
     const [tempList, setTempList] = useState([]);
     const isFocused = useIsFocused();
+    const dispatch = useDispatch();
     let mapView = null;
-
 
     useEffect(() => {
         (async () => {
@@ -64,18 +64,9 @@ const LiveTracking = ({ navigation, route }) => {
             setcompanyId(cId);
             await getEmpTrackInfo(selctedEmployeeValue, cId);
             await getEmpAllWithCompanyId(cId);
-            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         })();
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        }
     }, [isFocused])
 
-    const handleBackButton = () => {
-        navigation.navigate('DailyAttendance');
-        return true;
-    }
 
     const _getLocationAsync = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -118,12 +109,12 @@ const LiveTracking = ({ navigation, route }) => {
         try {
             setmarkers([]);
             if (selectedVal === 'All Employee') {
-                await GetMovementDetailsAll(cId ? cId : companyId)
+                await GetMovementDetailsAll(cId)
                     .then(res => {
+                        console.log('companyId', cId, 'GetMovementDetailsAll', res)
                         setEmpTrackList(res)
                         var markerlist = [];
-                        console.log('companyId', companyId, 'GetMovementDetailsAll', res)
-                        if (res?.length > 0) {
+                        if (!res?.success && res?.length > 0) {
                             res?.map((userData, index) => {
                                 var title = '';
                                 var color = '';
@@ -166,35 +157,37 @@ const LiveTracking = ({ navigation, route }) => {
                         console.log(selectedVal, 'GetMovementDetails', res)
                         setEmpTrackList(res);
                         var markerlist = [];
-                        res?.map((userData, index) => {
-                            var title = '';
-                            var color = '';
-                            if (userData?.IsCheckInPoint) {
-                                title = "Checked In";
-                                color = 'green';
-                            } else if (userData?.IsCheckOutPoint) {
-                                title = "Checked Out";
-                                color = 'red';
-                            } else {
-                                title = "Checked point";
-                                color = index === res?.length - 1 ? 'red' : 'yellow';
-                            }
-                            var newMarkerObj = {
-                                "title": title + " " + (index + 1),
-                                "description": userData?.LogLocation,
-                                "color": color,
-                                coordinates: {
-                                    "latitude": Number(userData?.Latitude),
-                                    "longitude": Number(userData?.Longitude)
-                                },
-                            }
-                            markerlist.push(newMarkerObj);
+                        if (!res?.success && res?.length > 0) {
+                            res?.map((userData, index) => {
+                                var title = '';
+                                var color = '';
+                                if (userData?.IsCheckInPoint) {
+                                    title = "Checked In";
+                                    color = 'green';
+                                } else if (userData?.IsCheckOutPoint) {
+                                    title = "Checked Out";
+                                    color = 'red';
+                                } else {
+                                    title = "Checked point";
+                                    color = index === res?.length - 1 ? 'red' : 'yellow';
+                                }
+                                var newMarkerObj = {
+                                    "title": title + " " + (index + 1),
+                                    "description": userData?.LogLocation,
+                                    "color": color,
+                                    coordinates: {
+                                        "latitude": Number(userData?.Latitude),
+                                        "longitude": Number(userData?.Longitude)
+                                    },
+                                }
+                                markerlist.push(newMarkerObj);
 
-                        });
-                        setmarkers(markers.concat(markerlist))
-                        setLongitude(Number(res[res?.length - 1]?.Longitude));
-                        setLatitude(Number(res[res?.length - 1]?.Latitude));
-                        setLogLocation(res[res?.length - 1]?.LogLocation);
+                            });
+                            setmarkers(markers.concat(markerlist))
+                            setLongitude(Number(res[res?.length - 1]?.Longitude));
+                            setLatitude(Number(res[res?.length - 1]?.Latitude));
+                            setLogLocation(res[res?.length - 1]?.LogLocation);
+                        }
                     })
                     .catch((ex) => {
                         console.log(ex, "GetMovementDetails error occured");
@@ -211,10 +204,10 @@ const LiveTracking = ({ navigation, route }) => {
         if (item?.UserName) {
             setslectedEmployeeId(item.UserId);
             setselctedEmployeeValue(item?.UserName);
-            getEmpTrackInfo(item);
+            getEmpTrackInfo(item, companyId);
         } else {
             setselctedEmployeeValue(item);
-            getEmpTrackInfo(item);
+            getEmpTrackInfo(item, companyId);
         }
     }
     const searchFilterFunction = text => {
@@ -248,7 +241,7 @@ const LiveTracking = ({ navigation, route }) => {
     const onError = (errorMessage) => {
         console.log(errorMessage);
     }
-    console.log(markers)
+
     const renderMapView = () => {
         return (
             <View style={{
@@ -310,6 +303,7 @@ const LiveTracking = ({ navigation, route }) => {
                 onSelect={() => setemployeeModal(true)}
                 selected={selctedEmployeeValue}
                 onPress={() => { navigation.openDrawer(); }}
+                onGoBack={() => { dispatch(toggleActive(1)); navigation.goBack() }}
             />
             {renderMapView()}
             <Modal style={{
