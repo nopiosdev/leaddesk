@@ -220,12 +220,12 @@ const MyPanel = ({ navigation }) => {
         } else if (statusPoint == "CheckPoint") {
             createCheckPoint(Latd, Logtd, loaction);
         } else {
-            console.log('OfficeStayHour', OfficeStayHour)
-            if (OfficeStayHour < maximumOfficeHours) {
-                setLessTimeReasonModal(true);
-            } else {
-                createCheckOut(fileId, Latd, Logtd, loaction);
-            }
+            // console.log('OfficeStayHour', OfficeStayHour)
+            // if (OfficeStayHour < maximumOfficeHours) {
+            //     setLessTimeReasonModal(true);
+            // } else {
+            createCheckOut(fileId, Latd, Logtd, loaction);
+            // }
         }
     }
 

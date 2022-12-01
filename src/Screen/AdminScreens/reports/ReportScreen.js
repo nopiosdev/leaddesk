@@ -71,7 +71,7 @@ const ReportScreen = ({ navigation, route }) => {
             setprogressVisible(true);
             await GetAllEmployeeAttendanceWithMonth(cId, monthNo, yearNo)
                 .then(res => {
-                    console.log("cId, monthNo, yearNo", cId, monthNo, yearNo);
+                    console.log("cId, monthNo, yearNo", res)
                     if (!res?.success) {
                         setworkingReportList(res);
                     }
@@ -218,8 +218,7 @@ const ReportScreen = ({ navigation, route }) => {
                                             </Text>
                                         </View>
                                         <Text style={DailyAttendanceStyle.CheckinTimeText}>
-                                            {item.CheckInTime ? moment(item.CheckInTime).format('DD/MM/YY') : ("")}
-
+                                            {item?.CheckInTime ? moment(item?.CheckInTime).format('DD/MM/YY') : ("")}
                                         </Text>
 
                                     </View>

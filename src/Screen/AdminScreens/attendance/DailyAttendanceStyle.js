@@ -215,7 +215,7 @@ export const DailyAttendanceStyle = StyleSheet.create({
         flexDirection: "row", alignItems: 'flex-end', marginRight: 10, marginTop: 4
     },
     TimeContainerwork: {
-        alignItems: 'flex-end', alignSelf: 'flex-start'
+        alignItems: 'flex-start', alignSelf: 'flex-start'
     },
     TimeContent: {
         flexDirection: 'row',
@@ -226,10 +226,11 @@ export const DailyAttendanceStyle = StyleSheet.create({
     TimeContentwork: {
         flexDirection: 'row',
         padding: 3,
+        marginRight: 10
     },
     CheckintimeStyle: {
         paddingRight: 8,
-        marginTop: 2
+        fontSize: 11
     },
     AntDesignstyle: {
         paddingRight: 2,
@@ -250,7 +251,8 @@ export const DailyAttendanceStyle = StyleSheet.create({
     },
     CheckOutTimetext: {
         paddingRight: 8,
-        marginTop: 2
+        marginTop: 2,
+        fontSize: 11
     },
     CheckOutTimeIconstyle: {
         paddingRight: 2,
