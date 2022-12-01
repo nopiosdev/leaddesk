@@ -234,21 +234,21 @@ const ReportScreen = ({ navigation, route }) => {
                                         </View>
                                         <Text style={DailyAttendanceStyle.CheckOutTimeText}></Text>
                                     </View>
-
-                                    <View style={DailyAttendanceStyle.CheckOutTimeView}>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <Text
-                                                style={
-                                                    [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]}>
-                                                No Checked Out:
-                                            </Text>
-                                            <Text style={[DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]}>
-                                                {item.TotalCheckedOutMissing}
-                                            </Text>
-                                        </View>
-                                        <Text style={DailyAttendanceStyle.CheckOutMissingTimeText}></Text>
-                                    </View>
-
+                                    {item.TotalCheckedOutMissing ?
+                                        <View style={DailyAttendanceStyle.CheckOutTimeView}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text
+                                                    style={
+                                                        [DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]}>
+                                                    Checkout Missing:{" "}  
+                                                </Text>
+                                                <Text style={[DailyAttendanceStyle.CheckOutMissingTimeText, { color: '#FF0000' }]}>
+                                                    {item.TotalCheckedOutMissing}
+                                                </Text>
+                                            </View>
+                                            <Text style={DailyAttendanceStyle.CheckOutMissingTimeText}></Text>
+                                        </View> : null
+                                    }
                                 </View>
                             </View>
                             <View style={{ borderBottomColor: '#edeeef', borderBottomWidth: 1, marginLeft: "24%", marginRight: 10, }}></View>

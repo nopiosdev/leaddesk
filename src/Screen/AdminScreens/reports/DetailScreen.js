@@ -200,21 +200,21 @@ const DetailScreen = ({ navigation, route }) => {
                                                     : null}
 
                                             {!item.IsLeave ?
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 14, textAlign: "right", color: "#076332", fontFamily: "PRODUCT_SANS_BOLD"
-                                                        }}>
-                                                        {moment(item.CheckInTime).format('DD/MM/YY')}
+                                                <Text
+                                                    style={{
+                                                        fontSize: 14, textAlign: "right", color: "#076332", fontFamily: "PRODUCT_SANS_BOLD"
+                                                    }}>
+                                                    {moment(item.CheckInTime).format('DD/MM/YY')}
 
-                                                    </Text>
-                                                    :
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 14, textAlign: "right", color: "red", fontFamily: "PRODUCT_SANS_BOLD"
-                                                        }}>
-                                                        {moment(item.CheckInTime).format('DD/MM/YY')}
+                                                </Text>
+                                                :
+                                                <Text
+                                                    style={{
+                                                        fontSize: 14, textAlign: "right", color: "red", fontFamily: "PRODUCT_SANS_BOLD"
+                                                    }}>
+                                                    {moment(item.CheckInTime).format('DD/MM/YY')}
 
-                                                    </Text>
+                                                </Text>
                                             }
                                         </View>
                                         {
@@ -259,7 +259,7 @@ const DetailScreen = ({ navigation, route }) => {
                                                         }}>
 
 
-                                                        {moment(item.CheckOutTime).format('DD/MM/YY')}
+                                                        {item.CheckOutTime ? moment(item.CheckOutTime).format('DD/MM/YY') : 'In Progress'}
 
                                                     </Text>
                                                 </View>
@@ -280,7 +280,7 @@ const DetailScreen = ({ navigation, route }) => {
                                     <View
                                         style={{
                                             borderRightColor: 'gray',
-                                            width: (width * 30) / 100,                                           
+                                            width: (width * 30) / 100,
                                             paddingLeft: 10,
                                         }}>
                                         <View
