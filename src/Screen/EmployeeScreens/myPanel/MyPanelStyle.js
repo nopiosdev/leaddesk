@@ -10,9 +10,9 @@ export const MyPanelStyle = StyleSheet.create({
     },
     loaderIndicator: {
         position: 'absolute',
-         left: 0, right: 0, 
-         //bottom: 0, 
-        top: 0, 
+        left: 0, right: 0,
+        //bottom: 0, 
+        top: 0,
         //justifyContent: 'center', 
         alignContent: 'center',
     },
@@ -206,10 +206,17 @@ export const MyPanelStyle = StyleSheet.create({
         flexDirection: 'row', marginBottom: 0, height: 45
     },
     modalForEditProfile: {
-        height: Dimensions.get('window').height/1.5,
+        height: Dimensions.get('window').height / 1.5,
         width: "85%",
         borderRadius: 20,
 
+    },
+    modalForLessTimeReason: {
+        height: Dimensions.get('window').height / 2.5,
+        width: "85%",
+        flexDirection:'column',
+        borderRadius: 20,
+        padding: 20
     },
     modelContent: {
         alignItems: 'center',

@@ -124,10 +124,7 @@ export const DailyAttendanceStyle = StyleSheet.create({
     },
 
     FlatListAttendanceLeft: {
-        alignItems: 'flex-start',
         flexDirection: 'row',
-        width: "55%"
-
     },
     FlatListLeftLeave: {
         alignItems: 'flex-start',
@@ -201,7 +198,6 @@ export const DailyAttendanceStyle = StyleSheet.create({
         fontSize: width * 0.034,
         textAlign: "left",
         color: "#19260c",
-        marginBottom: -15
     },
     DesignationText: {
         fontSize: width * 0.03,

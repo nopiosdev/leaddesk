@@ -99,6 +99,8 @@ const fetchlog = async (lat, long) => {
         });
 }
 let interval = null;
+
+
 const MyPanel = ({ navigation }) => {
 
     const [progressVisible, setprogressVisible] = useState(false);
@@ -137,6 +139,7 @@ const MyPanel = ({ navigation }) => {
     const [Imageparam, setImageparam] = useState("resourcetracker");
     const [ImageFileId, setImageFileId] = useState(null);
     const [EmployeeId, setEmployeeId] = useState(null);
+    const [EmployeeReason, setEmployeeReason] = useState('');
     const [data, setdata] = useState([]);
     const [pointcheck, setpointcheck] = useState('');
     const [fetchDate, setfetchDate] = useState(null);
@@ -144,9 +147,11 @@ const MyPanel = ({ navigation }) => {
     const [isRegistered, setisRegistered] = useState(false);
     const [IsAutoCheckPoint, setIsAutoCheckPoint] = useState(false);
     const [AutoCheckPointTime, setAutoCheckPointTime] = useState('1:00:00');
+    const [maximumOfficeHours, setMaximumOfficeHours] = useState('1:00:00');
     const user = useSelector((state) => state.user.currentUser);
     const [modalEditEmp, setmodalEditEmp] = useState(false);
     const [modalForImage, setmodalForImage] = useState(false);
+    const [lessTimeReasonModal, setLessTimeReasonModal] = useState(false);
     const [successMessage, setsuccessMessage] = useState(null);
     const [error, seterror] = useState(null);
     const dispatch = useDispatch();
@@ -177,6 +182,7 @@ const MyPanel = ({ navigation }) => {
     };
 
     const handleSelfiePhoto = async (pickerResult, statusPoint, Latd, Logtd) => {
+        setprogressVisible(true);
         let filename = pickerResult?.uri?.split('/')?.pop();
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `image/${match[1]}` : `image`;
@@ -190,13 +196,16 @@ const MyPanel = ({ navigation }) => {
         upLoadImage(data)
             .then(response => {
                 if (response?.success) {
-                    _sendToServer(response.image, statusPoint, Latd, Logtd)
+                    setimage(response?.image)
+                    _sendToServer(response?.image, statusPoint, Latd, Logtd)
                 } else {
+                    setprogressVisible(false);
                     ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
                 }
             })
             .catch(error => {
                 console.log("upload error", error);
+                setprogressVisible(false);
                 ToastAndroid.show('Upload Fail', ToastAndroid.TOP);
             });
     };
@@ -210,7 +219,12 @@ const MyPanel = ({ navigation }) => {
         } else if (statusPoint == "CheckPoint") {
             createCheckPoint(Latd, Logtd, loaction);
         } else {
-            createCheckOut(fileId, Latd, Logtd, loaction);
+            console.log('OfficeStayHour', OfficeStayHour)
+            if (OfficeStayHour < maximumOfficeHours) {
+                setLessTimeReasonModal(true);
+            } else {
+                createCheckOut(fileId, Latd, Logtd, loaction);
+            }
         }
     }
 
@@ -229,7 +243,7 @@ const MyPanel = ({ navigation }) => {
         var data = new FormData();
         data.append('UserFullName', EmployeeName);
         data.append('EmployeeCode', EmployeeCode);
-        data.append('DesignationName', Designation);
+        data.append('Designation', Designation);
         data.append('Id', EmployeeId);
         data.append('ImageFileName', ImageFileName);
         data.append('ImageFileId', ImageFileId);
@@ -303,7 +317,7 @@ const MyPanel = ({ navigation }) => {
         setprogressVisible(true);
         await GetMyTodayAttendance(user?.Id)
             .then(res => {
-                console.log('GetMyTodayAttendance',res)
+                console.log('GetMyTodayAttendance', res)
                 if (!res?.success && res?.success !== false) {
                     setattendanceModel(res);
                     setEmployeeCode(res?.EmployeeCode);
@@ -320,13 +334,14 @@ const MyPanel = ({ navigation }) => {
                     setStatus(res?.Status);
                     setEmployeeId(res?.EmployeeId);
                     setImageFileName(res?.ImageFileName);
+                    setMaximumOfficeHours(res?.MaximumOfficeHours);
                 }
             }).catch(() => {
                 console.log("GetMyTodayAttendance error occured");
             });
         await GetMovementDetails(user?.Id)
             .then(res => {
-                console.log('GetMovementDetails',res)
+                console.log('GetMovementDetails', res)
                 setdata([]);
                 if (!res?.success && res?.success !== false) {
 
@@ -380,6 +395,7 @@ const MyPanel = ({ navigation }) => {
         if (status !== 'granted') {
             ToastAndroid.show('Permission to access location was denied', ToastAndroid.TOP);
         }
+        setprogressVisible(true);
         await Location.getCurrentPositionAsync({
             enableHighAccuracy: false,
             timeout: 20000,
@@ -400,6 +416,7 @@ const MyPanel = ({ navigation }) => {
     };
 
     const _sendCheckpointToServer = async (currentLatitude, currentLongitude) => {
+        setprogressVisible(true);
         var location = await getLocation(currentLatitude, currentLongitude);
         setLogLocation(location);
         createCheckPoint(currentLatitude, currentLongitude, location);
@@ -511,7 +528,7 @@ const MyPanel = ({ navigation }) => {
 
     const createCheckOut = async (fileId, Latd, Logtd, loaction) => {
         try {
-
+            console.log('createCheckOutDATA', fileId, Latd, Logtd, loaction)
             var data = new FormData();
             data.append('Latitude', Latd);
             data.append('Longitude', Logtd);
@@ -524,22 +541,22 @@ const MyPanel = ({ navigation }) => {
             data.append('LessTimeReason', '');
 
 
-            const response = await CheckOut(data);
-            setprogressVisible(true);
+            // const response = await CheckOut(data);
+            // setprogressVisible(true);
 
-            console.log("createCheckOut response", response)
-            if (response && response.success) {
+            // console.log("createCheckOut response", response)
+            // if (response && response.success) {
 
-                //  getEmpTrackingTodayList();
-                getMyTodayAttendance();
-                ClearInterval();
-                toggle();
-                setprogressVisible(false);
+            //     //  getEmpTrackingTodayList();
+            //     getMyTodayAttendance();
+            //     ClearInterval();
+            //     toggle();
+            //     setprogressVisible(false);
 
-            } else {
-                ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
-                setprogressVisible(false);
-            }
+            // } else {
+            //     ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
+            //     setprogressVisible(false);
+            // }
         } catch (errors) {
             console.log("createCheckOut Errors", errors);
             setprogressVisible(false);
@@ -845,6 +862,32 @@ const MyPanel = ({ navigation }) => {
                     </View>
                 </ScrollView>
                 : <Loader />}
+            <Modal style={[MyPanelStyle.modalForLessTimeReason]} position={"center"} isOpen={lessTimeReasonModal}
+                backdropPressToClose={false}
+                swipeToClose={false}
+            >
+                <View style={MyPanelStyle.modelContent}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        Please give reason for checking out too early.
+                    </Text>
+                    <View style={{ width: "100%" }}>
+                        <TextInput
+                            style={{ height: 60, margin: 15, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
+                            value={EmployeeReason}
+                            placeholder="Reason"
+                            placeholderTextColor="darkgrey"
+                            autoCapitalize="none"
+                            onChangeText={text => setEmployeeReason(text)}
+                            multiline={true}
+                        >
+                        </TextInput>
+                    </View>
+                </View>
+                <TouchableOpacity style={MyPanelStyle.addPeopleBtn} onPress={() => { EmployeeReason && createCheckOut(image, Latitude, Longitude, LogLocation) }} >
+                    <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>Checkout</Text>
+                </TouchableOpacity>
+            </Modal>
+
 
             <Modal style={[MyPanelStyle.modalForEditProfile]} position={"center"} isOpen={modalEditEmp}
                 backdropPressToClose={false}
@@ -870,7 +913,7 @@ const MyPanel = ({ navigation }) => {
                         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
                             EDIT PROFILE
                         </Text>
-                        {image ?
+                        {(ImageFileName && ImageFileName !== 'null') ?
                             <Image style={{
                                 ...Platform.select({
                                     ios: {
@@ -880,42 +923,26 @@ const MyPanel = ({ navigation }) => {
                                         width: 60,
                                         height: 60,
                                         marginVertical: 12,
-                                        borderRadius: 600,
+                                        borderRadius: 50,
                                         alignSelf: 'center'
                                     },
                                 }),
-                            }} resizeMode='contain' source={{ uri: image }} />
+                            }} resizeMode='cover' source={{ uri: urlResource + ImageFileName }} />
                             :
-                            (ImageFileName && ImageFileName !== 'null') ?
-                                <Image style={{
-                                    ...Platform.select({
-                                        ios: {
-                                            width: 60, height: 60, borderRadius: 50
-                                        },
-                                        android: {
-                                            width: 60,
-                                            height: 60,
-                                            marginVertical: 12,
-                                            borderRadius: 50,
-                                            alignSelf: 'center'
-                                        },
-                                    }),
-                                }} resizeMode='cover' source={{ uri: urlResource + ImageFileName }} />
-                                :
-                                <Image style={{
-                                    ...Platform.select({
-                                        ios: {
-                                            width: 60, height: 60, borderRadius: 50
-                                        },
-                                        android: {
-                                            width: 100,
-                                            height: 100,
-                                            marginVertical: 12,
-                                            borderRadius: 50,
-                                            alignSelf: 'center'
-                                        },
-                                    }),
-                                }} resizeMode='contain' source={require('../../../../assets/images/employee.png')} />
+                            <Image style={{
+                                ...Platform.select({
+                                    ios: {
+                                        width: 60, height: 60, borderRadius: 50
+                                    },
+                                    android: {
+                                        width: 100,
+                                        height: 100,
+                                        marginVertical: 12,
+                                        borderRadius: 50,
+                                        alignSelf: 'center'
+                                    },
+                                }),
+                            }} resizeMode='contain' source={require('../../../../assets/images/employee.png')} />
                         }
 
                     </View>

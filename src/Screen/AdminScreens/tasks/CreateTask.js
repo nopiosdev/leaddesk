@@ -167,7 +167,7 @@ const CreateTask = ({ navigation, route }) => {
         try {
             await EmployeeList(companyId)
                 .then(res => {
-                    // console.log(res)
+                    console.log('getEmployeeList',res)
                     setEmployeeList(res);
                     setprogressVisible(false);
                 })
@@ -206,7 +206,6 @@ const CreateTask = ({ navigation, route }) => {
 
     const renderEmpList = () => {
         let content = employeeList?.map((empName, i) => {
-            console.log('empName', empName)
             return (
                 <TouchableOpacity style={{ paddingVertical: 7, borderBottomColor: '#D5D5D5', borderBottomWidth: 2 }} key={i}
                     onPress={() => { setAssignTo(empName.Id, empName.EmployeeName) }}>
@@ -233,11 +232,6 @@ const CreateTask = ({ navigation, route }) => {
             )
         });
         return content;
-    }
-
-    const handleBackButton = () => {
-        goBack();
-        return true;
     }
 
     const ImageViewer = () => {

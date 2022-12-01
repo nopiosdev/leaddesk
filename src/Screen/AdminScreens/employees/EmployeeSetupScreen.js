@@ -17,7 +17,7 @@ import { EmpSetScreenStyle } from './EmpSetScreenStyle';
 import { CommonStyles } from '../../../common/CommonStyles';
 import RadioButton from 'radio-button-react-native';
 import { GetEmployeeWithCompanyId, UpdateEmployee } from "../../../services/AccountService";
-import { GetDepartmentByCompanyId,  } from "../../../services/DepartmentService";
+import { GetDepartmentByCompanyId, } from "../../../services/DepartmentService";
 import { urlResource } from '../../../Utils/config';
 import LocalStorage from '../../../common/LocalStorage';
 import { useSelector } from 'react-redux';
@@ -214,15 +214,15 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
     }
 
     const updateEmployeeRecords = async () => {
-
+        console.log('EmpDesignation', EmpDesignation)
         var data = new FormData();
         data.append('UserFullName', EmpUserName);
         data.append('EmployeeCode', EmployeeCode);
-        data.append('DesignationName', EmpDesignation);
+        data.append('Designation', EmpDesignation);
         data.append('Id', EmployeeUserId);
         data.append('IsAutoCheckPoint', IsAutoCheckPoint ? 1 : 0);
         data.append('AutoCheckPointTime', AutoCheckPointTime);
-        data.append('ImageFileName', EmpImageFileName);
+        data.append('ImageFileName', ImageFileName);
         data.append('ImageFileId', ImageFileId);
         data.append('IsActive', IsActive ? 1 : 0);
 
@@ -598,6 +598,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
     }
     return (
         <View style={EmpSetScreenStyle.container}>
+            {/* <KeyboardAvoidingView style={{ flex: 1 }}> */}
             <Header
                 title={'Employee Setup'}
                 onPress={() => { navigation.goBack() }}
@@ -958,12 +959,6 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'column', }}>
-                        {/* <Text>Employee Code</Text>
-                        <TextInput
-                            style={EmpSetScreenStyle.modalEmpEditTextBox}
-                            value={EmployeeCode}
-                            onChangeText={(txt) => setEmployeeCode(txt)}
-                        /> */}
                         <Text>Name</Text>
                         <TextInput
                             style={EmpSetScreenStyle.modalEmpEditTextBox}
@@ -979,7 +974,7 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                         <Text>Phone Number</Text>
                         <TextInput
                             style={EmpSetScreenStyle.modalEmpEditTextBox}
-                            editable={false}
+                            // editable={false}
                             value={EmpPhoneNumber}
                             onChangeText={(txt) => setEmpPhoneNumber(txt)}
                         />
@@ -1030,9 +1025,10 @@ const EmployeeSetupScreen = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-
             </Modal>
+            {/* </KeyboardAvoidingView> */}
         </View >
+
     );
 }
 export default EmployeeSetupScreen; 

@@ -8,10 +8,13 @@ import LocalStorage from "../common/LocalStorage";
 export const getApi = async (action, headers = {}) => {
   const Token = await LocalStorage.GetData("userToken")
   const url = await LocalStorage.GetData('URL')
-  console.log(url)
+
 
   return await axios.get(`${url}/api/index.php/${action}`, { headers: { 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
+      if (data?.message == 'Unauthorize user!') {
+        LocalStorage.ClearData();
+      }
       return data;
     })
     .catch((error) => {
@@ -22,9 +25,12 @@ export const getApi = async (action, headers = {}) => {
 export const postApi = async (action, data) => {
   const Token = await LocalStorage.GetData("userToken")
   const url = await LocalStorage.GetData('URL')
-console.log(url)
+
   return await axios.post(`${url}/api/index.php/${action}`, data, { headers: { "Content-Type": "multipart/form-data", 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
+      // if (data?.message == 'Unauthorize user!') {
+      //   LocalStorage.ClearData();
+      // }
       return data;
     })
     .catch((error) => {

@@ -5,17 +5,19 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Notifications from 'expo-notifications';
 import * as Update from 'expo-updates';
 import Popup from '../../../components/Popup';
-import { View } from 'react-native';
 import { toggleActive } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
 
 
 const DailyAttendance = ({ navigation }) => {
+
     const userDetails = useSelector((state) => state.user.currentUser);
-    const [expoPushToken, setExpoPushToken] = useState('');
+    const [connectionPopup, setConnectionPopup] = useState(false);
     const [updatevisible, setUpdateVisible] = useState(false);
-    const dispatch = useDispatch();
+    const [expoPushToken, setExpoPushToken] = useState('');
     const isFocused = useIsFocused();
+    const dispatch = useDispatch();
+
     // const registerForPushNotificationsAsync = async() => {
     //     let token;
 
@@ -55,10 +57,18 @@ const DailyAttendance = ({ navigation }) => {
     }
 
     useEffect(() => {
+        // const unsubscribe = NetInfo.addEventListener(state => {
+        //     if (!state.isConnected) {
+        //         setConnectionPopup(true);
+        //     } else {
+        //         setConnectionPopup(false);
+        //     }
+        // });
         dispatch(toggleActive(1));
         checkupdate();
         // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));   
-    }, []);
+        // return unsubscribe;
+    }, [isFocused]);
     return (
         <>
             {userDetails?.UserType == 'admin' ? <AdminTodayAttendance navigation={navigation} /> : <DailyAttendances navigation={navigation} />}
@@ -66,6 +76,15 @@ const DailyAttendance = ({ navigation }) => {
                 show={updatevisible}
                 title={'Update'}
                 description={'New Updates Are Available'}
+                onPress={() => Update.reloadAsync()}
+                btnText="Update"
+            />
+            <Popup
+                show={connectionPopup}
+                title={'Connection Error!'}
+                description={'Please turn on your internet connection!'}
+                btnText="Try Again"
+                // onPress={() => Update.reloadAsync()}
             />
         </>
     );

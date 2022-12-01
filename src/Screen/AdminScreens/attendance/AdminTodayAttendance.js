@@ -15,6 +15,7 @@ import { ActivityIndicator } from 'react-native';
 import { TaskStyle } from '../tasks/TaskStyle';
 import moment from 'moment';
 import { setSelectedEmployee } from '../../../Redux/Slices/UserSlice';
+import { checkConnection } from '../../../common/checkConnection';
 
 const AdminTodayAttendance = ({ navigation }) => {
 
@@ -263,6 +264,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                         onSelect={() => setCompanyModal(true)}
                         selected={selctedCompanyValue}
                         onPress={() => { navigation.openDrawer(); }}
+                        onGoBack={() => handleBackButton()}
                     />
                     <View
                         style={
@@ -270,10 +272,7 @@ const AdminTodayAttendance = ({ navigation }) => {
                         }>
                         {renderStatusList()}
                     </View>
-                    <View
-                        style={
-                            DailyAttendanceStyle.FlatListContainer
-                        }>
+                    <View style={DailyAttendanceStyle.FlatListContainer}>
                         <FlatList
                             refreshControl={
                                 <RefreshControl
@@ -284,11 +283,10 @@ const AdminTodayAttendance = ({ navigation }) => {
                             data={displayAbleEmployeeList}
                             keyExtractor={(x, i) => i.toString()}
                             renderItem={({ item }) =>
-
                                 <View style={DailyAttendanceStyle.FlatListTouchableOpacity}>
                                     <TouchableOpacity onPress={() => goToDetail(item)}>
                                         <View style={DailyAttendanceStyle.FlatListAttendanceLeft}>
-                                            <View style={{ paddingRight: 10, }}>
+                                            <View style={{ paddingRight: 10 }}>
                                                 {item?.ImageFileName && item?.ImageFileName !== 'null' ?
                                                     <Image resizeMode='cover' style={
                                                         DailyAttendanceStyle.ImageLocal
@@ -320,35 +318,35 @@ const AdminTodayAttendance = ({ navigation }) => {
                                                     {item?.DepartmentName}
                                                 </Text>
                                             </View>
-
                                         </View>
                                     </TouchableOpacity>
 
-                                    {item?.CheckInTime && <View style={DailyAttendanceStyle.TimeContainer}>
-                                        <TouchableOpacity onPress={() => ShowImageViewer(item?.CheckInTimeFile)}>
-                                            <View style={DailyAttendanceStyle.AttendanceImageView1}>
-                                                <Image resizeMode='cover' style={
-                                                    DailyAttendanceStyle.AttendanceImage
-                                                } source={{ uri: urlResource + item?.CheckInTimeFile }} />
-                                                <Text style={
-                                                    DailyAttendanceStyle.CheckinTimeText
-                                                }>
-                                                    {item?.CheckInTime ? moment(item?.CheckInTime).format('DD/MM/YY') : ("")}</Text>
-                                            </View>
+                                    {item?.CheckInTime &&
+                                        <View style={DailyAttendanceStyle.TimeContainer}>
+                                            <TouchableOpacity onPress={() => ShowImageViewer(item?.CheckInTimeFile)}>
+                                                <View style={DailyAttendanceStyle.AttendanceImageView1}>
+                                                    <Image resizeMode='cover' style={
+                                                        DailyAttendanceStyle.AttendanceImage
+                                                    } source={{ uri: urlResource + item?.CheckInTimeFile }} />
+                                                    <Text style={
+                                                        DailyAttendanceStyle.CheckinTimeText
+                                                    }>
+                                                        {item?.CheckInTime ? moment(item?.CheckInTime).format('DD/MM/YY') : ("")}</Text>
+                                                </View>
 
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => ShowImageViewer(item?.CheckOutTimeFile)}>
-                                            <View style={DailyAttendanceStyle.AttendanceImageView2}>
-                                                <Image resizeMode='cover' style={
-                                                    DailyAttendanceStyle.AttendanceImage
-                                                } source={{ uri: urlResource + item?.CheckOutTimeFile }} />
-                                                <Text style={
-                                                    DailyAttendanceStyle.CheckOutTimeText
-                                                }>{item?.CheckOutTime ? moment(item?.CheckOutTime).format('DD/MM/YY') : ("")}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-
-                                    </View>}
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => ShowImageViewer(item?.CheckOutTimeFile)}>
+                                                <View style={DailyAttendanceStyle.AttendanceImageView2}>
+                                                    <Image resizeMode='cover' style={
+                                                        DailyAttendanceStyle.AttendanceImage
+                                                    } source={{ uri: urlResource + item?.CheckOutTimeFile }} />
+                                                    <Text style={
+                                                        DailyAttendanceStyle.CheckOutTimeText
+                                                    }>{item?.CheckOutTime ? moment(item?.CheckOutTime).format('DD/MM/YY') : ("")}</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    }
                                 </View>
                             }>
                         </FlatList>

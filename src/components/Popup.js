@@ -9,7 +9,7 @@ import LocalStorage from '../common/LocalStorage';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Popup = ({ show, onPress, description, testingPopup, title }) => {
+const Popup = ({ show, onPress, description, testingPopup, title, btnText }) => {
     const [url, setUrl] = useState('')
 
     return (
@@ -50,8 +50,8 @@ const Popup = ({ show, onPress, description, testingPopup, title }) => {
                             </Dialog.Content>
                             <Dialog.Actions>
                                 <CustomButton
-                                    title={'Update'}
-                                    onPress={() => Update.reloadAsync()}
+                                    title={btnText}
+                                    onPress={onPress}
                                     btnStyle={{ width: '50%' }}
                                 />
                             </Dialog.Actions>
