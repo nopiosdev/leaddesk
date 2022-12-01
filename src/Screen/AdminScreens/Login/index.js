@@ -4,16 +4,13 @@ import { KeyboardAvoidingView, StyleSheet, Dimensions, View, Image, Pressable } 
 import Popup from '../../../components/Popup';
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
+import { handleUrl } from '../../../Utils/config';
 
 
 var { height } = Dimensions.get('window');
 
 const Login = ({ navigation, route }) => {
     const [popup, setPopup] = useState(false);
-    const isFocused = useIsFocused();
-    useEffect(() => {
-        LocalStorage.SetData('URL', 'https://theleaddesk.com')
-    }, [isFocused])
 
     return (
         <KeyboardAvoidingView enabled style={styles.container}>

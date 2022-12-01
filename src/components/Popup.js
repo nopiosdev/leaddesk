@@ -4,6 +4,7 @@ import { Portal, Dialog, Paragraph, Button, TextInput } from 'react-native-paper
 import * as Update from 'expo-updates';
 import CustomButton from './CustomButton';
 import LocalStorage from '../common/LocalStorage';
+import { handleUrl } from '../Utils/config';
 
 
 const width = Dimensions.get('window').width;
@@ -30,7 +31,7 @@ const Popup = ({ show, onPress, description, testingPopup, title, btnText }) => 
                             <Dialog.Actions>
                                 <CustomButton
                                     title={'Update'}
-                                    onPress={() => { LocalStorage.SetData('URL', url?.toString()); onPress() }}
+                                    onPress={() => { LocalStorage.SetData('URL', url?.toString()); handleUrl(); onPress() }}
                                     btnStyle={{ width: '40%', marginRight: 5 }}
                                 />
                                 <CustomButton

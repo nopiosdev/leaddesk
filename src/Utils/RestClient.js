@@ -10,7 +10,7 @@ export const getApi = async (action, headers = {}) => {
   const url = await LocalStorage.GetData('URL')
 
 
-  return await axios.get(`${url}/api/index.php/${action}`, { headers: { 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
+  return await axios.get(`${apiConfig.url}${action}`, { headers: { 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
       if (data?.message == 'Unauthorize user!') {
         LocalStorage.ClearData();
@@ -26,11 +26,11 @@ export const postApi = async (action, data) => {
   const Token = await LocalStorage.GetData("userToken")
   const url = await LocalStorage.GetData('URL')
 
-  return await axios.post(`${url}/api/index.php/${action}`, data, { headers: { "Content-Type": "multipart/form-data", 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
+  return await axios.post(`${apiConfig.url}${action}`, data, { headers: { "Content-Type": "multipart/form-data", 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
-      // if (data?.message == 'Unauthorize user!') {
-      //   LocalStorage.ClearData();
-      // }
+      if (data?.message == 'Unauthorize user!') {
+        LocalStorage.ClearData();
+      }
       return data;
     })
     .catch((error) => {
