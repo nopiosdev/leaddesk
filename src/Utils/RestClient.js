@@ -1,16 +1,14 @@
 import { ToastAndroid } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import _ from "lodash";
-import apiConfig from "./config";
+import apiConfig, { urlDev } from "./config";
 import axios from 'axios';
 import LocalStorage from "../common/LocalStorage";
 
 export const getApi = async (action, headers = {}) => {
-  const Token = await LocalStorage.GetData("userToken")
-  const url = await LocalStorage.GetData('URL')
+  const Token = await LocalStorage.GetData("userToken");
 
-
-  return await axios.get(`${apiConfig.url}${action}`, { headers: { 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
+  return await axios.get(`${urlDev}${action}`, { headers: { 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
       if (data?.message == 'Unauthorize user!') {
         LocalStorage.ClearData();
@@ -26,7 +24,7 @@ export const postApi = async (action, data) => {
   const Token = await LocalStorage.GetData("userToken")
   const url = await LocalStorage.GetData('URL')
 
-  return await axios.post(`${apiConfig.url}${action}`, data, { headers: { "Content-Type": "multipart/form-data", 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
+  return await axios.post(`${urlDev}${action}`, data, { headers: { "Content-Type": "multipart/form-data", 'Authorization': 'Bearer ' + (Token != '' ? Token : '') } })
     .then(({ data }) => {
       if (data?.message == 'Unauthorize user!') {
         LocalStorage.ClearData();
