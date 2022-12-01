@@ -541,23 +541,22 @@ const MyPanel = ({ navigation }) => {
             data.append('CheckOutTimeFile', fileId);
             data.append('LessTimeReason', '');
 
+            const response = await CheckOut(data);
+            setprogressVisible(true);
 
-            // const response = await CheckOut(data);
-            // setprogressVisible(true);
+            console.log("createCheckOut response", response)
+            if (response && response.success) {
 
-            // console.log("createCheckOut response", response)
-            // if (response && response.success) {
+                //  getEmpTrackingTodayList();
+                getMyTodayAttendance();
+                ClearInterval();
+                toggle();
+                setprogressVisible(false);
 
-            //     //  getEmpTrackingTodayList();
-            //     getMyTodayAttendance();
-            //     ClearInterval();
-            //     toggle();
-            //     setprogressVisible(false);
-
-            // } else {
-            //     ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
-            //     setprogressVisible(false);
-            // }
+            } else {
+                ToastAndroid.show('Something went wrong', ToastAndroid.TOP);
+                setprogressVisible(false);
+            }
         } catch (errors) {
             console.log("createCheckOut Errors", errors);
             setprogressVisible(false);
