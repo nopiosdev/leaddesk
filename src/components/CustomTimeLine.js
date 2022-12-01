@@ -3,7 +3,6 @@ import React from 'react'
 import Timeline from 'react-native-timeline-flatlist'
 
 const CustomTimeLine = ({ data }) => {
-    console.log(data)
     return (
         <View style={styles.container}>
             <Timeline

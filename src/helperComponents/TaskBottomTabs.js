@@ -10,7 +10,6 @@ const TaskBottomTabs = ({ navigation }) => {
     const user = useSelector((state) => state.user.currentUser);
     const isFocused = useIsFocused();
     const route = useRoute();
-    console.log(route.name);
     // useEffect(() => {
     //   setActive('Pending')
     // }, [isFocused])

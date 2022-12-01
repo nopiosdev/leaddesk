@@ -9,6 +9,7 @@ export const getLocation = async (currentLatitude, currentLongitude) => {
     let location = null;
     try {
         let { status } = await Location.requestForegroundPermissionsAsync();
+        let { status2 } = await Location.requestBackgroundPermissionsAsync();
         if (status === 'granted') {
             await Location.reverseGeocodeAsync(pos).then(res => {
                 console.log('reverseGeocodeAsync', res)

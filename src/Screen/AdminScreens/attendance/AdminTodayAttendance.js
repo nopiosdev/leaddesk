@@ -189,7 +189,6 @@ const AdminTodayAttendance = ({ navigation }) => {
     const getAttendanceFeed = async (cId) => {
         await GetAttendanceFeed(cId)
             .then(res => {
-                console.log('attendanvce', res)
                 setemployeeList(res?.EmployeeList);
                 setdisplayAbleEmployeeList(res?.EmployeeList);
                 setstatusCount(res?.StatusCount);

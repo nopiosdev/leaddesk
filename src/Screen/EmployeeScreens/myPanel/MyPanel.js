@@ -48,6 +48,7 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, () => {
 const _getLocationAsync = async () => {
     try {
         let { status } = await Location.requestForegroundPermissionsAsync();
+        let { status2 } = await Location.requestBackgroundPermissionsAsync();
         if (status !== 'granted') {
             ToastAndroid.show('Permission to access location was denied', ToastAndroid.TOP);
             return;
@@ -392,10 +393,10 @@ const MyPanel = ({ navigation }) => {
 
     const _getLocationAsync = async (statusPoint) => {
         let { status } = await Location.requestForegroundPermissionsAsync();
+        let { status2 } = await Location.requestBackgroundPermissionsAsync();
         if (status !== 'granted') {
             ToastAndroid.show('Permission to access location was denied', ToastAndroid.TOP);
         }
-        setprogressVisible(true);
         await Location.getCurrentPositionAsync({
             enableHighAccuracy: false,
             timeout: 20000,

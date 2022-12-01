@@ -23,7 +23,6 @@ export default class DetailsContainer extends Component
   async componentDidMount()
   {
     await AsyncStorage.setItem("AttendanceUserId", this.props.aItem.UserId);
-    console.log("UserId", this.props.aItem.UserId);
     this.setState({ itemlist: this.props.aItem });
   }
 

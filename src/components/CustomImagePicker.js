@@ -24,7 +24,6 @@ const CustomImagePicker = ({ TaskId, setprogressVisible, single = false, setfile
         setprogressVisible(true);
         upLoadImage(data)
             .then(response => {
-                console.log('Image', response)
                 if (response?.success) {
                     let attachmentModel = {
                         TaskId: TaskId,

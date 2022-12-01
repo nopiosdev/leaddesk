@@ -2,7 +2,6 @@ import NetInfo from '@react-native-community/netinfo';
 
 
 export const checkConnection = NetInfo.addEventListener(state => {
-    console.log('checkConnection',state)
     if (!state.isConnected) {
         return <Popup
             show={true}
@@ -11,7 +10,5 @@ export const checkConnection = NetInfo.addEventListener(state => {
             btnText="Try Again"
         // onPress={() => Update.reloadAsync()}
         />
-    } else {
-        console.log("RUN")
     }
 });

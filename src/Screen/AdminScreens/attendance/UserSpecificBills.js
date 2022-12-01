@@ -22,7 +22,7 @@ import call from 'react-native-phone-call'
 
 import { CommonStyles } from '../../../common/CommonStyles';
 import LocalStorage from '../../../common/LocalStorage';
-import Searchbar from '../../../components/Searchbar;
+import Searchbar from '../../../components/Searchbar';
 
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
