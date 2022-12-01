@@ -4,14 +4,14 @@ import { Portal, Dialog, Paragraph, Button, TextInput } from 'react-native-paper
 import * as Update from 'expo-updates';
 import CustomButton from './CustomButton';
 import LocalStorage from '../common/LocalStorage';
-import { handleUrl } from '../Utils/config';
+import { handleUrl, hostUrl } from '../Utils/config';
 
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const Popup = ({ show, onPress, description, testingPopup, title, btnText }) => {
-    const [url, setUrl] = useState('')
+    const [url, setUrl] = useState(hostUrl)
 
     return (
         <>
@@ -31,7 +31,7 @@ const Popup = ({ show, onPress, description, testingPopup, title, btnText }) => 
                             <Dialog.Actions>
                                 <CustomButton
                                     title={'Update'}
-                                    onPress={() => { LocalStorage.SetData('URL', url?.toString()); handleUrl(); onPress() }}
+                                    onPress={() => { handleUrl(url?.toString()); onPress() }}
                                     btnStyle={{ width: '40%', marginRight: 5 }}
                                 />
                                 <CustomButton
