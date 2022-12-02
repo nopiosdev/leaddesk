@@ -220,12 +220,13 @@ const MyPanel = ({ navigation }) => {
         } else if (statusPoint == "CheckPoint") {
             createCheckPoint(Latd, Logtd, loaction);
         } else {
-            // console.log('OfficeStayHour', OfficeStayHour)
-            // if (OfficeStayHour < maximumOfficeHours) {
-            //     setLessTimeReasonModal(true);
-            // } else {
-            createCheckOut(fileId, Latd, Logtd, loaction);
-            // }
+            console.log('OfficeStayHour', OfficeStayHour)
+            if (OfficeStayHour < maximumOfficeHours) {
+                setprogressVisible(false);
+                setLessTimeReasonModal(true);
+            } else {
+                createCheckOut(fileId, Latd, Logtd, loaction, '');
+            }
         }
     }
 
@@ -331,7 +332,7 @@ const MyPanel = ({ navigation }) => {
                     setIsCheckedIn(res?.CheckInTime && !res?.CheckOutTime ? 1 : 0);
                     setIsCheckedOut(res?.CheckInTime && res?.CheckOutTime ? 1 : 0);
                     setIsAutoCheckPoint(res?.IsAutoCheckPoint);
-                    setAutoCheckPointTime(res?.AutoCheckPointTime);
+                    if (res?.AutoCheckPointTime) { setAutoCheckPointTime(res?.AutoCheckPointTime); }
                     setStatus(res?.Status);
                     setEmployeeId(res?.EmployeeId);
                     setImageFileName(res?.ImageFileName);
@@ -526,10 +527,11 @@ const MyPanel = ({ navigation }) => {
             setprogressVisible(false);
         }
     }
-
-    const createCheckOut = async (fileId, Latd, Logtd, loaction) => {
+    const createCheckOut = async (fileId, Latd, Logtd, loaction, LessTimeReason) => {
         try {
             console.log('createCheckOutDATA', fileId, Latd, Logtd, loaction)
+            setLessTimeReasonModal(false);
+            setprogressVisible(true);
             var data = new FormData();
             data.append('Latitude', Latd);
             data.append('Longitude', Logtd);
@@ -539,7 +541,7 @@ const MyPanel = ({ navigation }) => {
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
             data.append('CheckOutTimeFile', fileId);
-            data.append('LessTimeReason', '');
+            data.append('LessTimeReason', LessTimeReason);
 
             const response = await CheckOut(data);
             setprogressVisible(true);
@@ -806,7 +808,6 @@ const MyPanel = ({ navigation }) => {
                     <View
                         style={MyPanelStyle.ButtonBar}>
                         <TouchableOpacity
-                            // disabled={IsCheckedIn === 1 ? true : false}
                             onPress={() => getCheckIn()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -817,7 +818,6 @@ const MyPanel = ({ navigation }) => {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            // disabled={IsCheckedIn === 1 && IsCheckedOut !== 1 ? true : false}
                             onPress={() => getCheckPoint()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -827,7 +827,6 @@ const MyPanel = ({ navigation }) => {
                             </Image>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            // disabled={IsCheckedOut === 1 ? true : false}
                             onPress={() => getCheckOut()}
                             style={MyPanelStyle.ButtonContainer}>
                             <Image
@@ -883,7 +882,7 @@ const MyPanel = ({ navigation }) => {
                         </TextInput>
                     </View>
                 </View>
-                <TouchableOpacity style={MyPanelStyle.addPeopleBtn} onPress={() => { EmployeeReason && createCheckOut(image, Latitude, Longitude, LogLocation) }} >
+                <TouchableOpacity style={MyPanelStyle.addPeopleBtn} onPress={() => { EmployeeReason && createCheckOut(image, Latitude, Longitude, LogLocation, EmployeeReason) }} >
                     <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>Checkout</Text>
                 </TouchableOpacity>
             </Modal>

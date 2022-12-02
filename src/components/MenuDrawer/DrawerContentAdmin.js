@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ScrollView, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { DrawerContentStyle } from './DrawerContentStyle';
 import { Feather, } from '@expo/vector-icons';
@@ -6,101 +6,41 @@ import { useDispatch, useSelector } from "react-redux";
 import LocalStorage from '../../common/LocalStorage';
 import { toggleActive, toggleUser } from '../../Redux/Slices/UserSlice';
 
-const logOut = (dispatch) => {
-
-    dispatch(toggleActive(8));
-    Alert.alert(
-        'Log Out'
-        ,
-        'Log Out From The App?', [{
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel'
-        }, {
-            text: 'OK',
-            style: 'ok',
-            onPress: () => {
-                LocalStorage.ClearData();
-                dispatch(toggleUser('Logout'));
-            }
-        },], {
-        cancelable: false
-    }
-    )
-    return true;
-};
-
-const drawerSelectedOption = (id, dispatch) => {
-    dispatch(toggleActive(id));
-
-};
-const LiveTrackingCombo = (navigation, dispatch) => {
-    navigation.navigate('LiveTraking');
-    drawerSelectedOption(2, dispatch);
-}
-const DailyAttendanceCombo = (navigation, dispatch) => {
-    navigation.navigate('DailyAttendance');
-    drawerSelectedOption(1, dispatch);
-}
-const TasksCombo = (navigation, dispatch) => {
-    navigation.navigate('TaskListBottomTab');
-    drawerSelectedOption(3, dispatch);
-}
-const TasksboardCombo = (navigation, dispatch) => {
-    navigation.navigate('TaskBoardScreen');
-    drawerSelectedOption(4, dispatch);
-}
-
-const LeavesCombo = (navigation, dispatch) => {
-    navigation.navigate('LeaveList');
-    drawerSelectedOption(5, dispatch);
-}
-
-
-
-const ReportsCombo = (navigation, dispatch) => {
-    navigation.navigate('ReportScreen');
-    drawerSelectedOption(6, dispatch);
-}
-
-const NoticeCombo = (navigation, dispatch) => {
-    navigation.navigate('Notice');
-    drawerSelectedOption(7, dispatch);
-}
-const LeaderBoardCombo = (navigation, dispatch) => {
-    navigation.navigate('LeaderBoard');
-    drawerSelectedOption(8, dispatch);
-}
-const SettingsCombo = (navigation, dispatch) => {
-    navigation.navigate('SettingScreen');
-    drawerSelectedOption(9, dispatch);
-}
-
-const LogoutCombo = (dispatch) => {
-    logOut(dispatch);
-}
-
-export {
-    DailyAttendanceCombo,
-    LiveTrackingCombo,
-    TasksCombo,
-    LeavesCombo,
-    ReportsCombo, NoticeCombo, SettingsCombo,
-    drawerSelectedOption,
-    TasksboardCombo,
-    LogoutCombo
-}
 
 const DrawerContentAdmin = ({ navigation }) => {
     const active = useSelector((state) => state.user.active);
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(toggleActive(2));
-    }, [])
+
+    const drawerSelectedOption = (id, screen) => {
+        dispatch(toggleActive(id));
+        if (screen) { navigation.navigate(screen); }
+    };
+
+    const logOut = () => {
+        drawerSelectedOption(10, '');
+        Alert.alert(
+            'Log Out'
+            ,
+            'Log Out From The App?', [{
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel'
+            }, {
+                text: 'OK',
+                style: 'ok',
+                onPress: () => {
+                    LocalStorage.ClearData();
+                    dispatch(toggleUser('Logout'));
+                }
+            },], {
+            cancelable: false
+        }
+        )
+        return true;
+    };
 
     return (
         <View style={DrawerContentStyle.container}>
-
             <View
                 style={[DrawerContentStyle.logoImage,
                 {
@@ -127,7 +67,7 @@ const DrawerContentAdmin = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
 
                 <TouchableOpacity
-                    onPress={() => DailyAttendanceCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(1, 'DailyAttendance')}
                     style={
                         active == 1 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -144,7 +84,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => LiveTrackingCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(2, 'LiveTraking')}
                     style={
                         active == 2 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -160,7 +100,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => TasksCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(3, 'TaskListBottomTab')}
                     style={
                         active == 3 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -177,7 +117,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => LeavesCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(5, 'LeaveList')}
                     style={
                         active == 5 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -193,7 +133,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => ReportsCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(6, 'ReportScreen')}
                     style={
                         active == 6 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -210,7 +150,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => NoticeCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(7, 'Notice')}
                     style={
                         active == 7 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -227,7 +167,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => LeaderBoardCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(8, 'LeaderBoard')}
                     style={
                         active == 8 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -241,7 +181,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => SettingsCombo(navigation, dispatch)}
+                    onPress={() => drawerSelectedOption(9, 'SettingScreen')}
                     style={
                         active == 9 ?
                             DrawerContentStyle.itemContainerSelected :
@@ -257,7 +197,7 @@ const DrawerContentAdmin = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => LogoutCombo(dispatch)}
+                    onPress={() => logOut()}
                     style={
                         active == 10 ?
                             DrawerContentStyle.itemContainerSelected :

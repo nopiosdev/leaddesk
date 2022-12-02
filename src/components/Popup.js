@@ -50,11 +50,11 @@ const Popup = ({ show, onPress, description, testingPopup, title, btnText }) => 
                                 <Paragraph style={[styles.child2Text]}>{description}</Paragraph>
                             </Dialog.Content>
                             <Dialog.Actions>
-                                <CustomButton
+                                {btnText && <CustomButton
                                     title={btnText}
                                     onPress={onPress}
                                     btnStyle={{ width: '50%' }}
-                                />
+                                />}
                             </Dialog.Actions>
                         </>
                     }

@@ -7,64 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleActive, toggleUser } from '../../Redux/Slices/UserSlice';
 import LocalStorage from '../../common/LocalStorage';
 
-const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 36 : StatusBar.currentHeight;
-
-const drawerSelectedOption = (id, dispatch) => {
-  dispatch(toggleActive(id));
-};
-
-const DailyAttendanceCombo = (navigation, dispatch) => {
-  navigation.navigate('DailyAttendance');
-  drawerSelectedOption(1, dispatch);
-}
-
-const TasksCombo = (navigation, dispatch) => {
-  navigation.navigate('TaskListBottomTab');
-  drawerSelectedOption(2, dispatch);
-}
-
-//user
-const MyPanelCombo = (navigation, dispatch) => {
-  navigation.navigate('MyPanel');
-  drawerSelectedOption(3, dispatch);
-}
-const LeavesCombo = (navigation, dispatch) => {
-  navigation.navigate('LeaveList');
-  drawerSelectedOption(4, dispatch);
-}
 
 
-const NoticeCombo = (navigation, dispatch) => {
-  navigation.navigate('Notice');
-  drawerSelectedOption(5, dispatch);
-}
-const LeaderBoardCombo = (navigation, dispatch) => {
-  navigation.navigate('LeaderBoard');
-  drawerSelectedOption(6, dispatch);
-}
-const SettingsCombo = (dispatch) => {
-  drawerSelectedOption(7, dispatch);
-  Alert.alert(
-    'Log Out'
-    ,
-    'Log Out From The App?', [{
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel'
-    }, {
-      text: 'OK',
-      style: 'ok',
-      onPress: async () => {
-        LocalStorage.ClearData();
-        dispatch(toggleUser('Logout'));
-      }
-    },], {
-    cancelable: false
-  }
-  )
-  return true;
-
-}
 
 // const StatusBarPlaceHolder = () => {
 //   return (
@@ -82,10 +26,39 @@ const UserDrawerContent = ({ navigation }) => {
   const active = useSelector((state) => state.user.active);
   const dispatch = useDispatch();
 
+  const drawerSelectedOption = (id, screen) => {
+    dispatch(toggleActive(id));
+    if (screen) { navigation.navigate(screen); }
+  };
+ 
+  const Logout = () => {
+    drawerSelectedOption(7);
+    Alert.alert(
+      'Log Out'
+      ,
+      'Log Out From The App?', [{
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel'
+      }, {
+        text: 'OK',
+        style: 'ok',
+        onPress: async () => {
+          LocalStorage.ClearData();
+          dispatch(toggleUser('Logout'));
+        }
+      },], {
+      cancelable: false
+    }
+    )
+    return true;
+
+  }
+
   // const getMyPanel = () => {
   //   if (userDetails?.UserType == "user") {
   //     return (<TouchableOpacity
-  //       onPress={() => MyPanelCombo(navigation, dispatch)}
+  //       onPress={() => MyPanelCombo()}
   //       style={
   //         active == 3 ?
   //           DrawerContentStyle.itemContainerSelected :
@@ -127,7 +100,7 @@ const UserDrawerContent = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
-          onPress={() => DailyAttendanceCombo(navigation, dispatch)}
+          onPress={() => drawerSelectedOption(1, 'DailyAttendance')}
           style={
             active == 1 ?
               DrawerContentStyle.itemContainerSelected :
@@ -143,7 +116,7 @@ const UserDrawerContent = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => MyPanelCombo(navigation, dispatch)}
+          onPress={() => drawerSelectedOption(3, 'MyPanel')}
           style={
             active == 3 ?
               DrawerContentStyle.itemContainerSelected :
@@ -154,7 +127,7 @@ const UserDrawerContent = ({ navigation }) => {
           <Text style={DrawerContentStyle.itemTextStyle}> My Panel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => TasksCombo(navigation, dispatch)}
+          onPress={() => drawerSelectedOption(2, 'TaskListBottomTab')}
           style={
             active == 2 ?
               DrawerContentStyle.itemContainerSelected :
@@ -170,7 +143,7 @@ const UserDrawerContent = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => LeavesCombo(navigation, dispatch)}
+          onPress={() => drawerSelectedOption(4, 'LeaveList')}
           style={
             active == 4 ?
               DrawerContentStyle.itemContainerSelected :
@@ -186,7 +159,7 @@ const UserDrawerContent = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => NoticeCombo(navigation, dispatch)}
+          onPress={() => drawerSelectedOption(5, 'Notice')}
           style={
             active == 5 ?
               DrawerContentStyle.itemContainerSelected :
@@ -203,7 +176,7 @@ const UserDrawerContent = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => LeaderBoardCombo(navigation, dispatch)}
+          onPress={() => drawerSelectedOption(6, 'LeaderBoard')}
           style={
             active == 6 ?
               DrawerContentStyle.itemContainerSelected :
@@ -217,7 +190,7 @@ const UserDrawerContent = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => SettingsCombo(dispatch)}
+          onPress={() => Logout()}
           style={
             active == 7 ?
               DrawerContentStyle.itemContainerSelected :

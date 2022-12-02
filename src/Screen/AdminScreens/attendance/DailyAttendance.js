@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Notifications from 'expo-notifications';
 import * as Update from 'expo-updates';
 import Popup from '../../../components/Popup';
+import NetInfo from '@react-native-community/netinfo';
 import { toggleActive } from '../../../Redux/Slices/UserSlice';
 import { useIsFocused } from '@react-navigation/native';
 
 
 const DailyAttendance = ({ navigation }) => {
-
     const userDetails = useSelector((state) => state.user.currentUser);
     const [connectionPopup, setConnectionPopup] = useState(false);
     const [updatevisible, setUpdateVisible] = useState(false);
@@ -57,18 +57,18 @@ const DailyAttendance = ({ navigation }) => {
     }
 
     useEffect(() => {
-        // const unsubscribe = NetInfo.addEventListener(state => {
-        //     if (!state.isConnected) {
-        //         setConnectionPopup(true);
-        //     } else {
-        //         setConnectionPopup(false);
-        //     }
-        // });
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if (!state.isConnected) {
+                setConnectionPopup(true);
+            } else {
+                setConnectionPopup(false);
+            }
+        });
         dispatch(toggleActive(1));
         checkupdate();
         // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));   
-        // return unsubscribe;
-    }, [isFocused]);
+        return unsubscribe;
+    }, [connectionPopup]);
     return (
         <>
             {userDetails?.UserType == 'admin' ? <AdminTodayAttendance navigation={navigation} /> : <DailyAttendances navigation={navigation} />}
@@ -83,8 +83,8 @@ const DailyAttendance = ({ navigation }) => {
                 show={connectionPopup}
                 title={'Connection Error!'}
                 description={'Please turn on your internet connection!'}
-                btnText="Try Again"
-                // onPress={() => Update.reloadAsync()}
+                btnText='Try Again'
+                onPress={() => setConnectionPopup(false)}
             />
         </>
     );

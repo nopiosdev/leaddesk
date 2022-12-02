@@ -9,13 +9,12 @@ import { urlResource } from '../../../Utils/config';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import LocalStorage from '../../../common/LocalStorage';
 import { useIsFocused } from '@react-navigation/native';
-import Loader from '../../../components/Loader';
 import Header from '../../../components/Header';
 import { ActivityIndicator } from 'react-native';
 import { TaskStyle } from '../tasks/TaskStyle';
 import moment from 'moment';
 import { setSelectedEmployee } from '../../../Redux/Slices/UserSlice';
-import { checkConnection } from '../../../common/checkConnection';
+
 
 const AdminTodayAttendance = ({ navigation }) => {
 
@@ -35,11 +34,9 @@ const AdminTodayAttendance = ({ navigation }) => {
     const user = useSelector((state) => state.user.currentUser);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    // console.log('user',user)
 
     const handleBackButton = () => {
         BackHandler.exitApp()
-        return true;
     }
     const _onRefresh = async () => {
         setrefreshing(true);
@@ -95,6 +92,7 @@ const AdminTodayAttendance = ({ navigation }) => {
         })();
 
     }, [isFocused])
+
 
     const closeCompanyModal = async (index, value) => {
         setCompanyModal(false);
