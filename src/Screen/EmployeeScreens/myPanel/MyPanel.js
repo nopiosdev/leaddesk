@@ -25,7 +25,7 @@ import CustomTimeLine from '../../../components/CustomTimeLine';
 import { upLoadImage } from '../../../services/TaskService';
 import Header from '../../../components/Header';
 import Loader from '../../../components/Loader';
-import moment from 'moment';
+import moment, { isMoment } from 'moment';
 import { toggleActive } from '../../../Redux/Slices/UserSlice';
 
 
@@ -220,13 +220,7 @@ const MyPanel = ({ navigation }) => {
         } else if (statusPoint == "CheckPoint") {
             createCheckPoint(Latd, Logtd, loaction);
         } else {
-            console.log('OfficeStayHour', OfficeStayHour)
-            if (OfficeStayHour < maximumOfficeHours) {
-                setprogressVisible(false);
-                setLessTimeReasonModal(true);
-            } else {
-                createCheckOut(fileId, Latd, Logtd, loaction, '');
-            }
+            createCheckOut(fileId, Latd, Logtd, loaction);
         }
     }
 
@@ -412,6 +406,7 @@ const MyPanel = ({ navigation }) => {
             if (statusPoint == "CheckPoint") {
                 _sendCheckpointToServer(currentLatitude, currentLongitude);
             } else {
+                setprogressVisible(false);
                 _takeSelfiePhoto(statusPoint, currentLatitude, currentLongitude);
             }
         });
@@ -527,11 +522,12 @@ const MyPanel = ({ navigation }) => {
             setprogressVisible(false);
         }
     }
-    const createCheckOut = async (fileId, Latd, Logtd, loaction, LessTimeReason) => {
+    const createCheckOut = async (fileId, Latd, Logtd, loaction) => {
         try {
             console.log('createCheckOutDATA', fileId, Latd, Logtd, loaction)
             setLessTimeReasonModal(false);
             setprogressVisible(true);
+            setEmployeeReason("");
             var data = new FormData();
             data.append('Latitude', Latd);
             data.append('Longitude', Logtd);
@@ -541,7 +537,7 @@ const MyPanel = ({ navigation }) => {
             data.append('DeviceOSVersion', DeviceOSVersion);
             data.append('companyId', CompanyId);
             data.append('CheckOutTimeFile', fileId);
-            data.append('LessTimeReason', LessTimeReason);
+            data.append('LessTimeReason', EmployeeReason);
 
             const response = await CheckOut(data);
             setprogressVisible(true);
@@ -589,7 +585,13 @@ const MyPanel = ({ navigation }) => {
 
         if (IsCheckedOut !== 1) {
             if (IsCheckedIn === 1 && IsCheckedOut !== 1) {
-                setprogressVisible(false);
+                if (EmployeeReason == "" && moment(OfficeStayHour, "hh:mm").isBefore(moment(maximumOfficeHours, "hh:mm"))) {
+                    setprogressVisible(false);
+                    setLessTimeReasonModal(true);
+                    return false;
+                } 
+                setEmployeeReason("");
+                setLessTimeReasonModal(false);
                 await getLocationInfo('CheckOut');
             } else {
                 setprogressVisible(false);
@@ -871,7 +873,7 @@ const MyPanel = ({ navigation }) => {
                     </Text>
                     <View style={{ width: "100%" }}>
                         <TextInput
-                            style={{ height: 60, margin: 15, padding: 5, backgroundColor: "#f1f4f6", borderRadius: 10, }}
+                            style={{ height: 60, margin: 0, marginTop: 10, padding: 5, paddingHorizontal: 15, backgroundColor: "#f7f7f7", borderRadius: 10, }}
                             value={EmployeeReason}
                             placeholder="Reason"
                             placeholderTextColor="darkgrey"
@@ -882,9 +884,24 @@ const MyPanel = ({ navigation }) => {
                         </TextInput>
                     </View>
                 </View>
-                <TouchableOpacity style={MyPanelStyle.addPeopleBtn} onPress={() => { EmployeeReason && createCheckOut(image, Latitude, Longitude, LogLocation, EmployeeReason) }} >
-                    <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>Checkout</Text>
-                </TouchableOpacity>
+                <View style={{flexDirection: "row", justifyContent: "center"}}>
+                    <TouchableOpacity style={MyPanelStyle.addPeopleBtn} onPress={() => { 
+                        if(EmployeeReason.trim() != ""){
+                            getCheckOut()
+                        } else {
+                            ToastAndroid.show('Please specify a reason to checkout', ToastAndroid.TOP);
+                        }
+                    }} >
+                        <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>Checkout</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={MyPanelStyle.closeReasonPopup} onPress={() => { 
+                        setEmployeeReason("");
+                        setLessTimeReasonModal(false);
+                    }} >
+                        <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>Close</Text>
+                    </TouchableOpacity>
+                </View>
             </Modal>
 
 

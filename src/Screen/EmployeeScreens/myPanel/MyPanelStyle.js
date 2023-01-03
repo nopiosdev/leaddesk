@@ -230,4 +230,14 @@ export const MyPanelStyle = StyleSheet.create({
         marginVertical: 15,
         marginTop: 20
     },
+    closeReasonPopup: {
+        backgroundColor: '#000',
+        padding: 15,
+        marginLeft: 10,
+        width: 100,
+        alignSelf: 'center',
+        borderRadius: 20,
+        marginVertical: 15,
+        marginTop: 20
+    },
 });
